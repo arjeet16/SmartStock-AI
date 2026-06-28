@@ -9,6 +9,8 @@ import SearchBar from "./components/SearchBar";
 import ProductForm from "./components/ProductForm";
 import ProductTable from "./components/ProductTable";
 import SalesHistory from "./components/SalesHistory";
+import AIInsights from "./components/AIInsights";
+import AIRecommendation from "./components/AIRecommendation";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -341,7 +343,17 @@ function App() {
           barChartData={barChartData}
           pieChartData={pieChartData}
         />
-
+        <AIInsights
+  products={products}
+  sales={sales}
+  lowStockCount={lowStockCount}
+  totalRevenue={totalRevenue}
+  totalProfit={totalProfit}
+/>
+<AIRecommendation
+  products={products}
+  sales={sales}
+/>
       <SearchBar
   search={search}
   setSearch={setSearch}
