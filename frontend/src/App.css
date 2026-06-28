@@ -441,3 +441,63 @@ body,
   width: 100% !important;
   height: 320px !important;
 }
+/* ===== PREMIUM DASHBOARD CARDS ===== */
+
+.cards {
+  max-width: 1100px !important;
+  margin: 0 auto 40px !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 24px !important;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(255, 255, 255, 0.86) !important;
+  backdrop-filter: blur(18px);
+  border-radius: 26px !important;
+  padding: 26px !important;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08) !important;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(96,165,250,0.18), transparent 45%);
+  opacity: 0;
+  transition: 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.01) !important;
+  box-shadow: 0 28px 65px rgba(15, 23, 42, 0.16) !important;
+}
+
+.card svg {
+  color: #2563eb !important;
+  background: #eff6ff;
+  padding: 10px;
+  border-radius: 16px;
+  box-sizing: content-box;
+}
+
+.card h3 {
+  margin-top: 18px !important;
+  color: #64748b !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+.card p {
+  margin-top: 10px !important;
+  color: #0f172a !important;
+  font-size: 34px !important;
+  font-weight: 900 !important;
+}
