@@ -2,7 +2,8 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "./components/Sidebar";
-
+import DashboardHeader from "./components/DashboardHeader";
+import StatsCards from "./components/StatsCards";
 import {
   LayoutDashboard,
   Package,
@@ -130,6 +131,7 @@ function App() {
     item_name: "",
     category: "",
     quantity: "",
+
     buying_price: "",
     selling_price: "",
   });
@@ -350,82 +352,26 @@ if (!isLoggedIn) {
     return <Login setIsLoggedIn={setIsLoggedIn} />;
 }
  return (
-  <>
-    <Sidebar />
+ <>
+  <Sidebar />
 
-    <div className="container">
-      <div
-  style={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "20px",
-  }}
->
-  <h1 className="title">
-  📦 Inventory Management Dashboard
-</h1>
+  <div className="container">
+    <DashboardHeader handleLogout={handleLogout} />
 
-  <button
-    onClick={handleLogout}
-    style={{
-      backgroundColor: "#e74c3c",
-      color: "white",
-      border: "none",
-      padding: "10px 18px",
-      borderRadius: "8px",
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      gap: "8px",
-      fontWeight: "bold",
-    }}
-  >
-    <FaSignOutAlt />
-    Logout
-  </button>
-</div>
+    {/* Dashboard Cards */}
 
-      {/* Dashboard Cards */}
+  {/* Dashboard Cards */}
 
-  <div className="cards">
-
-  <div className="card">
-    <FaBoxes size={35} />
-    <h3>Total Products</h3>
-    <p>{totalProducts}</p>
-  </div>
-
-  <div className="card">
-    <FaWarehouse size={35} />
-    <h3>Total Quantity</h3>
-    <p>{totalQuantity}</p>
-  </div>
-
-  <div className="card">
-    <FaMoneyBillWave size={35} />
-    <h3>Inventory Value</h3>
-    <p>₹{inventoryValue}</p>
-  </div>
-
-  <div className="card">
-    <FaChartLine size={35} />
-    <h3>Total Profit</h3>
-    <p>₹{totalProfit}</p>
-  </div>
-
-  <div className="card">
-    <FaMoneyBillWave size={35} />
-    <h3>Total Revenue</h3>
-    <p>₹{totalRevenue}</p>
-  </div>
-
-  <div className="card">
-    <FaShoppingCart size={35} />
-    <h3>Total Sales</h3>
-    <p>{totalSales}</p>
-  </div>
-
+<StatsCards
+  totalProducts={totalProducts}
+  totalQuantity={totalQuantity}
+  inventoryValue={inventoryValue}
+  totalProfit={totalProfit}
+  totalRevenue={totalRevenue}
+  totalSales={totalSales}
+  bestSellingProduct={bestSellingProduct}
+  lowStockCount={lowStockCount}
+/>
   <div
   className="card"
   style={{
@@ -739,7 +685,6 @@ if (!isLoggedIn) {
     </tbody>
   </table>
 </div>
-    </div>
     </>
   );
 }
