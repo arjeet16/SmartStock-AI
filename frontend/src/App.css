@@ -591,3 +591,86 @@ body,
   font-size: 18px;
   font-weight: 600;
 }
+/* ===== PREMIUM AI BUSINESS ASSISTANT ===== */
+
+.ai-business-assistant {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 32px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #020617, #0f172a);
+  color: white;
+  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.35);
+}
+
+.assistant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 28px;
+}
+
+.assistant-badge {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(96, 165, 250, 0.16);
+  color: #93c5fd;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.assistant-header h2 {
+  color: white;
+  font-size: 32px;
+  margin: 0 0 8px;
+}
+
+.assistant-header p {
+  color: #cbd5e1;
+}
+
+.generate-report-btn {
+  border: none;
+  padding: 14px 22px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.assistant-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.assistant-card {
+  padding: 22px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.assistant-card span {
+  font-size: 28px;
+}
+
+.assistant-card h3 {
+  color: #93c5fd;
+  margin: 12px 0 8px;
+}
+
+.assistant-card p {
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.assistant-card.warning {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(248, 113, 113, 0.35);
+}

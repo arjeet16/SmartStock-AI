@@ -11,6 +11,7 @@ import ProductTable from "./components/ProductTable";
 import SalesHistory from "./components/SalesHistory";
 import AIInsights from "./components/AIInsights";
 import AIRecommendation from "./components/AIRecommendation";
+import AIBusinessAssistant from "./components/AIBusinessAssistant";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -343,6 +344,14 @@ function App() {
           barChartData={barChartData}
           pieChartData={pieChartData}
         />
+        <AIBusinessAssistant
+  products={products}
+  sales={sales}
+  lowStockCount={lowStockCount}
+  totalRevenue={totalRevenue}
+  totalProfit={totalProfit}
+  bestSellingProduct={bestSellingProduct}
+/>
         <AIInsights
   products={products}
   sales={sales}
