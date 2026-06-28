@@ -1,0 +1,201 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f4f7fc;
+}
+
+.container {
+  width: 95%;
+  margin: auto;
+  padding: 30px;
+}
+
+.title {
+  text-align: center;
+  font-size: 60px;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+/* Dashboard Cards */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-bottom: 35px;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  text-align: center;
+  border-radius: 20px;
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+.card svg {
+  color: #6c63ff;
+  margin-bottom: 15px;
+}
+
+.card h3 {
+  color: #666;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.card p {
+  color: #3498db;
+  font-size: 36px;
+  font-weight: bold;
+}
+.card {
+  transition: all 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Product Form */
+
+.product-form {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.product-form input {
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #333;
+  color: white;
+  font-size: 15px;
+}
+
+.product-form input::placeholder {
+  color: #bbb;
+}
+
+.add-btn {
+  border: none;
+  border-radius: 12px;
+  background: #27ae60;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.add-btn:hover {
+  background: #219150;
+}
+
+/* Search Box */
+
+.search-box {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  background: white;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.search-box:focus {
+  outline: none;
+}
+
+/* Table */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+th {
+  background: #3498db;
+  color: white;
+  padding: 20px;
+  font-size: 16px;
+}
+
+td {
+  padding: 18px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+}
+
+tr:hover {
+  background: #f8f9ff;
+}
+
+/* Delete Button */
+
+.delete-btn {
+  border: none;
+  background: #e74c3c;
+  color: white;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+  transform: scale(1.08);
+}
+
+/* Mobile Responsive */
+
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .product-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .product-form {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 35px;
+  }
+
+ .title {
+  font-size: 40px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+}
