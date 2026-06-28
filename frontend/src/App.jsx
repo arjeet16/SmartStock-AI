@@ -5,7 +5,7 @@ import DashboardHeader from "./components/DashboardHeader";
 import StatsCards from "./components/StatsCards";
 import Charts from "./components/Charts";
 import Login from "./Login";
-
+import SearchBar from "./components/SearchBar";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -339,134 +339,15 @@ function App() {
           pieChartData={pieChartData}
         />
 
-        {/* Search Bar */}
-        <div className="search-container">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search Product or Category..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="search-box"
-          />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <select
-            value={categoryFilter}
-            onChange={(e) =>
-              setCategoryFilter(e.target.value)
-            }
-            style={{
-              padding: "10px",
-              borderRadius: "8px",
-              width: "220px",
-            }}
-          >
-            {categories.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              padding: "10px",
-              borderRadius: "8px",
-              width: "220px",
-            }}
-          >
-            <option value="">Sort Products</option>
-            <option value="name">Name (A-Z)</option>
-            <option value="quantity">
-              Quantity (High-Low)
-            </option>
-            <option value="profit">
-              Profit (High-Low)
-            </option>
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <button
-            onClick={exportToExcel}
-            style={{
-              background: "#27ae60",
-              color: "white",
-              border: "none",
-              padding: "12px 20px",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            📥 Export Inventory to Excel
-          </button>
-        </div>
-
-        <h2>➕ Add / Update Product</h2>
-        <p>
-          Fill in the details below to add a new product or
-          update an existing one.
-        </p>
-
-        <form className="product-form" onSubmit={addProduct}>
-          <input
-            type="text"
-            name="item_name"
-            placeholder="Item Name"
-            value={formData.item_name}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="text"
-            name="category"
-            placeholder="Category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="number"
-            name="quantity"
-            placeholder="Quantity"
-            value={formData.quantity}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="number"
-            step="0.01"
-            name="buying_price"
-            placeholder="Buying Price"
-            value={formData.buying_price}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="number"
-            step="0.01"
-            name="selling_price"
-            placeholder="Selling Price"
-            value={formData.selling_price}
-            onChange={handleChange}
-            required
-          />
-
-          <button className="add-btn" type="submit">
-            {editId ? "Update Product" : "Add Product"}
-          </button>
-        </form>
+      <SearchBar
+  search={search}
+  setSearch={setSearch}
+  categories={categories}
+  categoryFilter={categoryFilter}
+  setCategoryFilter={setCategoryFilter}
+  sortBy={sortBy}
+  setSortBy={setSortBy}
+/> 
 
         {/* Products Table */}
         <table>
