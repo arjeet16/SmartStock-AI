@@ -199,3 +199,162 @@ tr:hover {
   color: #2c3e50;
 }
 }
+/* Main dashboard layout after sidebar */
+.container {
+  margin-left: 280px !important;
+  width: calc(100% - 280px) !important;
+  max-width: none !important;
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f4f7fb;
+}
+/* ===== PROFESSIONAL LAYOUT FIX AFTER SIDEBAR ===== */
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden !important;
+  background: #f4f7fb;
+}
+
+.sidebar {
+  z-index: 9999;
+}
+
+/* Main content after sidebar */
+.container {
+  margin-left: 285px !important;
+  width: calc(100vw - 285px) !important;
+  max-width: calc(100vw - 285px) !important;
+  min-height: 100vh;
+  padding: 35px 45px !important;
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+  background: #f4f7fb;
+}
+
+/* Fix big overlapping title */
+.container h1 {
+  font-size: 52px !important;
+  line-height: 1.05 !important;
+  margin: 20px auto 35px !important;
+  text-align: center;
+  max-width: 900px;
+  white-space: normal !important;
+}
+
+/* Fix cards layout */
+.stats-container,
+.cards,
+.card-container,
+.dashboard-cards,
+.analytics-cards {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 24px !important;
+  max-width: 980px !important;
+  margin: 0 auto 35px !important;
+}
+
+/* Fix chart layout */
+.charts,
+.chart-container,
+.charts-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 24px !important;
+  max-width: 980px !important;
+  margin: 30px auto !important;
+}
+
+.chart-box,
+.chart-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Fix search/select/add product form */
+.container input,
+.container select {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.container form {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  align-items: center;
+  justify-content: center;
+  max-width: 1100px !important;
+  margin: 35px auto !important;
+}
+
+.container form input,
+.container form select {
+  flex: 1 1 180px !important;
+  min-width: 170px !important;
+  width: auto !important;
+}
+
+.container form button {
+  flex: 0 0 auto !important;
+}
+
+/* Fix all tables */
+.container table {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  margin: 25px auto !important;
+}
+
+.container th,
+.container td {
+  padding: 14px 8px !important;
+  font-size: 15px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+.container table button {
+  margin: 4px !important;
+}
+/* ===== FIX SALES HISTORY TABLE ===== */
+
+.sales-history,
+.sales-section {
+  width: 100% !important;
+  max-width: 900px !important;
+  margin: 40px auto !important;
+  display: block !important;
+}
+
+.sales-history table,
+.sales-section table {
+  width: 100% !important;
+  min-width: 650px !important;
+  table-layout: auto !important;
+}
+
+.sales-history th,
+.sales-history td,
+.sales-section th,
+.sales-section td {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  text-align: center !important;
+  padding: 16px 20px !important;
+}
