@@ -14,6 +14,7 @@ import AIRecommendation from "./components/AIRecommendation";
 import AIBusinessAssistant from "./components/AIBusinessAssistant";
 import DashboardV2 from "./components/DashboardV2";
 import SidebarV2 from "./components/SidebarV2";
+import Topbar from "./components/Topbar";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -329,11 +330,11 @@ function App() {
     <SidebarV2 />
 
     <div className="container">
-      <DashboardHeader handleLogout={handleLogout} />
 
-      {/* Dashboard */}
-      <div id="dashboard">
-        <DashboardV2
+  <DashboardHeader handleLogout={handleLogout} />
+
+  <div id="dashboard">
+    <DashboardV2
           totalRevenue={totalRevenue}
           totalProfit={totalProfit}
           totalProducts={totalProducts}
