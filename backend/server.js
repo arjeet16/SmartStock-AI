@@ -5,7 +5,8 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-
+const { generateInventoryReport } = require("./gemini");
+const { formatAIReport } = require("./services/aiReportFormatter");
 app.use(cors());
 app.use(express.json());
 
@@ -333,8 +334,47 @@ app.post("/login", (req, res) => {
     );
 
 });
+
+// AI REPORT
+
+app.post("/ai-report", async (req, res) => {
+    console.log("AI REPORT API HIT");
+  try {
+    const {
+      products,
+      sales,
+      totalRevenue,
+      totalProfit,
+      lowStockCount,
+      bestSellingProduct,
+    } = req.body;
+
+    const report = await generateInventoryReport({
+      products,
+      sales,
+      totalRevenue,
+      totalProfit,
+      lowStockCount,
+      bestSellingProduct,
+    });
+    const formattedReport = formatAIReport(report);
+
+    res.json({
+  success: true,
+  report: formattedReport,
+});
+} catch (error) {
+  console.error("AI REPORT ERROR:", error.message);
+
+  res.status(500).json({
+    success: false,
+    message: "Failed to generate AI report",
+    error: error.message,
+  });
+}  
+});
 const PORT = 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server Running On Port ${PORT}`);
+  console.log(`Server Running On Port ${PORT}`);
 });

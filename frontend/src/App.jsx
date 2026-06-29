@@ -12,6 +12,8 @@ import SalesHistory from "./components/SalesHistory";
 import AIInsights from "./components/AIInsights";
 import AIRecommendation from "./components/AIRecommendation";
 import AIBusinessAssistant from "./components/AIBusinessAssistant";
+import DashboardV2 from "./components/DashboardV2";
+import SidebarV2 from "./components/SidebarV2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -323,11 +325,21 @@ function App() {
   }
 
   return (
-    <>
-      <Sidebar />
+  <>
+    <SidebarV2 />
 
-      <div className="container">
-        <DashboardHeader handleLogout={handleLogout} />
+    <div className="container">
+      <DashboardHeader handleLogout={handleLogout} />
+
+      {/* Dashboard */}
+      <div id="dashboard">
+        <DashboardV2
+          totalRevenue={totalRevenue}
+          totalProfit={totalProfit}
+          totalProducts={totalProducts}
+          lowStockCount={lowStockCount}
+          bestSellingProduct={bestSellingProduct}
+        />
 
         <StatsCards
           totalProducts={totalProducts}
@@ -344,52 +356,82 @@ function App() {
           barChartData={barChartData}
           pieChartData={pieChartData}
         />
-        <AIBusinessAssistant
-  products={products}
-  sales={sales}
-  lowStockCount={lowStockCount}
-  totalRevenue={totalRevenue}
-  totalProfit={totalProfit}
-  bestSellingProduct={bestSellingProduct}
-/>
-        <AIInsights
-  products={products}
-  sales={sales}
-  lowStockCount={lowStockCount}
-  totalRevenue={totalRevenue}
-  totalProfit={totalProfit}
-/>
-<AIRecommendation
-  products={products}
-  sales={sales}
-/>
-      <SearchBar
-  search={search}
-  setSearch={setSearch}
-  categories={categories}
-  categoryFilter={categoryFilter}
-  setCategoryFilter={setCategoryFilter}
-  sortBy={sortBy}
-  setSortBy={setSortBy}
-/> 
-<ProductForm
-  formData={formData}
-  handleChange={handleChange}
-  addProduct={addProduct}
-  editId={editId}
-/>
-{/*products table*/}
-<ProductTable
-  filteredProducts={filteredProducts}
-  editProduct={editProduct}
-  sellProduct={sellProduct}
-  deleteProduct={deleteProduct}
-/>
-
-       <SalesHistory sales={sales} /> 
       </div>
-    </>
-  );
+
+      {/* AI */}
+      <div id="ai">
+        <AIBusinessAssistant
+          products={products}
+          sales={sales}
+          totalRevenue={totalRevenue}
+          totalProfit={totalProfit}
+          lowStockCount={lowStockCount}
+          bestSellingProduct={bestSellingProduct}
+        />
+
+        <AIInsights
+          products={products}
+          sales={sales}
+          lowStockCount={lowStockCount}
+          totalRevenue={totalRevenue}
+          totalProfit={totalProfit}
+        />
+
+        <AIRecommendation
+          products={products}
+          sales={sales}
+        />
+      </div>
+
+      {/* Inventory */}
+      <div id="inventory">
+        <SearchBar
+          search={search}
+          setSearch={setSearch}
+          categories={categories}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+        />
+
+        <ProductForm
+          formData={formData}
+          handleChange={handleChange}
+          addProduct={addProduct}
+          editId={editId}
+        />
+
+        <ProductTable
+          filteredProducts={filteredProducts}
+          editProduct={editProduct}
+          sellProduct={sellProduct}
+          deleteProduct={deleteProduct}
+        />
+      </div>
+
+      {/* Sales */}
+      <div id="sales">
+        <SalesHistory sales={sales} />
+      </div>
+      {/* Reports */}
+<div id="reports">
+  <div className="placeholder-section">
+    <h2>📄 Reports</h2>
+    <p>AI reports and export tools will appear here.</p>
+  </div>
+</div>
+
+{/* Settings */}
+<div id="settings">
+  <div className="placeholder-section">
+    <h2>⚙️ Settings</h2>
+    <p>Profile, preferences and system settings will appear here.</p>
+  </div>
+</div>
+    </div>
+  </>
+);
 }
 
 export default App;
