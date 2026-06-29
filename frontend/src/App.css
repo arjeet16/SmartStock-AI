@@ -1072,3 +1072,98 @@ html {
   background: white;
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
 }
+/* ===== TOPBAR ===== */
+
+.topbar {
+  margin-bottom: 28px;
+  padding: 18px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+
+.topbar-left h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 24px;
+}
+
+.topbar-left p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.topbar-center {
+  flex: 1;
+  max-width: 420px;
+  height: 46px;
+  padding: 0 16px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #64748b;
+}
+
+.topbar-center input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon-btn {
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 16px;
+  background: #f1f5f9;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.profile .avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+
+.profile strong {
+  display: block;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.profile small {
+  color: #64748b;
+  font-size: 12px;
+}

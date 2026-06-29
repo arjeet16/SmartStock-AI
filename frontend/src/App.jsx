@@ -1,7 +1,6 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
-import DashboardHeader from "./components/DashboardHeader";
 import StatsCards from "./components/StatsCards";
 import Charts from "./components/Charts";
 import Login from "./Login";
@@ -331,7 +330,7 @@ function App() {
 
     <div className="container">
 
-  <DashboardHeader handleLogout={handleLogout} />
+  <Topbar handleLogout={handleLogout} />
 
   <div id="dashboard">
     <DashboardV2
