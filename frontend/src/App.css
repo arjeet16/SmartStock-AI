@@ -881,8 +881,20 @@ body,
 }
 
 .ui-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.13);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 35px 70px rgba(37, 99, 235, 0.15);
+}
+.kpi-v2-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.kpi-v2-card:hover .kpi-icon {
+  transform: rotate(10deg) scale(1.1);
+}
+
+.kpi-icon {
+  transition: all 0.3s ease;
 }
 /* ===========================
    DASHBOARD V2
@@ -1166,4 +1178,57 @@ html {
 .profile small {
   color: #64748b;
   font-size: 12px;
+}
+/* ===== KPI CARDS V2 ===== */
+
+.kpi-v2-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin: 28px 0;
+}
+
+.kpi-v2-card {
+  min-height: 150px;
+}
+
+.kpi-v2-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpi-v2-top span {
+  color: #2563eb;
+  font-weight: 800;
+}
+
+.kpi-v2-top small {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #16a34a;
+  font-weight: 800;
+}
+
+.kpi-v2-card h2 {
+  margin: 18px 0 8px;
+  color: #0f172a;
+  font-size: 34px;
+}
+
+.kpi-v2-card p {
+  color: #64748b;
+  margin: 0;
+}
+.kpi-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  margin-bottom: 18px;
 }

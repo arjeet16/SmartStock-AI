@@ -14,6 +14,7 @@ import AIBusinessAssistant from "./components/AIBusinessAssistant";
 import DashboardV2 from "./components/DashboardV2";
 import SidebarV2 from "./components/SidebarV2";
 import Topbar from "./components/Topbar";
+import KPICardsV2 from "./components/KPICardsV2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -341,16 +342,14 @@ function App() {
           bestSellingProduct={bestSellingProduct}
         />
 
-        <StatsCards
-          totalProducts={totalProducts}
-          totalQuantity={totalQuantity}
-          inventoryValue={inventoryValue}
-          totalProfit={totalProfit}
-          totalRevenue={totalRevenue}
-          totalSales={totalSales}
-          bestSellingProduct={bestSellingProduct}
-          lowStockCount={lowStockCount}
-        />
+        <KPICardsV2
+  totalRevenue={totalRevenue}
+  totalProfit={totalProfit}
+  totalProducts={totalProducts}
+  totalSales={totalSales}
+  inventoryValue={inventoryValue}
+  lowStockCount={lowStockCount}
+/>
 
         <Charts
           barChartData={barChartData}
