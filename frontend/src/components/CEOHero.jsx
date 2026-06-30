@@ -1,14 +1,50 @@
 import Card from "./ui/Card";
 import { FaBrain, FaFileDownload, FaRocket } from "react-icons/fa";
+import { exportDashboardPDF } from "../utils/exportPDF";
+import { generateAIReport } from "../services/aiService";
 
 function CEOHero({
+  products,
+  sales,
   totalRevenue,
   totalProfit,
+  inventoryValue,
   lowStockCount,
   bestSellingProduct,
+  aiReport,
+  setAiReport,
 }) {
   const healthStatus = lowStockCount > 0 ? "Needs Attention" : "Healthy";
   const score = lowStockCount > 0 ? 85 : 94;
+
+  const handleGenerateReport = async () => {
+    try {
+      const report = await generateAIReport({
+        products,
+        sales,
+        totalRevenue,
+        totalProfit,
+        lowStockCount,
+        bestSellingProduct,
+      });
+
+      setAiReport(report);
+      alert("AI Report Generated Successfully!");
+    } catch (err) {
+      alert("Failed to generate AI report.");
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    exportDashboardPDF({
+      totalRevenue,
+      totalProfit,
+      inventoryValue,
+      lowStockCount,
+      bestSellingProduct,
+      aiReport,
+    });
+  };
 
   return (
     <Card className="ceo-hero">
@@ -25,11 +61,11 @@ function CEOHero({
         </p>
 
         <div className="ceo-hero-actions">
-          <button className="ceo-primary-btn">
+          <button className="ceo-primary-btn" onClick={handleGenerateReport}>
             <FaRocket /> Generate AI Report
           </button>
 
-          <button className="ceo-secondary-btn">
+          <button className="ceo-secondary-btn" onClick={handleDownloadPDF}>
             <FaFileDownload /> Download PDF
           </button>
         </div>

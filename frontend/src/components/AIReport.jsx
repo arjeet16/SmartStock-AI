@@ -20,7 +20,7 @@ function AIReport({ report }) {
       <div className="ceo-report-grid">
         <div className="ceo-panel risk-panel">
           <h3>⚠️ Business Risks</h3>
-          {report.risks.map((risk, index) => (
+          {report.risks?.map((risk, index) => (
             <div className="ceo-list-item" key={index}>
               <span>!</span>
               <p>{risk}</p>
@@ -30,7 +30,7 @@ function AIReport({ report }) {
 
         <div className="ceo-panel action-panel">
           <h3>🚀 Priority Actions</h3>
-          {report.recommendations.map((item, index) => (
+          {report.recommendations?.map((item, index) => (
             <div className="ceo-list-item" key={index}>
               <span>✓</span>
               <p>{item}</p>
@@ -40,7 +40,7 @@ function AIReport({ report }) {
 
         <div className="ceo-panel profit-panel">
           <h3>💰 Profit Opportunities</h3>
-          {report.profitTips.map((tip, index) => (
+          {report.profitTips?.map((tip, index) => (
             <div className="ceo-list-item" key={index}>
               <span>₹</span>
               <p>{tip}</p>

@@ -1359,3 +1359,49 @@ html {
     margin-top:8px;
     font-size:20px;
 }
+/* ===== ANALYTICS V2 ===== */
+
+.analytics-v2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.analytics-card {
+  min-height: 430px;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.analytics-header span {
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.analytics-header h3 {
+  margin: 8px 0 0;
+  color: #0f172a;
+  font-size: 24px;
+}
+
+.trend-up {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #16a34a;
+  font-weight: 900;
+}
+
+.analytics-chart {
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

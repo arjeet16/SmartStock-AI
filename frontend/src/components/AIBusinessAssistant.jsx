@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AIReport from "./AIReport";
+import { generateAIReport } from "../services/aiService";
 
 function AIBusinessAssistant({
   products,
@@ -9,38 +10,26 @@ function AIBusinessAssistant({
   lowStockCount,
   bestSellingProduct,
 }) {
-  const [aiReport, setAiReport] = useState("");
+  const [aiReport, setAiReport] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const generateReport = async () => {
     setLoading(true);
-    setAiReport("");
+    setAiReport(null);
 
     try {
-      const response = await fetch("http://localhost:5000/ai-report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          products,
-          sales,
-          totalRevenue,
-          totalProfit,
-          lowStockCount,
-          bestSellingProduct,
-        }),
+      const report = await generateAIReport({
+        products,
+        sales,
+        totalRevenue,
+        totalProfit,
+        lowStockCount,
+        bestSellingProduct,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
-        setAiReport(data.report);
-      } else {
-        setAiReport("Failed to generate AI report. Please try again.");
-      }
+      setAiReport(report);
     } catch (error) {
-      setAiReport("Backend connection failed. Make sure backend is running.");
+      alert("Failed to generate AI report. Make sure backend is running.");
     } finally {
       setLoading(false);
     }

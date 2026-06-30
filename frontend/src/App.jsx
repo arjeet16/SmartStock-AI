@@ -16,6 +16,8 @@ import SidebarV2 from "./components/SidebarV2";
 import Topbar from "./components/Topbar";
 import KPICardsV2 from "./components/KPICardsV2";
 import CEOHero from "./components/CEOHero";
+import AnalyticsV2 from "./components/AnalyticsV2";
+import AIReport from "./components/AIReport";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -52,7 +54,7 @@ function App() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortBy, setSortBy] = useState("");
   const [editId, setEditId] = useState(null);
-
+  const [aiReport, setAiReport] = useState(null);
   const [formData, setFormData] = useState({
     item_name: "",
     category: "",
@@ -337,11 +339,18 @@ function App() {
   <div id="dashboard">
 
   <CEOHero
-    totalRevenue={totalRevenue}
-    totalProfit={totalProfit}
-    lowStockCount={lowStockCount}
-    bestSellingProduct={bestSellingProduct}
-  />
+  products={products}
+  sales={sales}
+  totalRevenue={totalRevenue}
+  totalProfit={totalProfit}
+  inventoryValue={inventoryValue}
+  lowStockCount={lowStockCount}
+  bestSellingProduct={bestSellingProduct}
+  aiReport={aiReport}
+  setAiReport={setAiReport}
+/>
+
+{aiReport && <AIReport report={aiReport} />}
   {/* <DashboardV2
   totalRevenue={totalRevenue}
   totalProfit={totalProfit}
@@ -360,13 +369,13 @@ function App() {
   lowStockCount={lowStockCount}
 />
 
-        <Charts
-          barChartData={barChartData}
-          pieChartData={pieChartData}
-        />
+        <AnalyticsV2
+  barChartData={barChartData}
+  pieChartData={pieChartData}
+/>
       </div>
 
-       AI 
+        
       <div id="ai">
         <AIBusinessAssistant
           products={products}
