@@ -15,6 +15,7 @@ import DashboardV2 from "./components/DashboardV2";
 import SidebarV2 from "./components/SidebarV2";
 import Topbar from "./components/Topbar";
 import KPICardsV2 from "./components/KPICardsV2";
+import CEOHero from "./components/CEOHero";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -334,13 +335,21 @@ function App() {
   <Topbar handleLogout={handleLogout} />
 
   <div id="dashboard">
-    <DashboardV2
-          totalRevenue={totalRevenue}
-          totalProfit={totalProfit}
-          totalProducts={totalProducts}
-          lowStockCount={lowStockCount}
-          bestSellingProduct={bestSellingProduct}
-        />
+
+  <CEOHero
+    totalRevenue={totalRevenue}
+    totalProfit={totalProfit}
+    lowStockCount={lowStockCount}
+    bestSellingProduct={bestSellingProduct}
+  />
+  {/* <DashboardV2
+  totalRevenue={totalRevenue}
+  totalProfit={totalProfit}
+  totalProducts={totalProducts}
+  lowStockCount={lowStockCount}
+  bestSellingProduct={bestSellingProduct}
+/> */}
+
 
         <KPICardsV2
   totalRevenue={totalRevenue}
@@ -357,7 +366,7 @@ function App() {
         />
       </div>
 
-      {/* AI */}
+       AI 
       <div id="ai">
         <AIBusinessAssistant
           products={products}
@@ -382,7 +391,7 @@ function App() {
         />
       </div>
 
-      {/* Inventory */}
+      Inventory 
       <div id="inventory">
         <SearchBar
           search={search}
@@ -409,7 +418,7 @@ function App() {
         />
       </div>
 
-      {/* Sales */}
+       Sales 
       <div id="sales">
         <SalesHistory sales={sales} />
       </div>

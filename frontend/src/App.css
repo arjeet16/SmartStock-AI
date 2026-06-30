@@ -890,7 +890,7 @@ body,
 }
 
 .kpi-v2-card:hover .kpi-icon {
-  transform: rotate(10deg) scale(1.1);
+  transform: rotate(20deg) scale(1.1);
 }
 
 .kpi-icon {
@@ -1211,10 +1211,11 @@ html {
   font-weight: 800;
 }
 
-.kpi-v2-card h2 {
-  margin: 18px 0 8px;
-  color: #0f172a;
-  font-size: 34px;
+.kpi-v2-card h2{
+    margin:18px 0 8px;
+    color:#0f172a;
+    font-size:34px;
+    font-weight:800;
 }
 
 .kpi-v2-card p {
@@ -1231,4 +1232,130 @@ html {
   place-items: center;
   font-size: 20px;
   margin-bottom: 18px;
+}
+/* =========================
+   CEO HERO
+========================= */
+
+.ceo-hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:50px;
+    margin-bottom:30px;
+    padding:40px;
+    background:linear-gradient(135deg,#2563eb,#1e3a8a);
+    color:white;
+    overflow:hidden;
+}
+
+.ceo-hero-left{
+    flex:1;
+}
+
+.ceo-hero-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 18px;
+    border-radius:999px;
+    background:rgba(255,255,255,.15);
+    font-weight:700;
+}
+
+.ceo-hero h1{
+    margin:25px 0 15px;
+    font-size:42px;
+}
+
+.ceo-hero-text{
+    max-width:650px;
+    line-height:1.8;
+    color:#dbeafe;
+}
+
+.ceo-hero-actions{
+    margin-top:35px;
+    display:flex;
+    gap:18px;
+}
+
+.ceo-primary-btn{
+    padding:15px 26px;
+    border:none;
+    border-radius:16px;
+    background:white;
+    color:#2563eb;
+    font-weight:800;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.ceo-secondary-btn{
+    padding:15px 26px;
+    border:2px solid rgba(255,255,255,.4);
+    border-radius:16px;
+    background:transparent;
+    color:white;
+    font-weight:800;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.ceo-hero-right{
+    display:flex;
+    gap:30px;
+    align-items:center;
+}
+
+.ceo-score-circle{
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    background:white;
+    color:#2563eb;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    box-shadow:0 20px 50px rgba(0,0,0,.2);
+}
+
+.ceo-score-circle span{
+    font-size:54px;
+    font-weight:900;
+}
+
+.ceo-score-circle p{
+    margin:0;
+    font-weight:700;
+}
+
+.ceo-hero-stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.ceo-hero-stats div{
+    background:rgba(255,255,255,.12);
+    padding:18px;
+    border-radius:18px;
+    min-width:170px;
+}
+
+.ceo-hero-stats span{
+    display:block;
+    color:#bfdbfe;
+    font-size:13px;
+}
+
+.ceo-hero-stats strong{
+    display:block;
+    margin-top:8px;
+    font-size:20px;
 }
