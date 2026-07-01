@@ -18,6 +18,7 @@ import KPICardsV2 from "./components/KPICardsV2";
 import CEOHero from "./components/CEOHero";
 import AnalyticsV2 from "./components/AnalyticsV2";
 import AIReport from "./components/AIReport";
+import AICopilot from "./components/AICopilot";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -446,10 +447,18 @@ function App() {
     <p>Profile, preferences and system settings will appear here.</p>
   </div>
 </div>
-    </div>
-  </>
+
+<AICopilot
+  products={products}
+  sales={sales}
+  totalRevenue={totalRevenue}
+  totalProfit={totalProfit}
+  lowStockCount={lowStockCount}
+  bestSellingProduct={bestSellingProduct}
+/>
+
+</div>
+</>
 );
 }
-
 export default App;
-
