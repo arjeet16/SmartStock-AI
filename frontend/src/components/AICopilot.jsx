@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaRobot, FaTimes, FaPaperPlane } from "react-icons/fa";
 import { askCopilot } from "../services/copilotService";
-
-function AICopilot({ products, sales, totalRevenue, totalProfit, lowStockCount, bestSellingProduct }) {
+import ReactMarkdown from "react-markdown";
+function AICopilot({
+  products,
+  sales,
+  totalRevenue,
+  totalProfit,
+  lowStockCount,
+  bestSellingProduct,
+}) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -11,47 +18,52 @@ function AICopilot({ products, sales, totalRevenue, totalProfit, lowStockCount, 
     },
   ]);
   const [input, setInput] = useState("");
-const sendMessage = async () => {
-  if (!input.trim()) return;
+  const [thinking, setThinking] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  const userQuestion = input;
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, thinking]);
 
-  setMessages((prev) => [
-    ...prev,
-    { role: "user", text: userQuestion },
-    { role: "ai", text: "Thinking..." },
-  ]);
+  const sendMessage = async () => {
+    if (!input.trim() || thinking) return;
 
-  setInput("");
-
-  try {
-    const reply = await askCopilot(userQuestion, {
-      products,
-      sales,
-      totalRevenue,
-      totalProfit,
-      lowStockCount,
-      bestSellingProduct,
-    });
+    const userQuestion = input.trim();
 
     setMessages((prev) => [
-      ...prev.slice(0, -1),
-      {
-        role: "ai",
-        text:
-          typeof reply === "string"
-            ? reply
-            : reply.summary || "AI response generated.",
-      },
+      ...prev,
+      { role: "user", text: userQuestion },
     ]);
-  } catch (error) {
-    setMessages((prev) => [
-      ...prev.slice(0, -1),
-      { role: "ai", text: "Sorry, I could not connect to AI." },
-    ]);
-  }
-};
 
+    setInput("");
+    setThinking(true);
+
+    try {
+      const reply = await askCopilot(userQuestion, {
+        products,
+        sales,
+        totalRevenue,
+        totalProfit,
+        lowStockCount,
+        bestSellingProduct,
+      });
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text: typeof reply === "string" ? reply : "AI response generated.",
+        },
+      ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: "Sorry, I could not connect to AI." },
+      ]);
+    } finally {
+      setThinking(false);
+    }
+  };
 
   return (
     <>
@@ -60,6 +72,11 @@ const sendMessage = async () => {
       </button>
 
       {open && (
+  <>
+    <div
+      className="copilot-backdrop"
+      onClick={() => setOpen(false)}
+    />
         <div className="ai-copilot-window">
           <div className="ai-copilot-header">
             <div>
@@ -76,13 +93,38 @@ const sendMessage = async () => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`ai-message ${
-                  msg.role === "user" ? "user-message" : "bot-message"
+                className={`chat-row ${
+                  msg.role === "user" ? "chat-row-user" : "chat-row-ai"
                 }`}
               >
-                {msg.text}
+                {msg.role === "ai" && <div className="chat-avatar">🤖</div>}
+
+                <div
+  className={`ai-message ${
+    msg.role === "user" ? "user-message" : "bot-message"
+  }`}
+>
+  {msg.role === "ai" ? (
+    <ReactMarkdown>{msg.text}</ReactMarkdown>
+  ) : (
+    msg.text
+  )}
+</div>
+
+                {msg.role === "user" && <div className="chat-avatar user-avatar-mini">A</div>}
               </div>
             ))}
+
+            {thinking && (
+              <div className="chat-row chat-row-ai">
+                <div className="chat-avatar">🤖</div>
+                <div className="ai-message bot-message typing">
+                  Thinking<span>.</span><span>.</span><span>.</span>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
 
           <div className="ai-copilot-input">
@@ -93,11 +135,12 @@ const sendMessage = async () => {
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             />
 
-            <button onClick={sendMessage}>
+            <button onClick={sendMessage} disabled={thinking}>
               <FaPaperPlane />
             </button>
           </div>
         </div>
+         </>
       )}
     </>
   );

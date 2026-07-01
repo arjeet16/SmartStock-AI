@@ -373,6 +373,27 @@ app.post("/ai-report", async (req, res) => {
   });
 }  
 });
+// AI COPILOT CHAT
+app.post("/ai-chat", async (req, res) => {
+  try {
+    const { generateCopilotAnswer } = require("./gemini");
+
+    const answer = await generateCopilotAnswer(req.body);
+
+    res.json({
+      success: true,
+      answer,
+    });
+  } catch (error) {
+    console.error("AI CHAT ERROR:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate AI chat response",
+      error: error.message,
+    });
+  }
+});
 const PORT = 5000;
 
 app.listen(PORT, () => {

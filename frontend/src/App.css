@@ -1406,118 +1406,259 @@ html {
   justify-content: center;
 }
 /* ===========================
-   AI COPILOT
+   AI COPILOT - FINAL
 =========================== */
 
-.ai-copilot-button{
-    position:fixed;
-    bottom:30px;
-    right:30px;
-    width:65px;
-    height:65px;
-    border:none;
-    border-radius:50%;
-    background:linear-gradient(135deg,#2563eb,#1d4ed8);
-    color:#fff;
-    font-size:26px;
-    cursor:pointer;
-    box-shadow:0 15px 35px rgba(37,99,235,.35);
-    z-index:999;
-    transition:.3s;
+.ai-copilot-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 68px;
+  height: 68px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 20px 45px rgba(37, 99, 235, 0.45);
+  z-index: 99999;
 }
 
-.ai-copilot-button:hover{
-    transform:scale(1.08);
+.copilot-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(6px);
+  z-index: 99998;
 }
 
-.ai-copilot-window{
-    position:fixed;
-    right:30px;
-    bottom:110px;
-    width:380px;
-    height:560px;
-    background:#fff;
-    border-radius:24px;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    box-shadow:0 30px 60px rgba(0,0,0,.18);
-    z-index:999;
+.ai-copilot-window {
+  position: fixed;
+  right: 30px;
+  bottom: 115px;
+  width: 480px;
+  height: 680px;
+  background: #f8fafc;
+  border-radius: 28px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 35px 90px rgba(15, 23, 42, 0.35);
+  z-index: 99999;
+  animation: popup 0.25s ease;
 }
 
-.ai-copilot-header{
-    padding:18px 22px;
-    background:#2563eb;
-    color:#fff;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.ai-copilot-header {
+  padding: 20px 22px;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.ai-copilot-header h3{
-    margin:0;
+.ai-copilot-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
 }
 
-.ai-copilot-header p{
-    margin-top:4px;
-    font-size:13px;
-    opacity:.85;
+.ai-copilot-header p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #dbeafe;
+  font-weight: 600;
 }
 
-.ai-copilot-header button{
-    background:none;
-    border:none;
-    color:white;
-    font-size:20px;
-    cursor:pointer;
+.ai-copilot-header button {
+  border: none;
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  cursor: pointer;
 }
 
-.ai-copilot-messages{
-    flex:1;
-    overflow-y:auto;
-    padding:18px;
-    background:#f8fafc;
+.ai-copilot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+  background: #f8fafc;
 }
 
-.ai-message{
-    margin-bottom:14px;
-    padding:12px 16px;
-    border-radius:16px;
-    max-width:85%;
-    line-height:1.5;
+.chat-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  align-items: flex-end;
 }
 
-.bot-message{
-    background:white;
-    color:#111827;
+.chat-row-ai {
+  justify-content: flex-start;
 }
 
-.user-message{
-    background:#2563eb;
-    color:white;
-    margin-left:auto;
+.chat-row-user {
+  justify-content: flex-end;
 }
 
-.ai-copilot-input{
-    display:flex;
-    padding:15px;
-    border-top:1px solid #e5e7eb;
-    background:white;
+.chat-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
 }
 
-.ai-copilot-input input{
-    flex:1;
-    border:none;
-    outline:none;
-    font-size:15px;
+.user-avatar-mini {
+  background: #10b981;
 }
 
-.ai-copilot-input button{
-    width:45px;
-    height:45px;
-    border:none;
-    border-radius:12px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
+.ai-message {
+  max-width: 78%;
+  padding: 14px 16px;
+  font-size: 15.5px;
+  line-height: 1.9;
+  letter-spacing: 0.2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-weight: 500;
+}
+
+.bot-message {
+  background: white;
+  color: #0f172a;
+  border-radius: 18px 18px 18px 6px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  text-align: left;
+}
+
+.user-message {
+  background: #2563eb;
+  color: white;
+  border-radius: 18px 18px 6px 18px;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
+  text-align: left;
+}
+
+.ai-copilot-input {
+  padding: 16px;
+  display: flex;
+  gap: 10px;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+}
+
+.ai-copilot-input input {
+  flex: 1;
+  height: 48px;
+  border: 1px solid #dbe3ef;
+  outline: none;
+  border-radius: 16px;
+  padding: 0 14px;
+  font-size: 14px;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.ai-copilot-input input::placeholder {
+  color: #64748b;
+}
+
+.ai-copilot-input button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  cursor: pointer;
+}
+
+.bot-message p {
+  margin: 0 0 10px;
+}
+
+.bot-message ul,
+.bot-message ol {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.bot-message li {
+  margin: 6px 0;
+}
+
+.bot-message strong {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.bot-message code {
+  background: #eef2ff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.typing span {
+  animation: blink 1.2s infinite;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% {
+    opacity: 0.2;
+  }
+
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes popup {
+  from {
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+.bot-message p {
+  margin: 0 0 6px;
+}
+
+.bot-message ol,
+.bot-message ul {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.bot-message li {
+  margin: 4px 0;
+}
+
+.bot-message {
+  max-width: 82%;
+}
+
+.ai-copilot-window {
+  width: 500px;
 }
