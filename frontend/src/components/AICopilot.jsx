@@ -1,149 +1,286 @@
 import { useEffect, useRef, useState } from "react";
-import { FaRobot, FaTimes, FaPaperPlane } from "react-icons/fa";
-import { askCopilot } from "../services/copilotService";
 import ReactMarkdown from "react-markdown";
-function AICopilot({
-  products,
-  sales,
-  totalRevenue,
-  totalProfit,
-  lowStockCount,
-  bestSellingProduct,
-}) {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      role: "ai",
-      text: "Hi Arjeet 👋 Ask me anything about your inventory, sales, profit, or restocking.",
-    },
-  ]);
+import { FiCopy, FiCheck, FiTrash2, FiSend, FiX } from "react-icons/fi";
+import { askCopilot } from "../services/copilotService";
+
+const STORAGE_KEY = "smartstock_copilot_messages";
+
+const suggestedPrompts = [
+  "Analyze my inventory health",
+  "Which products are low in stock?",
+  "How can I increase profit?",
+  "Give me today's sales summary",
+  "Find business risks",
+  "Recommend restocking actions",
+];
+
+const quickActions = [
+  "Analyze inventory",
+  "Show low stock risks",
+  "Give profit tips",
+  "Prepare CEO summary",
+];
+
+function getTime() {
+  return new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export default function AICopilot({ products = [], sales = [] }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [thinking, setThinking] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved
+      ? JSON.parse(saved)
+      : [
+          {
+            id: crypto.randomUUID(),
+            role: "ai",
+            text: "Hi, I’m your SmartStock AI Copilot. Ask me anything about inventory, sales, profit, risks, or restocking.",
+            time: getTime(),
+          },
+        ];
+  });
+
   const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, thinking]);
+  }, [messages, loading]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || thinking) return;
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
 
-    const userQuestion = input.trim();
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
 
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", text: userQuestion },
-    ]);
+  useEffect(() => {
+    if (!textareaRef.current) return;
 
+    textareaRef.current.style.height = "auto";
+    textareaRef.current.style.height = `${Math.min(
+      textareaRef.current.scrollHeight,
+      130
+    )}px`;
+  }, [input]);
+
+  const sendMessage = async (customPrompt = null) => {
+    const messageText = customPrompt || input.trim();
+    if (!messageText || loading) return;
+
+    const userMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      text: messageText,
+      time: getTime(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setThinking(true);
+    setLoading(true);
 
     try {
-      const reply = await askCopilot(userQuestion, {
+      const aiResponse = await askCopilot({
+        message: messageText,
         products,
         sales,
-        totalRevenue,
-        totalProfit,
-        lowStockCount,
-        bestSellingProduct,
       });
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          text: typeof reply === "string" ? reply : "AI response generated.",
-        },
-      ]);
+      const aiMessage = {
+        id: crypto.randomUUID(),
+        role: "ai",
+        text: aiResponse || "I could not generate a response right now.",
+        time: getTime(),
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { role: "ai", text: "Sorry, I could not connect to AI." },
+        {
+          id: crypto.randomUUID(),
+          role: "ai",
+          text: "Something went wrong while contacting SmartStock AI. Please try again.",
+          time: getTime(),
+        },
       ]);
     } finally {
-      setThinking(false);
+      setLoading(false);
+    }
+  };
+
+  const copyMessage = async (message) => {
+    await navigator.clipboard.writeText(message.text);
+    setCopiedId(message.id);
+
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 1800);
+  };
+
+  const clearChat = () => {
+    const starter = [
+      {
+        id: crypto.randomUUID(),
+        role: "ai",
+        text: "Chat cleared. How can I help you with your business now?",
+        time: getTime(),
+      },
+    ];
+
+    setMessages(starter);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(starter));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
   return (
     <>
-      <button className="ai-copilot-button" onClick={() => setOpen(true)}>
-        <FaRobot />
+      <button
+        className="ai-copilot-button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-label="Open AI Copilot"
+      >
+        {isOpen ? <FiX /> : "🤖"}
       </button>
 
-      {open && (
-  <>
-    <div
-      className="copilot-backdrop"
-      onClick={() => setOpen(false)}
-    />
-        <div className="ai-copilot-window">
-          <div className="ai-copilot-header">
-            <div>
-              <h3>🤖 SmartStock Copilot</h3>
-              <p>Inventory-aware AI assistant</p>
+      {isOpen && (
+        <div className="ai-copilot-backdrop">
+          <section className="ai-copilot-window">
+            <header className="ai-copilot-header">
+              <div>
+                <h3>SmartStock AI</h3>
+                <p>Inventory Intelligence Assistant</p>
+              </div>
+
+              <div className="ai-copilot-status">
+                <span></span>
+                Online
+              </div>
+            </header>
+
+            <main className="ai-copilot-messages">
+              {messages.length <= 1 && (
+                <div className="ai-suggestions">
+                  {suggestedPrompts.map((prompt) => (
+                    <button key={prompt} onClick={() => sendMessage(prompt)}>
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`ai-message ${
+                    message.role === "user" ? "user-message" : "bot-message"
+                  }`}
+                >
+                  <div className="ai-message-meta">
+                    <strong>{message.role === "user" ? "You" : "AI"}</strong>
+                    <span>{message.time}</span>
+                  </div>
+
+                  <div className="ai-message-content">
+                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                  </div>
+
+                  {message.role === "ai" && (
+                    <button
+                      className="ai-copy-button"
+                      onClick={() => copyMessage(message)}
+                    >
+                      {copiedId === message.id ? (
+                        <>
+                          <FiCheck /> Copied
+                        </>
+                      ) : (
+                        <>
+                          <FiCopy /> Copy
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              {loading && (
+                <div className="ai-message bot-message typing-message">
+                  <div className="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </main>
+
+            <div className="ai-quick-actions">
+              {quickActions.map((action) => (
+                <button key={action} onClick={() => sendMessage(action)}>
+                  {action}
+                </button>
+              ))}
+
+              <button className="clear-chat-btn" onClick={clearChat}>
+                <FiTrash2 /> Clear
+              </button>
             </div>
 
-            <button onClick={() => setOpen(false)}>
-              <FaTimes />
-            </button>
-          </div>
+            <footer className="ai-copilot-input-area">
 
-          <div className="ai-copilot-messages">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`chat-row ${
-                  msg.role === "user" ? "chat-row-user" : "chat-row-ai"
-                }`}
-              >
-                {msg.role === "ai" && <div className="chat-avatar">🤖</div>}
+    <div className="ai-input-wrapper">
 
-                <div
-  className={`ai-message ${
-    msg.role === "user" ? "user-message" : "bot-message"
-  }`}
->
-  {msg.role === "ai" ? (
-    <ReactMarkdown>{msg.text}</ReactMarkdown>
-  ) : (
-    msg.text
-  )}
-</div>
+        <span className="ai-input-icon">
+            ✨
+        </span>
 
-                {msg.role === "user" && <div className="chat-avatar user-avatar-mini">A</div>}
-              </div>
-            ))}
+        <input
+            type="text"
+            value={input}
+            placeholder="Ask about inventory, sales, risks or profit..."
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoComplete="off"
+            spellCheck={false}
+        />
 
-            {thinking && (
-              <div className="chat-row chat-row-ai">
-                <div className="chat-avatar">🤖</div>
-                <div className="ai-message bot-message typing">
-                  Thinking<span>.</span><span>.</span><span>.</span>
-                </div>
-              </div>
-            )}
+    </div>
 
-            <div ref={messagesEndRef} />
-          </div>
+    <button
+        className="send-btn"
+        onClick={() => sendMessage()}
+        disabled={!input.trim() || loading}
+    >
+        <FiSend />
+    </button>
 
-          <div className="ai-copilot-input">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about stock, profit, sales..."
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
-
-            <button onClick={sendMessage} disabled={thinking}>
-              <FaPaperPlane />
-            </button>
-          </div>
+</footer>
+          </section>
         </div>
-         </>
       )}
     </>
   );
 }
-
-export default AICopilot;

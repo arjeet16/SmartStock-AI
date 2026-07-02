@@ -19,6 +19,7 @@ import CEOHero from "./components/CEOHero";
 import AnalyticsV2 from "./components/AnalyticsV2";
 import AIReport from "./components/AIReport";
 import AICopilot from "./components/AICopilot";
+import DemandForecast from "./components/DemandForecast";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -374,6 +375,7 @@ function App() {
   barChartData={barChartData}
   pieChartData={pieChartData}
 />
+<DemandForecast />
       </div>
 
         

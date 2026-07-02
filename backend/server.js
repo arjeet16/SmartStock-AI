@@ -3,10 +3,11 @@ console.log("SERVER FILE LOADED");
 const db = require("./config/db");
 const express = require("express");
 const cors = require("cors");
-
+const { askAI } = require("./gemini");
 const app = express();
 const { generateInventoryReport } = require("./gemini");
 const { formatAIReport } = require("./services/aiReportFormatter");
+const { calculateForecast } = require("./forecast");
 app.use(cors());
 app.use(express.json());
 
@@ -394,8 +395,42 @@ app.post("/ai-chat", async (req, res) => {
     });
   }
 });
+    // ==============================
+// AI Demand Forecast API
+// ==============================
+
+app.get("/forecast", async (req, res) => {
+  try {
+    // Get all products
+    const [products] = await db.promise().query(
+      "SELECT * FROM stock_items"
+    );
+
+    // Get all sales
+   const [sales] = await db.promise().query(
+  "SELECT * FROM sales"
+);
+
+    const forecast = calculateForecast(products, sales);
+
+    res.json({
+      success: true,
+      forecast,
+    });
+
+  } catch (error) {
+  console.error("Forecast Error:", error);
+
+  res.status(500).json({
+    success: false,
+    message: error.message,
+    error,
+  });
+}
+});
 const PORT = 5000;
 
 app.listen(PORT, () => {
+
   console.log(`Server Running On Port ${PORT}`);
 });
