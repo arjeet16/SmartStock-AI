@@ -20,6 +20,7 @@ import AnalyticsV2 from "./components/AnalyticsV2";
 import AIReport from "./components/AIReport";
 import AICopilot from "./components/AICopilot";
 import DemandForecast from "./components/DemandForecast";
+import MLModelMetrics from "./components/MLModelMetrics";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -376,6 +377,7 @@ function App() {
   pieChartData={pieChartData}
 />
 <DemandForecast />
+<MLModelMetrics />
       </div>
 
         

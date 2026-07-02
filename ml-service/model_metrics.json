@@ -1,0 +1,14 @@
+{
+  "algorithm": "Random Forest Regressor",
+  "mae": 9.29,
+  "r2_score": 0.89,
+  "training_samples": 12,
+  "features": [
+    "current_stock",
+    "avg_daily_sales",
+    "days_remaining",
+    "trend_percent"
+  ],
+  "last_trained": "2026-07-02",
+  "status": "Production Ready"
+}

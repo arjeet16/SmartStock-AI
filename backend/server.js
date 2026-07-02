@@ -2,6 +2,7 @@ require("dotenv").config();
 console.log("SERVER FILE LOADED");
 const db = require("./config/db");
 const express = require("express");
+const axios = require("axios");
 const cors = require("cors");
 const { askAI } = require("./gemini");
 const app = express();
@@ -411,8 +412,47 @@ app.get("/forecast", async (req, res) => {
   "SELECT * FROM sales"
 );
 
-    const forecast = calculateForecast(products, sales);
+    let forecast = calculateForecast(products, sales);
 
+forecast = await Promise.all(
+  forecast.map(async (item) => {
+    try {
+      const mlResponse = await axios.post("http://localhost:7000/predict", {
+        current_stock: item.currentStock,
+        avg_daily_sales: item.averageDailySales,
+        days_remaining: item.daysRemaining,
+        trend_percent: item.trendPercent,
+      });
+      console.log("ML response:", mlResponse.data);
+
+  let mlPrediction = mlResponse.data.predicted_30_day_demand;
+
+if (Number(item.averageDailySales) === 0) {
+  mlPrediction = 0;
+}
+
+      const mlRecommendedRestock = Math.max(
+        0,
+        mlPrediction - item.currentStock
+      );
+
+      return {
+        ...item,
+        mlForecast30Days: mlPrediction,
+        mlRecommendedRestock,
+        forecastSource: "ML Random Forest",
+      };
+    } catch (error) {
+      return {
+        ...item,
+        mlForecast30Days: item.forecast30Days,
+        mlRecommendedRestock: item.recommendedRestock,
+        forecastSource: "Rule Based Fallback",
+      };
+    }
+  })
+);
+console.log("FINAL FORECAST SENT:", forecast[0]);
     res.json({
       success: true,
       forecast,
@@ -427,6 +467,24 @@ app.get("/forecast", async (req, res) => {
     error,
   });
 }
+});
+// ==============================
+// ML Model Metrics API
+// ==============================
+
+app.get("/ml-metrics", async (req, res) => {
+  try {
+    const response = await axios.get("http://localhost:7000/metrics");
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("ML Metrics Error:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to fetch ML model metrics.",
+    });
+  }
 });
 const PORT = 5000;
 

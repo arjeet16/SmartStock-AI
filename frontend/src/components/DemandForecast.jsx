@@ -201,7 +201,7 @@ const priorityProduct =
               <div className="forecast-hero">
                 <div>
                   <p>Next 30-Day Demand</p>
-                  <h2>{item.forecast30Days}</h2>
+                  <h2>{item.mlForecast30Days ?? item.forecast30Days}</h2>
                   <span>units expected</span>
                 </div>
 
@@ -227,7 +227,7 @@ const priorityProduct =
                 <div>
                   <FaExclamationTriangle />
                   <p>Restock</p>
-                  <h4>{item.recommendedRestock}</h4>
+                  <h4>{item.mlRecommendedRestock ?? item.recommendedRestock}</h4>
                 </div>
               </div>
 
@@ -249,10 +249,37 @@ const priorityProduct =
                 <span></span>
               </div>
 
-              <div className="forecast-ai-box">
-                <h4>AI Recommendation</h4>
-                <p>{getAiRecommendation(item)}</p>
-              </div>
+   <div className="forecast-ai-box">
+  <h4>AI Decision Engine</h4>
+
+  <div className="decision-list">
+    <p>
+      <span>Demand Trend</span>
+      <strong>
+        {item.trend} {item.trendPercent > 0 ? `+${item.trendPercent}%` : ""}
+      </strong>
+    </p>
+
+    <p>
+      <span>Stock Coverage</span>
+      <strong>
+        {item.daysRemaining === 999 ? "Stable" : `${item.daysRemaining} days`}
+      </strong>
+    </p>
+
+    <p>
+      <span>ML Forecast</span>
+      <strong>{item.mlForecast30Days || item.forecast30Days} units</strong>
+    </p>
+
+    <p>
+      <span>Forecast Source</span>
+      <strong>{item.forecastSource || "ML Random Forest"}</strong>
+    </p>
+  </div>
+
+  <p className="decision-action">{getAiRecommendation(item)}</p>
+</div>
 
               <p className="forecast-note">
                 Avg daily sales: <strong>{item.averageDailySales}</strong> units

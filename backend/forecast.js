@@ -42,18 +42,20 @@ function calculateForecast(products, sales) {
     let trend = "Stable";
     let trendPercent = 0;
 
-    if (soldPrevious7 > 0) {
-      trendPercent = Math.round(
-        ((soldLast7 - soldPrevious7) / soldPrevious7) * 100
-      );
+   if (soldPrevious7 > 0) {
+  trendPercent = Math.round(
+    ((soldLast7 - soldPrevious7) / soldPrevious7) * 100
+  );
 
-      if (trendPercent > 10) trend = "Increasing";
-      else if (trendPercent < -10) trend = "Decreasing";
-    } else if (soldLast7 > 0) {
+  trendPercent = Math.max(-100, Math.min(trendPercent, 100));
+
+  if (trendPercent > 10) trend = "Increasing";
+  else if (trendPercent < -10) trend = "Decreasing";
+} else if (soldLast7 > 0) {
       trend = "Increasing";
       trendPercent = 100;
     }
-
+trendPercent = Math.max(-100, Math.min(trendPercent, 100));
     let trendFactor = 1;
 
     if (trend === "Increasing") trendFactor = 1.18;
