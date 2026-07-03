@@ -436,12 +436,44 @@ if (Number(item.averageDailySales) === 0) {
         mlPrediction - item.currentStock
       );
 
-      return {
-        ...item,
-        mlForecast30Days: mlPrediction,
-        mlRecommendedRestock,
-        forecastSource: "ML Random Forest",
-      };
+      const businessExplanation = [];
+
+if (item.averageDailySales === 0) {
+  businessExplanation.push("No measurable demand detected in recent sales.");
+  businessExplanation.push("Current inventory is sufficient.");
+  businessExplanation.push("No restocking is required at this time.");
+} else {
+  businessExplanation.push(
+    `Current inventory will last about ${item.daysRemaining} days.`
+  );
+
+  businessExplanation.push(
+    `Demand trend is ${item.trend.toLowerCase()}${
+      item.trendPercent > 0 ? ` by ${item.trendPercent}%` : ""
+    }.`
+  );
+
+  businessExplanation.push(
+    `ML predicts ${mlPrediction} units demand for the next 30 days.`
+  );
+
+  businessExplanation.push(
+    `Recommended restock quantity is ${mlRecommendedRestock} units.`
+  );
+
+  businessExplanation.push(
+    `Forecast confidence is ${item.confidence}%.`
+  );
+}
+
+return {
+  ...item,
+  mlForecast30Days: mlPrediction,
+  mlRecommendedRestock,
+  forecastSource: "ML Random Forest",
+  predictionExplanation: mlResponse.data.explanation,
+  businessExplanation,
+};
     } catch (error) {
       return {
         ...item,
@@ -483,6 +515,71 @@ app.get("/ml-metrics", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Unable to fetch ML model metrics.",
+    });
+  }
+});
+app.post("/forecast/simulate", async (req, res) => {
+  try {
+    const {
+      currentStock,
+      additionalStock,
+      averageDailySales,
+      trendPercent,
+    } = req.body;
+
+    const newStock =
+      Number(currentStock) + Number(additionalStock);
+
+    const daysCoverage =
+      averageDailySales > 0
+        ? Math.round(newStock / averageDailySales)
+        : 999;
+
+    const mlResponse = await axios.post(
+      "http://localhost:7000/predict",
+      {
+        current_stock: newStock,
+        avg_daily_sales: averageDailySales,
+        days_remaining: daysCoverage,
+        trend_percent: trendPercent,
+      }
+    );
+
+    const predictedDemand =
+      mlResponse.data.predicted_30_day_demand;
+
+    const remaining =
+      newStock - predictedDemand;
+
+    let recommendation = "";
+
+    if (remaining < 0)
+      recommendation =
+        "Stock is still insufficient.";
+
+    else if (remaining < 20)
+      recommendation =
+        "Inventory will be tight.";
+
+    else
+      recommendation =
+        "Inventory should comfortably meet demand.";
+
+    res.json({
+      success: true,
+      currentStock,
+      additionalStock,
+      newStock,
+      predictedDemand,
+      remainingStock: remaining,
+      daysCoverage,
+      recommendation,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 });

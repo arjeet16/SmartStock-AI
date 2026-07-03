@@ -7,8 +7,8 @@ import {
   FaFire,
   FaSyncAlt,
 } from "react-icons/fa";
+export default function DemandForecast({ onForecastLoad }) {
 
-export default function DemandForecast() {
   const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,6 +21,10 @@ export default function DemandForecast() {
       setLoading(true);
       const data = await getForecast();
       setForecast(data);
+
+if (onForecastLoad) {
+  onForecastLoad(data);
+}
     } catch (error) {
       console.error("Forecast error:", error);
     } finally {
@@ -35,8 +39,10 @@ export default function DemandForecast() {
   };
 
   const getPriority = (item) => {
+    const restock = item.mlRecommendedRestock ?? item.recommendedRestock;
+
     if (item.risk === "High") return "Urgent";
-    if (item.risk === "Medium" && item.recommendedRestock > 0) return "Soon";
+    if (item.risk === "Medium" && restock > 0) return "Soon";
     return "Normal";
   };
 
@@ -47,58 +53,68 @@ export default function DemandForecast() {
   };
 
   const getAiRecommendation = (item) => {
+    const restock = item.mlRecommendedRestock ?? item.recommendedRestock;
+
     if (item.risk === "High") {
-      return `Demand may exceed current stock soon. Restock ${item.recommendedRestock} units immediately to avoid stockout.`;
+      return `Demand may exceed current stock soon. Restock ${restock} units immediately to avoid stockout.`;
     }
 
     if (item.risk === "Medium") {
-      return `Sales velocity is active. Restock ${item.recommendedRestock} units within the next few days.`;
+      return `Sales velocity is active. Restock ${restock} units within the next few days.`;
     }
 
-    if (item.forecast30Days === 0) {
+    if ((item.mlForecast30Days ?? item.forecast30Days) === 0) {
       return "No strong demand signal yet. Keep monitoring sales before restocking.";
     }
 
     return "Inventory looks healthy. No immediate restocking action is required.";
   };
+
   const totalProducts = forecast.length;
 
-const highRisk = forecast.filter((item) => item.risk === "High").length;
-const mediumRisk = forecast.filter((item) => item.risk === "Medium").length;
-const lowRisk = forecast.filter((item) => item.risk === "Low").length;
+  const highRisk = forecast.filter((item) => item.risk === "High").length;
+  const mediumRisk = forecast.filter((item) => item.risk === "Medium").length;
+  const lowRisk = forecast.filter((item) => item.risk === "Low").length;
 
-const totalRestock = forecast.reduce(
-  (sum, item) => sum + Number(item.recommendedRestock),
-  0
-);
+  const totalRestock = forecast.reduce(
+    (sum, item) =>
+      sum + Number(item.mlRecommendedRestock ?? item.recommendedRestock ?? 0),
+    0
+  );
 
-const avgConfidence =
-  forecast.length > 0
-    ? Math.round(
-        forecast.reduce((sum, item) => sum + Number(item.confidence), 0) /
-          forecast.length
-      )
-    : 0;
+  const avgConfidence =
+    forecast.length > 0
+      ? Math.round(
+          forecast.reduce((sum, item) => sum + Number(item.confidence), 0) /
+            forecast.length
+        )
+      : 0;
+
   const avgHealth =
-  forecast.length > 0
-    ? Math.round(
-        forecast.reduce(
-          (sum, item) => sum + Number(item.healthScore || 0),
-          0
-        ) / forecast.length
-      )
-    : 0;
+    forecast.length > 0
+      ? Math.round(
+          forecast.reduce(
+            (sum, item) => sum + Number(item.healthScore || 0),
+            0
+          ) / forecast.length
+        )
+      : 0;
 
-const revenueAtRisk = forecast.reduce(
-  (sum, item) => sum + Number(item.estimatedRevenueAtRisk || 0),
-  0
-);
+  const revenueAtRisk = forecast.reduce(
+    (sum, item) => sum + Number(item.estimatedRevenueAtRisk || 0),
+    0
+  );
 
-const priorityProduct =
-  [...forecast].sort(
-    (a, b) => b.recommendedRestock - a.recommendedRestock
+  const priorityProduct = [...forecast].sort(
+    (a, b) =>
+      Number(b.mlRecommendedRestock ?? b.recommendedRestock ?? 0) -
+      Number(a.mlRecommendedRestock ?? a.recommendedRestock ?? 0)
   )[0];
-  const aiExecutiveInsight = `Inventory health is currently ${avgHealth}%. ${mediumRisk} products need attention, with ${priorityProduct?.productName || "no product"} as the top restocking priority. Estimated revenue at risk is ₹${revenueAtRisk.toLocaleString()}. Recommended total restock quantity is ${totalRestock} units.`;
+
+  const aiExecutiveInsight = `Inventory health is currently ${avgHealth}%. ${mediumRisk} products need attention, with ${
+    priorityProduct?.productName || "no product"
+  } as the top restocking priority. Estimated revenue at risk is ₹${revenueAtRisk.toLocaleString()}. Recommended total restock quantity is ${totalRestock} units.`;
+
   if (loading) {
     return (
       <section className="forecast-section">
@@ -112,7 +128,7 @@ const priorityProduct =
     <section className="forecast-section">
       <div className="forecast-header">
         <div>
-          <span className="section-pill">Phase 9 · AI Forecast Engine</span>
+          <span className="section-pill">Phase 11 · Explainable AI</span>
           <h2>AI Demand Forecasting</h2>
           <p>
             Predict future demand, stockout risk, restocking priority and
@@ -124,68 +140,71 @@ const priorityProduct =
           <FaSyncAlt /> Refresh Forecast
         </button>
       </div>
+
       <div className="forecast-summary">
-  <div>
-    <span>Products Analysed</span>
-    <strong>{totalProducts}</strong>
-  </div>
+        <div>
+          <span>Products Analysed</span>
+          <strong>{totalProducts}</strong>
+        </div>
 
-  <div>
-    <span>High Risk</span>
-    <strong>{highRisk}</strong>
-  </div>
+        <div>
+          <span>High Risk</span>
+          <strong>{highRisk}</strong>
+        </div>
 
-  <div>
-    <span>Medium Risk</span>
-    <strong>{mediumRisk}</strong>
-  </div>
+        <div>
+          <span>Medium Risk</span>
+          <strong>{mediumRisk}</strong>
+        </div>
 
-  <div>
-    <span>Low Risk</span>
-    <strong>{lowRisk}</strong>
-  </div>
+        <div>
+          <span>Low Risk</span>
+          <strong>{lowRisk}</strong>
+        </div>
 
-  <div>
-    <span>Total Restock</span>
-    <strong>{totalRestock} units</strong>
-  </div>
+        <div>
+          <span>Total Restock</span>
+          <strong>{totalRestock} units</strong>
+        </div>
 
-  <div>
-    <span>Avg Confidence</span>
-    <strong>{avgConfidence}%</strong>
-  </div>
-  <div>
-  <span>Inventory Health</span>
-  <strong>{avgHealth}%</strong>
-</div>
+        <div>
+          <span>Avg Confidence</span>
+          <strong>{avgConfidence}%</strong>
+        </div>
 
-<div>
-  <span>Revenue At Risk</span>
-  <strong>₹{revenueAtRisk.toLocaleString()}</strong>
-</div>
+        <div>
+          <span>Inventory Health</span>
+          <strong>{avgHealth}%</strong>
+        </div>
 
-<div>
-  <span>Top Priority</span>
-  <strong>{priorityProduct?.productName || "-"}</strong>
-</div>
+        <div>
+          <span>Revenue At Risk</span>
+          <strong>₹{revenueAtRisk.toLocaleString()}</strong>
+        </div>
 
-</div>
+        <div>
+          <span>Top Priority</span>
+          <strong>{priorityProduct?.productName || "-"}</strong>
+        </div>
+      </div>
 
-<div className="executive-ai-panel">
-  <div className="executive-ai-content">
-    <span>🤖 AI Executive Insight</span>
-    <h3>Smart Inventory Action Summary</h3>
-    <p>{aiExecutiveInsight}</p>
-  </div>
+      <div className="executive-ai-panel">
+        <div className="executive-ai-content">
+          <span>🤖 AI Executive Insight</span>
+          <h3>Smart Inventory Action Summary</h3>
+          <p>{aiExecutiveInsight}</p>
+        </div>
 
-  <button>View Detailed Plan</button>
-</div>
+        <button>View Detailed Plan</button>
+      </div>
 
-<div className="forecast-grid forecast-grid-v2">
-  {forecast.map((item) => {
-    const priority = getPriority(item);
+      <div className="forecast-grid forecast-grid-v2">
+        {forecast.map((item) => {
+          const priority = getPriority(item);
+          const mlForecast = item.mlForecast30Days ?? item.forecast30Days;
+          const restock = item.mlRecommendedRestock ?? item.recommendedRestock;
 
-    return (
+          return (
             <div className="forecast-card forecast-card-v2" key={item.productId}>
               <div className="forecast-card-top">
                 <div>
@@ -201,7 +220,7 @@ const priorityProduct =
               <div className="forecast-hero">
                 <div>
                   <p>Next 30-Day Demand</p>
-                  <h2>{item.mlForecast30Days ?? item.forecast30Days}</h2>
+                  <h2>{mlForecast}</h2>
                   <span>units expected</span>
                 </div>
 
@@ -227,7 +246,7 @@ const priorityProduct =
                 <div>
                   <FaExclamationTriangle />
                   <p>Restock</p>
-                  <h4>{item.mlRecommendedRestock ?? item.recommendedRestock}</h4>
+                  <h4>{restock}</h4>
                 </div>
               </div>
 
@@ -249,37 +268,49 @@ const priorityProduct =
                 <span></span>
               </div>
 
-   <div className="forecast-ai-box">
-  <h4>AI Decision Engine</h4>
+              <div className="forecast-ai-box">
+                <h4>AI Decision Engine</h4>
 
-  <div className="decision-list">
-    <p>
-      <span>Demand Trend</span>
-      <strong>
-        {item.trend} {item.trendPercent > 0 ? `+${item.trendPercent}%` : ""}
-      </strong>
-    </p>
+                <div className="decision-list">
+                  <p>
+                    <span>Demand Trend</span>
+                    <strong>
+                      {item.trend}{" "}
+                      {item.trendPercent > 0 ? `+${item.trendPercent}%` : ""}
+                    </strong>
+                  </p>
 
-    <p>
-      <span>Stock Coverage</span>
-      <strong>
-        {item.daysRemaining === 999 ? "Stable" : `${item.daysRemaining} days`}
-      </strong>
-    </p>
+                  <p>
+                    <span>Stock Coverage</span>
+                    <strong>
+                      {item.daysRemaining === 999
+                        ? "Stable"
+                        : `${item.daysRemaining} days`}
+                    </strong>
+                  </p>
 
-    <p>
-      <span>ML Forecast</span>
-      <strong>{item.mlForecast30Days || item.forecast30Days} units</strong>
-    </p>
+                  <p>
+                    <span>ML Forecast</span>
+                    <strong>{mlForecast} units</strong>
+                  </p>
 
-    <p>
-      <span>Forecast Source</span>
-      <strong>{item.forecastSource || "ML Random Forest"}</strong>
-    </p>
-  </div>
+                  <p>
+                    <span>Forecast Source</span>
+                    <strong>{item.forecastSource || "ML Random Forest"}</strong>
+                  </p>
+                </div>
 
-  <p className="decision-action">{getAiRecommendation(item)}</p>
-</div>
+                <ul className="business-list">
+  {item.businessExplanation.map((point, index) => (
+    <li key={index}>
+      <span className="check-icon">✅</span>
+      <span>{point}</span>
+    </li>
+  ))}
+</ul>
+
+                <p className="decision-action">{getAiRecommendation(item)}</p>
+              </div>
 
               <p className="forecast-note">
                 Avg daily sales: <strong>{item.averageDailySales}</strong> units

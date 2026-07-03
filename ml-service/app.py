@@ -33,7 +33,14 @@ def predict():
 
         return jsonify({
             "success": True,
-            "predicted_30_day_demand": round(float(prediction))
+            "predicted_30_day_demand": round(float(prediction)),
+            "explanation": {
+                "current_stock": float(data.get("current_stock", 0)),
+                "avg_daily_sales": float(data.get("avg_daily_sales", 0)),
+                "days_remaining": float(data.get("days_remaining", 0)),
+                "trend_percent": float(data.get("trend_percent", 0)),
+                "message": "Prediction generated using current stock, average daily sales, inventory coverage, and demand trend."
+            }
         })
 
     except Exception as e:
@@ -41,6 +48,8 @@ def predict():
             "success": False,
             "message": str(e)
         }), 500
+
+
 @app.route("/metrics", methods=["GET"])
 def metrics():
     try:
@@ -57,6 +66,7 @@ def metrics():
             "success": False,
             "message": str(e)
         }), 500
+
 
 if __name__ == "__main__":
     app.run(port=7000, debug=True)

@@ -21,6 +21,7 @@ import AIReport from "./components/AIReport";
 import AICopilot from "./components/AICopilot";
 import DemandForecast from "./components/DemandForecast";
 import MLModelMetrics from "./components/MLModelMetrics";
+import ScenarioSimulator from "./components/ScenarioSimulator";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -65,6 +66,7 @@ function App() {
     buying_price: "",
     selling_price: "",
   });
+  const [forecastData, setForecastData] = useState([]);
 
   const handleLogout = () => {
     const confirmLogout = window.confirm(
@@ -376,7 +378,8 @@ function App() {
   barChartData={barChartData}
   pieChartData={pieChartData}
 />
-<DemandForecast />
+<DemandForecast onForecastLoad={setForecastData} />
+<ScenarioSimulator forecast={forecastData} />
 <MLModelMetrics />
       </div>
 
