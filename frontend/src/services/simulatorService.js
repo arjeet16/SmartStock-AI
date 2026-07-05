@@ -1,5 +1,5 @@
-export async function simulateForecast(payload) {
-  const response = await fetch("http://localhost:5000/forecast/simulate", {
+export async function runScenarioSimulation(payload) {
+  const response = await fetch("http://localhost:5000/scenario-simulate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -8,9 +8,10 @@ export async function simulateForecast(payload) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to simulate forecast");
+    throw new Error("Scenario simulation failed");
   }
 
   const data = await response.json();
-  return data;
+
+  return data.simulation;
 }

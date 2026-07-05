@@ -19,8 +19,14 @@ export default function DemandForecast({ onForecastLoad }) {
   const loadForecast = async () => {
     try {
       setLoading(true);
+      
       const data = await getForecast();
-      setForecast(data);
+      console.log("Forecast loaded:", data);
+
+setForecast(data);
+
+onForecastLoad?.(data);
+      ;
 
 if (onForecastLoad) {
   onForecastLoad(data);
@@ -301,7 +307,7 @@ if (onForecastLoad) {
                 </div>
 
                 <ul className="business-list">
-  {item.businessExplanation.map((point, index) => (
+  {(item.businessExplanation || []).map((point, index) => (
     <li key={index}>
       <span className="check-icon">✅</span>
       <span>{point}</span>

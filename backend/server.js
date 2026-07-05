@@ -583,6 +583,71 @@ app.post("/forecast/simulate", async (req, res) => {
     });
   }
 });
+// ==============================
+// AI Scenario Simulator API
+// ==============================
+
+app.post("/scenario-simulate", async (req, res) => {
+  try {
+    const {
+      currentStock,
+      averageDailySales,
+      daysRemaining,
+      trendPercent,
+      demandIncreasePercent,
+    } = req.body;
+
+    const adjustedDailySales =
+      Number(averageDailySales) * (1 + Number(demandIncreasePercent) / 100);
+
+    const adjustedDaysRemaining =
+      adjustedDailySales > 0
+        ? Math.floor(Number(currentStock) / adjustedDailySales)
+        : 999;
+
+    const mlResponse = await axios.post("http://localhost:7000/predict", {
+      current_stock: Number(currentStock),
+      avg_daily_sales: adjustedDailySales,
+      days_remaining: adjustedDaysRemaining,
+      trend_percent: Number(trendPercent) + Number(demandIncreasePercent),
+    });
+
+    let predictedDemand = mlResponse.data.predicted_30_day_demand;
+
+    if (adjustedDailySales === 0) {
+      predictedDemand = 0;
+    }
+
+    const suggestedRestock = Math.max(
+      0,
+      predictedDemand - Number(currentStock)
+    );
+
+    let risk = "Low";
+
+    if (adjustedDaysRemaining <= 7) risk = "High";
+    else if (adjustedDaysRemaining <= 20) risk = "Medium";
+
+    res.json({
+      success: true,
+      simulation: {
+        adjustedDailySales: Number(adjustedDailySales.toFixed(2)),
+        adjustedDaysRemaining,
+        predictedDemand,
+        suggestedRestock,
+        risk,
+        forecastSource: "Scenario + ML Random Forest",
+      },
+    });
+  } catch (error) {
+    console.error("Scenario Simulation Error:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to run scenario simulation.",
+    });
+  }
+});
 const PORT = 5000;
 
 app.listen(PORT, () => {

@@ -54,6 +54,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
+  const [forecastData, setForecastData] = useState([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortBy, setSortBy] = useState("");
@@ -66,7 +67,6 @@ function App() {
     buying_price: "",
     selling_price: "",
   });
-  const [forecastData, setForecastData] = useState([]);
 
   const handleLogout = () => {
     const confirmLogout = window.confirm(
@@ -355,7 +355,12 @@ function App() {
   setAiReport={setAiReport}
 />
 
-{aiReport && <AIReport report={aiReport} />}
+{aiReport && (
+  <AIReport
+    report={aiReport}
+    forecastData={forecastData}
+  />
+)}
   {/* <DashboardV2
   totalRevenue={totalRevenue}
   totalProfit={totalProfit}
@@ -379,6 +384,7 @@ function App() {
   pieChartData={pieChartData}
 />
 <DemandForecast onForecastLoad={setForecastData} />
+
 <ScenarioSimulator forecast={forecastData} />
 <MLModelMetrics />
       </div>
