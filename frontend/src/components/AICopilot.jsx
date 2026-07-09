@@ -4,6 +4,8 @@ import { FiCopy, FiCheck, FiTrash2, FiSend, FiX } from "react-icons/fi";
 import { askCopilot } from "../services/copilotService";
 
 const STORAGE_KEY = "smartstock_copilot_messages";
+const CHAT_VERSION_KEY = "smartstock_copilot_version";
+const CHAT_VERSION = "v2";
 
 const suggestedPrompts = [
   "Analyze my inventory health",
@@ -28,6 +30,23 @@ function getTime() {
   });
 }
 
+function getStarterMessage() {
+  return [
+    {
+      id: crypto.randomUUID(),
+      role: "ai",
+      text: `Good evening, Arjeet 👋
+
+Welcome back to your AI command center.
+
+I can analyze your inventory, detect low-stock risks, summarize sales, find profit opportunities, and recommend restocking actions.
+
+What would you like to investigate first?`,
+      time: getTime(),
+    },
+  ];
+}
+
 export default function AICopilot({ products = [], sales = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -35,21 +54,20 @@ export default function AICopilot({ products = [], sales = [] }) {
   const [loading, setLoading] = useState(false);
 
   const [messages, setMessages] = useState(() => {
+    const savedVersion = localStorage.getItem(CHAT_VERSION_KEY);
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: crypto.randomUUID(),
-            role: "ai",
-            text: "Hi, I’m your SmartStock AI Copilot. Ask me anything about inventory, sales, profit, risks, or restocking.",
-            time: getTime(),
-          },
-        ];
+    const starter = getStarterMessage();
+
+    if (savedVersion !== CHAT_VERSION) {
+      localStorage.setItem(CHAT_VERSION_KEY, CHAT_VERSION);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(starter));
+      return starter;
+    }
+
+    return saved ? JSON.parse(saved) : starter;
   });
 
   const messagesEndRef = useRef(null);
-  const textareaRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
@@ -67,16 +85,6 @@ export default function AICopilot({ products = [], sales = [] }) {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
-
-  useEffect(() => {
-    if (!textareaRef.current) return;
-
-    textareaRef.current.style.height = "auto";
-    textareaRef.current.style.height = `${Math.min(
-      textareaRef.current.scrollHeight,
-      130
-    )}px`;
-  }, [input]);
 
   const sendMessage = async (customPrompt = null) => {
     const messageText = customPrompt || input.trim();
@@ -133,16 +141,9 @@ export default function AICopilot({ products = [], sales = [] }) {
   };
 
   const clearChat = () => {
-    const starter = [
-      {
-        id: crypto.randomUUID(),
-        role: "ai",
-        text: "Chat cleared. How can I help you with your business now?",
-        time: getTime(),
-      },
-    ];
-
+    const starter = getStarterMessage();
     setMessages(starter);
+    localStorage.setItem(CHAT_VERSION_KEY, CHAT_VERSION);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(starter));
   };
 
@@ -156,20 +157,25 @@ export default function AICopilot({ products = [], sales = [] }) {
   return (
     <>
       <button
-        className="ai-copilot-button"
+        className={`ai-copilot-button ${isOpen ? "active" : ""}`}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Open AI Copilot"
       >
-        {isOpen ? <FiX /> : "🤖"}
+        {isOpen ? <FiX /> : "✦"}
+        <span>AI</span>
       </button>
 
       {isOpen && (
         <div className="ai-copilot-backdrop">
-          <section className="ai-copilot-window">
+          <section className="ai-copilot-window ai-copilot-v5">
             <header className="ai-copilot-header">
-              <div>
-                <h3>SmartStock AI</h3>
-                <p>Inventory Intelligence Assistant</p>
+              <div className="ai-brand">
+                <div className="ai-orb">✦</div>
+
+                <div>
+                  <h3>SmartStock AI</h3>
+                  <p>Enterprise Inventory Intelligence</p>
+                </div>
               </div>
 
               <div className="ai-copilot-status">
@@ -225,14 +231,28 @@ export default function AICopilot({ products = [], sales = [] }) {
               ))}
 
               {loading && (
-                <div className="ai-message bot-message typing-message">
-                  <div className="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              )}
+  <div className="ai-message bot-message ai-thinking-card">
+    <div className="thinking-header">
+      <div className="thinking-orb">✦</div>
+      <div>
+        <strong>SmartStock AI is thinking</strong>
+        <span>Analyzing inventory signals...</span>
+      </div>
+    </div>
+
+    <div className="thinking-steps">
+      <p>Scanning stock levels</p>
+      <p>Checking sales movement</p>
+      <p>Finding revenue opportunities</p>
+    </div>
+
+    <div className="thinking-loader">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+)}
 
               <div ref={messagesEndRef} />
             </main>
@@ -250,34 +270,28 @@ export default function AICopilot({ products = [], sales = [] }) {
             </div>
 
             <footer className="ai-copilot-input-area">
+              <div className="ai-input-wrapper">
+                <span className="ai-input-icon">✨</span>
 
-    <div className="ai-input-wrapper">
+                <input
+                  type="text"
+                  value={input}
+                  placeholder="Ask about inventory, sales, risks or profit..."
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </div>
 
-        <span className="ai-input-icon">
-            ✨
-        </span>
-
-        <input
-            type="text"
-            value={input}
-            placeholder="Ask about inventory, sales, risks or profit..."
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoComplete="off"
-            spellCheck={false}
-        />
-
-    </div>
-
-    <button
-        className="send-btn"
-        onClick={() => sendMessage()}
-        disabled={!input.trim() || loading}
-    >
-        <FiSend />
-    </button>
-
-</footer>
+              <button
+                className="send-btn"
+                onClick={() => sendMessage()}
+                disabled={!input.trim() || loading}
+              >
+                <FiSend />
+              </button>
+            </footer>
           </section>
         </div>
       )}

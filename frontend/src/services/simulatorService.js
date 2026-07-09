@@ -1,5 +1,6 @@
+import { API_BASE_URL } from "./api";
 export async function runScenarioSimulation(payload) {
-  const response = await fetch("http://localhost:5000/scenario-simulate", {
+  const response = await fetch("`${API_BASE_URL}/scenario-simulate`", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

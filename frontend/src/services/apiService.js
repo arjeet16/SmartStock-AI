@@ -1,7 +1,7 @@
 const API_BASE_URL = "http://localhost:5000";
 
 export async function fetchProducts() {
-  const response = await fetch(`${API_BASE_URL}/products`);
+  const response = await fetch(http://localhost:5000/products);
   return response.json();
 }
 
@@ -11,7 +11,7 @@ export async function fetchSales() {
 }
 
 export async function createProduct(productData) {
-  const response = await fetch(`${API_BASE_URL}/products`, {
+  const response = await fetch(http://localhost:5000/products, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaFilter, FaSortAmountDown } from "react-icons/fa";
 
 function SearchBar({
   search,
@@ -10,42 +10,70 @@ function SearchBar({
   setSortBy,
 }) {
   return (
-    <>
-      <div className="search-container">
-        <FaSearch className="search-icon" />
+    <div className="inventory-toolbar">
+      <div className="inventory-toolbar-header">
+        <div>
+          <p>Inventory Workspace</p>
+          <h2>Search, Filter & Organize Products</h2>
+        </div>
 
-        <input
-          type="text"
-          placeholder="Search Product or Category..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="search-box"
-        />
+        <span className="toolbar-badge">
+          Smart Inventory
+        </span>
       </div>
 
-      <div className="filter-row">
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-        >
-          {categories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
+      <div className="inventory-toolbar-grid">
+
+        <div className="premium-search">
+          <FaSearch />
+
+          <input
+            type="text"
+            placeholder="Search product, category..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="premium-select">
+          <FaFilter />
+
+          <select
+            value={categoryFilter}
+            onChange={(e) =>
+              setCategoryFilter(e.target.value)
+            }
+          >
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="premium-select">
+          <FaSortAmountDown />
+
+          <select
+            value={sortBy}
+            onChange={(e) =>
+              setSortBy(e.target.value)
+            }
+          >
+            <option value="">Sort Products</option>
+            <option value="name">Name A → Z</option>
+            <option value="quantity">
+              Quantity High → Low
             </option>
-          ))}
-        </select>
+            <option value="profit">
+              Profit High → Low
+            </option>
+          </select>
+        </div>
 
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-        >
-          <option value="">Sort Products</option>
-          <option value="name">Name (A-Z)</option>
-          <option value="quantity">Quantity (High-Low)</option>
-          <option value="profit">Profit (High-Low)</option>
-        </select>
       </div>
-    </>
+    </div>
   );
 }
 

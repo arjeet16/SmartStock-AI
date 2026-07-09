@@ -1,5 +1,7 @@
+import { API_BASE_URL } from "./api";
+
 export async function getMLMetrics() {
-  const response = await fetch("http://localhost:5000/ml-metrics");
+  const response = await fetch(`${API_BASE_URL}/ml-metrics`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch ML metrics");

@@ -1,6 +1,8 @@
+import { API_BASE_URL } from "./api";
+
 export async function generateAIReport(payload) {
   try {
-    const response = await fetch("http://localhost:5000/ai-report", {
+    const response = await fetch(`${API_BASE_URL}/ai-report`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -8,19 +10,13 @@ export async function generateAIReport(payload) {
       body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.message);
+    if (!response.ok) {
+      throw new Error("AI report request failed");
     }
 
-    if (typeof data.report === "string") {
-  return JSON.parse(data.report);
-}
-
-return data.report;
+    return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error("AI report error:", error);
     throw error;
   }
 }

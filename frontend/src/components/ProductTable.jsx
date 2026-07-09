@@ -1,4 +1,18 @@
-import { FaShoppingCart, FaTrash } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { FaEdit, FaShoppingCart, FaTrash } from "react-icons/fa";
+import PremiumCard from "./premium/PremiumCard";
+import SectionHeader from "./premium/SectionHeader";
+import LiveBadge from "./premium/LiveBadge";
+import { staggerContainer, fadeUp } from "../utils/motion";
+
+function getStockStatus(quantity) {
+  const stock = Number(quantity);
+
+  if (stock <= 0) return { label: "Out of Stock", className: "status-critical" };
+  if (stock < 20) return { label: "Low Stock", className: "status-warning" };
+
+  return { label: "Healthy", className: "status-healthy" };
+}
 
 function ProductTable({
   filteredProducts,
@@ -7,101 +21,124 @@ function ProductTable({
   deleteProduct,
 }) {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Category</th>
-          <th>Quantity</th>
-          <th>Buying</th>
-          <th>Selling</th>
-          <th>Profit/Unit</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
+    <motion.section
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="inventory-v5-section"
+    >
+      <PremiumCard className="inventory-v5-card" hover={false}>
+        <SectionHeader
+          eyebrow="INVENTORY CONTROL"
+          title="Product Intelligence Table"
+          description="Monitor stock health, pricing, profit margin and inventory risk from one command center."
+          action={<LiveBadge label={`${filteredProducts.length} Products`} />}
+        />
 
-      <tbody>
-        {filteredProducts.map((item) => (
-          <tr key={item.id}>
-            <td>{item.id}</td>
-            <td>{item.item_name}</td>
-            <td>{item.category}</td>
-            <td>{item.quantity}</td>
-            <td>₹{item.buying_price}</td>
-            <td>₹{item.selling_price}</td>
+        <div className="inventory-v5-scroll">
+          <table className="inventory-v5-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Buying</th>
+                <th>Selling</th>
+                <th>Profit</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
-            <td>
-              ₹
-              {Number(item.selling_price) -
-                Number(item.buying_price)}
-            </td>
+            <tbody>
+              {filteredProducts.map((item, index) => {
+                const profit =
+                  Number(item.selling_price) - Number(item.buying_price);
 
-            <td>
-              {Number(item.quantity) < 20 ? (
-                <span
-                  style={{
-                    color: "red",
-                    fontWeight: "bold",
-                  }}
-                >
-                  ⚠️ Low Stock
-                </span>
-              ) : (
-                <span
-                  style={{
-                    color: "green",
-                    fontWeight: "bold",
-                  }}
-                >
-                  In Stock
-                </span>
-              )}
-            </td>
+                const status = getStockStatus(item.quantity);
 
-            <td>
-              <button
-                style={{
-                  background: "#3498db",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 12px",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  marginRight: "10px",
-                }}
-                onClick={() => editProduct(item)}
-              >
-                Edit
-              </button>
+                return (
+                  <motion.tr
+                    key={item.id}
+                    variants={fadeUp}
+                    custom={index}
+                    whileHover={{ scale: 1.005 }}
+                  >
+                    <td>
+                      <div className="product-cell">
+                        <div className="product-avatar-v5">
+                          {item.item_name?.charAt(0)}
+                        </div>
 
-              <button
-                style={{
-                  background: "#27ae60",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 12px",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  marginRight: "10px",
-                }}
-                onClick={() => sellProduct(item.id)}
-              >
-                <FaShoppingCart />
-              </button>
+                        <div>
+                          <strong>{item.item_name}</strong>
+                          <span>ID #{item.id}</span>
+                        </div>
+                      </div>
+                    </td>
 
-              <button
-                className="delete-btn"
-                onClick={() => deleteProduct(item.id)}
-              >
-                <FaTrash />
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+                    <td>
+                      <span className="category-pill-v5">{item.category}</span>
+                    </td>
+
+                    <td>
+                      <div className="stock-cell-v5">
+                        <strong>{item.quantity}</strong>
+                        <span>units</span>
+                      </div>
+                    </td>
+
+                    <td>₹{Number(item.buying_price).toFixed(2)}</td>
+
+                    <td>₹{Number(item.selling_price).toFixed(2)}</td>
+
+                    <td>
+                      <strong className="profit-text-v5">
+                        ₹{profit.toFixed(2)}
+                      </strong>
+                    </td>
+
+                    <td>
+                      <span className={`stock-status-v5 ${status.className}`}>
+                        {status.label}
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className="table-actions-v5">
+                        <button
+                          className="action-btn-v5 edit-action"
+                          onClick={() => editProduct(item)}
+                          title="Edit Product"
+                        >
+                          <FaEdit />
+                        </button>
+
+                        <button
+                          className="action-btn-v5 sell-action"
+                          onClick={() => sellProduct(item.id)}
+                          title="Sell Product"
+                        >
+                          <FaShoppingCart />
+                        </button>
+
+                        <button
+                          className="action-btn-v5 delete-action"
+                          onClick={() => deleteProduct(item.id)}
+                          title="Delete Product"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </PremiumCard>
+    </motion.section>
   );
 }
 

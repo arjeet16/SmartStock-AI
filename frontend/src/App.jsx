@@ -15,13 +15,19 @@ import DashboardV2 from "./components/DashboardV2";
 import SidebarV2 from "./components/SidebarV2";
 import Topbar from "./components/Topbar";
 import KPICardsV2 from "./components/KPICardsV2";
-import CEOHero from "./components/CEOHero";
+import ExecutiveHero from "./components/ExecutiveHero";
 import AnalyticsV2 from "./components/AnalyticsV2";
 import AIReport from "./components/AIReport";
 import AICopilot from "./components/AICopilot";
 import DemandForecast from "./components/DemandForecast";
 import MLModelMetrics from "./components/MLModelMetrics";
 import ScenarioSimulator from "./components/ScenarioSimulator";
+import { API_BASE_URL } from "./services/api";
+import ExecutiveBrief from "./components/ExecutiveBrief";
+import SmartAlerts from "./components/SmartAlerts";
+import AIDecisionPanel from "./components/AIDecisionPanel";
+import AIPurchaseAdvisor from "./components/AIPurchaseAdvisor";
+import { generatePurchaseAdvice } from "./utils/purchaseAdvisor";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -78,122 +84,120 @@ function App() {
     setIsLoggedIn(false);
   };
 
-  const fetchProducts = () => {
-    fetch("http://localhost:5000/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  };
+const fetchProducts = () => {
+  fetch(`${API_BASE_URL}/products`)
+    .then((res) => res.json())
+    .then((data) => setProducts(data))
+    .catch((error) => console.error("Products fetch error:", error));
+};
 
-  const fetchSales = () => {
-    fetch("http://localhost:5000/sales")
-      .then((res) => res.json())
-      .then((data) => setSales(data));
-  };
+const fetchSales = () => {
+  fetch(`${API_BASE_URL}/sales`)
+    .then((res) => res.json())
+    .then((data) => setSales(data))
+    .catch((error) => console.error("Sales fetch error:", error));
+};
 
-  useEffect(() => {
-    fetchProducts();
-    fetchSales();
-  }, []);
+useEffect(() => {
+  fetchProducts();
+  fetchSales();
+}, []);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+const handleChange = (e) => {
+  setFormData({
+    ...formData,
+    [e.target.name]: e.target.value,
+  });
+};
 
-  const addProduct = async (e) => {
-    e.preventDefault();
+const addProduct = async (e) => {
+  e.preventDefault();
 
-    if (editId) {
-      await fetch(`http://localhost:5000/products/${editId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      setEditId(null);
-    } else {
-      await fetch("http://localhost:5000/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-    }
-
-    fetchProducts();
-    fetchSales();
-
-    setFormData({
-      item_name: "",
-      category: "",
-      quantity: "",
-      buying_price: "",
-      selling_price: "",
-    });
-  };
-
-  const deleteProduct = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-
-    if (!confirmDelete) return;
-
-    await fetch(`http://localhost:5000/products/${id}`, {
-      method: "DELETE",
+  if (editId) {
+    await fetch(`${API_BASE_URL}/products/${editId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
     });
 
-    fetchProducts();
-    fetchSales();
-  };
-
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(products);
-    const workbook = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(
-      workbook,
-      worksheet,
-      "Inventory"
-    );
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-
-    const data = new Blob([excelBuffer], {
-      type:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-    });
-
-    saveAs(data, "Inventory_Report.xlsx");
-  };
-
-  const sellProduct = async (productId) => {
-    const quantity = prompt("Enter quantity to sell:");
-
-    if (!quantity || Number(quantity) <= 0) return;
-
-    await fetch("http://localhost:5000/sell", {
+    setEditId(null);
+  } else {
+    await fetch(`${API_BASE_URL}/products`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        product_id: productId,
-        quantity_sold: Number(quantity),
-      }),
+      body: JSON.stringify(formData),
     });
+  }
 
-    fetchProducts();
-    fetchSales();
-  };
+  fetchProducts();
+  fetchSales();
+
+  setFormData({
+    item_name: "",
+    category: "",
+    quantity: "",
+    buying_price: "",
+    selling_price: "",
+  });
+};
+
+const deleteProduct = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this product?"
+  );
+
+  if (!confirmDelete) return;
+
+  await fetch(`${API_BASE_URL}/products/${id}`, {
+    method: "DELETE",
+  });
+
+  fetchProducts();
+  fetchSales();
+};
+
+const exportToExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(products);
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory");
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  });
+
+  const data = new Blob([excelBuffer], {
+    type:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+  });
+
+  saveAs(data, "Inventory_Report.xlsx");
+};
+
+const sellProduct = async (productId) => {
+  const quantity = prompt("Enter quantity to sell:");
+
+  if (!quantity || Number(quantity) <= 0) return;
+
+  await fetch(`${API_BASE_URL}/sell`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      product_id: productId,
+      quantity_sold: Number(quantity),
+    }),
+  });
+
+  fetchProducts();
+  fetchSales();
+};
 
   const editProduct = (item) => {
     setEditId(item.id);
@@ -328,22 +332,30 @@ function App() {
       },
     ],
   };
+  const purchaseAdvice = generatePurchaseAdvice(products, forecastData);
 
+const topRecommendation =
+  purchaseAdvice.decisions.find((item) => item.recommendedPurchase > 0) ||
+  null;
   if (!isLoggedIn) {
-    return <Login setIsLoggedIn={setIsLoggedIn} />;
-  }
+  return <Login setIsLoggedIn={setIsLoggedIn} />;
+}
 
-  return (
+return (
   <>
     <SidebarV2 />
 
     <div className="container">
+      <Topbar
+  handleLogout={handleLogout}
+  products={products}
+  forecastData={forecastData}
+  totalRevenue={totalRevenue}
+  totalProfit={totalProfit}
+/>
 
-  <Topbar handleLogout={handleLogout} />
-
-  <div id="dashboard">
-
-  <CEOHero
+      <div id="dashboard">
+       <ExecutiveHero
   products={products}
   sales={sales}
   totalRevenue={totalRevenue}
@@ -355,41 +367,65 @@ function App() {
   setAiReport={setAiReport}
 />
 
-{aiReport && (
-  <AIReport
-    report={aiReport}
-    forecastData={forecastData}
-  />
-)}
-  {/* <DashboardV2
+        <ExecutiveBrief
+          totalRevenue={totalRevenue}
+          totalProfit={totalProfit}
+          inventoryHealth={83}
+          businessScore={92}
+          businessStatus="Healthy"
+          aiConfidence={94}
+          topRecommendation={topRecommendation}
+        />
+
+        {/* 
+<KPICardsV2
   totalRevenue={totalRevenue}
   totalProfit={totalProfit}
-  totalProducts={totalProducts}
   lowStockCount={lowStockCount}
-  bestSellingProduct={bestSellingProduct}
-/> */}
-
-
-        <KPICardsV2
-  totalRevenue={totalRevenue}
-  totalProfit={totalProfit}
-  totalProducts={totalProducts}
-  totalSales={totalSales}
   inventoryValue={inventoryValue}
-  lowStockCount={lowStockCount}
-/>
+/> 
+*/}
 
         <AnalyticsV2
-  barChartData={barChartData}
-  pieChartData={pieChartData}
-/>
-<DemandForecast onForecastLoad={setForecastData} />
+          barChartData={barChartData}
+          pieChartData={pieChartData}
+        />
 
-<ScenarioSimulator forecast={forecastData} />
-<MLModelMetrics />
+        <DemandForecast onForecastLoad={setForecastData} />
+
+        <SmartAlerts forecastData={forecastData} />
+
+        <ScenarioSimulator forecast={forecastData} />
+
+        {forecastData.length > 0 && (
+          <>
+            <AIDecisionPanel
+              forecast={forecastData[0]}
+              products={products}
+            />
+
+            <AIPurchaseAdvisor
+              products={products}
+              forecastData={forecastData}
+            />
+          </>
+        )}
+
+        {aiReport && (
+          <AIReport
+            report={aiReport}
+            forecastData={forecastData}
+            products={products}
+            sales={sales}
+            totalRevenue={totalRevenue}
+            totalProfit={totalProfit}
+            inventoryValue={inventoryValue}
+          />
+        )}
+
+        <MLModelMetrics />
       </div>
 
-        
       <div id="ai">
         <AIBusinessAssistant
           products={products}
@@ -408,13 +444,9 @@ function App() {
           totalProfit={totalProfit}
         />
 
-        <AIRecommendation
-          products={products}
-          sales={sales}
-        />
+        <AIRecommendation products={products} sales={sales} />
       </div>
 
-      Inventory 
       <div id="inventory">
         <SearchBar
           search={search}
@@ -441,37 +473,35 @@ function App() {
         />
       </div>
 
-       Sales 
       <div id="sales">
         <SalesHistory sales={sales} />
       </div>
-      {/* Reports */}
-<div id="reports">
-  <div className="placeholder-section">
-    <h2>📄 Reports</h2>
-    <p>AI reports and export tools will appear here.</p>
-  </div>
-</div>
 
-{/* Settings */}
-<div id="settings">
-  <div className="placeholder-section">
-    <h2>⚙️ Settings</h2>
-    <p>Profile, preferences and system settings will appear here.</p>
-  </div>
-</div>
+      <div id="reports">
+        <div className="placeholder-section">
+          <h2>📄 Reports</h2>
+          <p>AI reports and export tools will appear here.</p>
+        </div>
+      </div>
 
-<AICopilot
-  products={products}
-  sales={sales}
-  totalRevenue={totalRevenue}
-  totalProfit={totalProfit}
-  lowStockCount={lowStockCount}
-  bestSellingProduct={bestSellingProduct}
-/>
+      <div id="settings">
+        <div className="placeholder-section">
+          <h2>⚙️ Settings</h2>
+          <p>Profile, preferences and system settings will appear here.</p>
+        </div>
+      </div>
 
-</div>
-</>
+      <AICopilot
+        products={products}
+        sales={sales}
+        totalRevenue={totalRevenue}
+        totalProfit={totalProfit}
+        lowStockCount={lowStockCount}
+        bestSellingProduct={bestSellingProduct}
+      />
+    </div>
+  </>
 );
 }
+
 export default App;

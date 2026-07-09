@@ -1,8 +1,10 @@
-import Card from "./ui/Card";
+
+import AnimatedNumber from "./ui/AnimatedNumber";
 import { FaBrain, FaFileDownload, FaRocket } from "react-icons/fa";
 import { exportDashboardPDF } from "../utils/exportPDF";
 import { generateAIReport } from "../services/aiService";
-
+import { motion } from "framer-motion";
+import { fadeUp } from "../utils/motion";
 function CEOHero({
   products,
   sales,
@@ -46,8 +48,13 @@ function CEOHero({
     });
   };
 
-  return (
-    <Card className="ceo-hero">
+    return (
+    <motion.div
+      className="ceo-hero"
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+    >
       <div className="ceo-hero-left">
         <p className="ceo-hero-badge">
           <FaBrain /> AI Executive Overview
@@ -73,19 +80,25 @@ function CEOHero({
 
       <div className="ceo-hero-right">
         <div className="ceo-score-circle">
-          <span>{score}</span>
+          <span>
+            <AnimatedNumber value={score} />
+          </span>
           <p>AI Score</p>
         </div>
 
         <div className="ceo-hero-stats">
           <div>
             <span>Revenue</span>
-            <strong>₹{totalRevenue}</strong>
+            <strong>
+              <AnimatedNumber value={totalRevenue} prefix="₹" />
+            </strong>
           </div>
 
           <div>
             <span>Profit</span>
-            <strong>₹{totalProfit}</strong>
+            <strong>
+              <AnimatedNumber value={totalProfit} prefix="₹" />
+            </strong>
           </div>
 
           <div>
@@ -99,7 +112,7 @@ function CEOHero({
           </div>
         </div>
       </div>
-    </Card>
+    </motion.div>
   );
 }
 
