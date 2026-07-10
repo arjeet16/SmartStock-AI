@@ -5,6 +5,7 @@ import { exportDashboardPDF } from "../utils/exportPDF";
 import { generateAIReport } from "../services/aiService";
 import { motion } from "framer-motion";
 import { fadeUp } from "../utils/motion";
+import toast from "react-hot-toast";
 function CEOHero({
   products,
   sales,
@@ -31,7 +32,7 @@ function CEOHero({
       });
 
       setAiReport(report);
-      alert("AI Report Generated Successfully!");
+      toast.success("AI Report Generated Successfully!");
     } catch (err) {
       alert("Failed to generate AI report.");
     }

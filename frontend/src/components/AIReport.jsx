@@ -1,6 +1,6 @@
 import { generateExecutiveReport } from "../services/reportGenerator";
 import { generateBusinessInsights } from "../utils/businessInsights";
-
+import { FaRobot } from "react-icons/fa";
 function AIReport({
   report,
   forecastData = [],
@@ -27,7 +27,17 @@ function AIReport({
       <div className="ceo-report-hero">
         <div>
           <p className="ceo-badge">AI Executive Intelligence</p>
-          <h2>CEO Business Dashboard</h2>
+          <div className="report-title">
+  <div className="report-icon">
+    <FaRobot />
+  </div>
+
+  <div>
+    
+
+    <h1>CEO Business Dashboard</h1>
+  </div>
+</div>
           <p>{insights.executiveSummary || "Executive report generated successfully."}</p>
 
           <button

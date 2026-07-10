@@ -28,6 +28,14 @@ import SmartAlerts from "./components/SmartAlerts";
 import AIDecisionPanel from "./components/AIDecisionPanel";
 import AIPurchaseAdvisor from "./components/AIPurchaseAdvisor";
 import { generatePurchaseAdvice } from "./utils/purchaseAdvisor";
+import SettingsPage, {
+  DEFAULT_SETTINGS,
+} from "./components/SettingsPage";
+import ReportsPage from "./components/ReportsPage";
+import ReportsHistory from "./components/ReportsHistory";
+import { generateAIReport } from "./services/aiService";
+import { exportDashboardPDF } from "./utils/exportPDF";
+import toast from "react-hot-toast";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -66,6 +74,7 @@ function App() {
   const [sortBy, setSortBy] = useState("");
   const [editId, setEditId] = useState(null);
   const [aiReport, setAiReport] = useState(null);
+  const [reportHistory, setReportHistory] = useState([]);
   const [formData, setFormData] = useState({
     item_name: "",
     category: "",
@@ -73,7 +82,102 @@ function App() {
     buying_price: "",
     selling_price: "",
   });
+  const deleteReport = (id) => {
+  setReportHistory((prev) =>
+    prev.filter((reportItem) => reportItem.id !== id)
+  );
+};
+  const handleGenerateAIReport = async () => {
+  if (isGeneratingReport) return;
 
+  try {
+    setIsGeneratingReport(true);
+  
+    const report = await generateAIReport({
+      products,
+      sales,
+      totalRevenue,
+      totalProfit,
+      lowStockCount,
+      bestSellingProduct,
+    });
+
+    
+    setReportHistory((prev) => [
+  {
+    id: crypto.randomUUID(),
+    title: "Executive AI Report",
+    date: new Date().toLocaleString(),
+    report,
+  },
+  ...prev,
+]);
+    toast.success("AI Report Generated Successfully!");
+  } catch (error) {
+    console.error("AI report error:", error);
+    alert("Failed to generate AI report.");
+  } finally {
+    setIsGeneratingReport(false);
+  }
+};
+
+const handleDownloadBusinessPDF = () => {
+  exportDashboardPDF({
+    totalRevenue,
+    totalProfit,
+    inventoryValue,
+    lowStockCount,
+    bestSellingProduct,
+    aiReport,
+  });
+};
+
+const handleViewFinancialSummary = () => {
+  const dashboardSection = document.getElementById("dashboard");
+
+  if (!dashboardSection) return;
+
+  setActiveSection("dashboard");
+
+  dashboardSection.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
+  const [activeSection, setActiveSection] = useState("dashboard");
+const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [settings, setSettings] = useState(() => {
+  const savedSettings = localStorage.getItem(
+    "smartstock_app_settings"
+  );
+
+  if (!savedSettings) {
+    return DEFAULT_SETTINGS;
+  }
+
+  try {
+    return {
+      ...DEFAULT_SETTINGS,
+      ...JSON.parse(savedSettings),
+    };
+  } catch (error) {
+    console.error("Failed to load settings:", error);
+    return DEFAULT_SETTINGS;
+  }
+});
+
+  const handleSidebarNavigation = (sectionId) => {
+  const target = document.getElementById(sectionId);
+
+  if (!target) return;
+
+  setActiveSection(sectionId);
+
+  target.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
   const handleLogout = () => {
     const confirmLogout = window.confirm(
       "Are you sure you want to logout?"
@@ -256,7 +360,8 @@ const sellProduct = async (productId) => {
       : "No Sales";
 
   const lowStockCount = products.filter(
-    (item) => Number(item.quantity) < 10
+    (item) =>
+      Number(item.quantity) < Number(settings.lowStockThreshold)
   ).length;
 
   const categories = [
@@ -337,13 +442,71 @@ const sellProduct = async (productId) => {
 const topRecommendation =
   purchaseAdvice.decisions.find((item) => item.recommendedPurchase > 0) ||
   null;
+  useEffect(() => {
+    document.body.classList.toggle(
+      "smartstock-compact-mode",
+      Boolean(settings.compactMode)
+    );
+  }, [settings.compactMode]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return undefined;
+
+    const sectionIds = [
+      "dashboard",
+      "forecast",
+      "alerts",
+      "simulator",
+      "inventory",
+      "sales",
+      "ai",
+      "reports",
+      "settings",
+    ];
+
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if (!sections.length) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (firstEntry, secondEntry) =>
+              secondEntry.intersectionRatio -
+              firstEntry.intersectionRatio
+          )[0];
+
+        if (visibleEntry?.target?.id) {
+          setActiveSection(visibleEntry.target.id);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-18% 0px -68% 0px",
+        threshold: [0.05, 0.15, 0.3],
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, [isLoggedIn]);
+
   if (!isLoggedIn) {
   return <Login setIsLoggedIn={setIsLoggedIn} />;
 }
 
-return (
+  return (
   <>
-    <SidebarV2 />
+    <SidebarV2
+  activeSection={activeSection}
+  onNavigate={handleSidebarNavigation}
+  userName={settings.profileName}
+/>
 
     <div className="container">
       <Topbar
@@ -354,7 +517,7 @@ return (
   totalProfit={totalProfit}
 />
 
-      <div id="dashboard">
+      <div id="dashboard" className="dashboard-anchor-section">
        <ExecutiveHero
   products={products}
   sales={sales}
@@ -391,11 +554,19 @@ return (
           pieChartData={pieChartData}
         />
 
-        <DemandForecast onForecastLoad={setForecastData} />
+        <section id="forecast" className="dashboard-anchor-section">
+  <DemandForecast onForecastLoad={setForecastData} />
+</section>
 
-        <SmartAlerts forecastData={forecastData} />
+{settings.stockAlerts && (
+  <section id="alerts" className="dashboard-anchor-section">
+    <SmartAlerts forecastData={forecastData} />
+  </section>
+)}
 
-        <ScenarioSimulator forecast={forecastData} />
+<section id="simulator" className="dashboard-anchor-section">
+  <ScenarioSimulator forecast={forecastData} />
+</section>
 
         {forecastData.length > 0 && (
           <>
@@ -426,7 +597,7 @@ return (
         <MLModelMetrics />
       </div>
 
-      <div id="ai">
+      <div id="ai" className="dashboard-anchor-section">
         <AIBusinessAssistant
           products={products}
           sales={sales}
@@ -447,7 +618,7 @@ return (
         <AIRecommendation products={products} sales={sales} />
       </div>
 
-      <div id="inventory">
+      <div id="inventory" className="dashboard-anchor-section">
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -466,29 +637,44 @@ return (
         />
 
         <ProductTable
-          filteredProducts={filteredProducts}
+                    filteredProducts={filteredProducts}
           editProduct={editProduct}
           sellProduct={sellProduct}
           deleteProduct={deleteProduct}
         />
       </div>
 
-      <div id="sales">
+      <div id="sales" className="dashboard-anchor-section">
         <SalesHistory sales={sales} />
       </div>
 
-      <div id="reports">
-        <div className="placeholder-section">
-          <h2>📄 Reports</h2>
-          <p>AI reports and export tools will appear here.</p>
-        </div>
+      <div id="reports" className="dashboard-anchor-section">
+        <ReportsPage
+          totalRevenue={totalRevenue}
+          totalProfit={totalProfit}
+          inventoryValue={inventoryValue}
+          lowStockCount={lowStockCount}
+          bestSellingProduct={bestSellingProduct}
+          exportToExcel={exportToExcel}
+          onGenerateAIReport={handleGenerateAIReport}
+          onDownloadPDF={handleDownloadBusinessPDF}
+          onViewSummary={handleViewFinancialSummary}
+          isGeneratingReport={isGeneratingReport}
+        />
+
+        {/*
+        <ReportsHistory
+          reports={reportHistory}
+          deleteReport={deleteReport}
+        />
+        */}
       </div>
 
-      <div id="settings">
-        <div className="placeholder-section">
-          <h2>⚙️ Settings</h2>
-          <p>Profile, preferences and system settings will appear here.</p>
-        </div>
+      <div id="settings" className="dashboard-anchor-section">
+        <SettingsPage
+          settings={settings}
+          setSettings={setSettings}
+        />
       </div>
 
       <AICopilot
@@ -498,6 +684,7 @@ return (
         totalProfit={totalProfit}
         lowStockCount={lowStockCount}
         bestSellingProduct={bestSellingProduct}
+        showSuggestions={settings.aiSuggestions}
       />
     </div>
   </>

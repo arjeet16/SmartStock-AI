@@ -12,7 +12,7 @@ import AnimatedNumber from "./ui/AnimatedNumber";
 import { exportDashboardPDF } from "../utils/exportPDF";
 import { generateAIReport } from "../services/aiService";
 import { fadeUp, staggerContainer } from "../utils/motion";
-
+import toast from "react-hot-toast";
 function ExecutiveHero({
   products,
   sales,
@@ -40,7 +40,7 @@ function ExecutiveHero({
       });
 
       setAiReport(report);
-      alert("AI Report Generated Successfully!");
+      toast.success("AI Report Generated Successfully!");
     } catch (err) {
       alert("Failed to generate AI report.");
     }
@@ -152,7 +152,7 @@ function ExecutiveHero({
           <p>{businessStatus}</p>
         </div>
 
-        <div className="ai-recommendation">
+        <div className="executive-ai-recommendation">
           <span>AI Recommendation</span>
           <p>
             Restock low-moving risk products first. Prioritize{" "}

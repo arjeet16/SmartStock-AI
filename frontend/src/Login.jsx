@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaLock, FaUser, FaRobot } from "react-icons/fa";
-
+import toast from "react-hot-toast";
 
 function Login({ setIsLoggedIn }) {
   const [username, setUsername] = useState("");
@@ -24,12 +24,14 @@ function Login({ setIsLoggedIn }) {
       const data = await response.json();
 
       if (data.success) {
+        toast.success("Welcome back to SmartStock AI");
         setIsLoggedIn(true);
       } else {
-        alert("Invalid Username or Password ❌");
+        toast.error("Invalid username or password");
       }
     } catch (error) {
-      alert("Login failed. Please check backend server.");
+      console.error("Login error:", error);
+      toast.error("Login failed. Please check the backend server.");
     } finally {
       setIsLoading(false);
     }

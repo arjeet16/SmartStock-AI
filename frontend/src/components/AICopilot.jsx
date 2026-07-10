@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { FiCopy, FiCheck, FiTrash2, FiSend, FiX } from "react-icons/fi";
+import {
+  FiCopy,
+  FiCheck,
+  FiTrash2,
+  FiSend,
+  FiX,
+  FiRefreshCw,
+  FiThumbsUp,
+  FiThumbsDown,
+} from "react-icons/fi";
 import { askCopilot } from "../services/copilotService";
 
 const STORAGE_KEY = "smartstock_copilot_messages";
@@ -47,10 +56,15 @@ What would you like to investigate first?`,
   ];
 }
 
-export default function AICopilot({ products = [], sales = [] }) {
+export default function AICopilot({
+  products = [],
+  sales = [],
+  showSuggestions = true,
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [copiedId, setCopiedId] = useState(null);
+  const [feedback, setFeedback] = useState({});
   const [loading, setLoading] = useState(false);
 
   const [messages, setMessages] = useState(() => {
@@ -139,6 +153,50 @@ export default function AICopilot({ products = [], sales = [] }) {
       setCopiedId(null);
     }, 1800);
   };
+  const regenerateMessage = async (messageIndex) => {
+  if (loading) return;
+
+  const previousUserMessage = [...messages]
+    .slice(0, messageIndex)
+    .reverse()
+    .find((message) => message.role === "user");
+
+  if (!previousUserMessage) return;
+
+  setLoading(true);
+
+  try {
+    const aiResponse = await askCopilot({
+      message: previousUserMessage.text,
+      products,
+      sales,
+    });
+
+    const regeneratedMessage = {
+      id: crypto.randomUUID(),
+      role: "ai",
+      text: aiResponse || "I could not regenerate the response right now.",
+      time: getTime(),
+    };
+
+    setMessages((prev) =>
+      prev.map((message, index) =>
+        index === messageIndex ? regeneratedMessage : message
+      )
+    );
+  } catch (error) {
+    console.error("Regenerate error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleFeedback = (messageId, type) => {
+  setFeedback((prev) => ({
+    ...prev,
+    [messageId]: prev[messageId] === type ? null : type,
+  }));
+};
 
   const clearChat = () => {
     const starter = getStarterMessage();
@@ -185,8 +243,8 @@ export default function AICopilot({ products = [], sales = [] }) {
             </header>
 
             <main className="ai-copilot-messages">
-              {messages.length <= 1 && (
-                <div className="ai-suggestions">
+              {showSuggestions && messages.length <= 1 && (
+  <div className="ai-suggestions">
                   {suggestedPrompts.map((prompt) => (
                     <button key={prompt} onClick={() => sendMessage(prompt)}>
                       {prompt}
@@ -195,7 +253,7 @@ export default function AICopilot({ products = [], sales = [] }) {
                 </div>
               )}
 
-              {messages.map((message) => (
+              {messages.map((message, index) => (
                 <div
                   key={message.id}
                   className={`ai-message ${
@@ -203,30 +261,74 @@ export default function AICopilot({ products = [], sales = [] }) {
                   }`}
                 >
                   <div className="ai-message-meta">
-                    <strong>{message.role === "user" ? "You" : "AI"}</strong>
-                    <span>{message.time}</span>
-                  </div>
+  <div className="message-author">
+    <span className="message-avatar">
+      {message.role === "user" ? "A" : "✦"}
+    </span>
+
+    <strong>
+      {message.role === "user" ? "You" : "SmartStock AI"}
+    </strong>
+  </div>
+
+  <span>{message.time}</span>
+</div>
 
                   <div className="ai-message-content">
                     <ReactMarkdown>{message.text}</ReactMarkdown>
                   </div>
 
-                  {message.role === "ai" && (
-                    <button
-                      className="ai-copy-button"
-                      onClick={() => copyMessage(message)}
-                    >
-                      {copiedId === message.id ? (
-                        <>
-                          <FiCheck /> Copied
-                        </>
-                      ) : (
-                        <>
-                          <FiCopy /> Copy
-                        </>
-                      )}
-                    </button>
-                  )}
+                {message.role === "ai" && (
+  <div className="ai-message-actions">
+    <button
+      className="ai-message-action-btn"
+      onClick={() => copyMessage(message)}
+      title="Copy response"
+    >
+      {copiedId === message.id ? (
+        <>
+          <FiCheck /> Copied
+        </>
+      ) : (
+        <>
+          <FiCopy /> Copy
+        </>
+      )}
+    </button>
+
+    {index > 0 && (
+      <button
+        className="ai-message-action-btn"
+        onClick={() => regenerateMessage(index)}
+        disabled={loading}
+        title="Regenerate response"
+      >
+        <FiRefreshCw />
+        Regenerate
+      </button>
+    )}
+
+    <button
+      className={`ai-feedback-btn ${
+        feedback[message.id] === "helpful" ? "active" : ""
+      }`}
+      onClick={() => handleFeedback(message.id, "helpful")}
+      title="Helpful"
+    >
+      <FiThumbsUp />
+    </button>
+
+    <button
+      className={`ai-feedback-btn ${
+        feedback[message.id] === "not-helpful" ? "active negative" : ""
+      }`}
+      onClick={() => handleFeedback(message.id, "not-helpful")}
+      title="Not helpful"
+    >
+      <FiThumbsDown />
+    </button>
+  </div>
+)}
                 </div>
               ))}
 

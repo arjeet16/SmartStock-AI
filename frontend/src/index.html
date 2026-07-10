@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arjeet Singh | Portfolio</title>
+    <style>
+        /* CSS VARIABLES & RESET */
+        :root {
+            --primary: #0f2027;
+            --secondary: #203a43;
+            --accent: #2c5364;
+            --text: #ffffff;
+            --highlight: #00e5ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { color: var(--text); overflow-x: hidden; background-color: var(--primary); }
+
+        /* LIVE & MOVING BACKGROUND */
+        .animated-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* NAVIGATION */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            background: rgba(15, 32, 39, 0.9);
+            padding: 20px 50px; display: flex; justify-content: space-between;
+            align-items: center; z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        nav h2 { color: var(--highlight); letter-spacing: 2px; }
+        nav ul { display: flex; list-style: none; gap: 20px; }
+        nav ul li a { color: var(--text); text-decoration: none; font-weight: 600; transition: color 0.3s; }
+        nav ul li a:hover { color: var(--highlight); }
+
+        /* HERO SECTION */
+        header {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 0 20px;
+        }
+        .profile-img {
+            width: 180px; height: 180px; border-radius: 50%;
+            border: 4px solid var(--highlight);
+            margin-bottom: 20px; object-fit: cover;
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        h1 { font-size: 4rem; margin-bottom: 10px; }
+        .typing-container { font-size: 1.5rem; color: #b0bec5; margin-bottom: 20px; min-height: 35px; }
+        .contact-info { margin-top: 20px; font-size: 1rem; color: #cfd8dc; }
+
+        /* SECTIONS & SCROLL REVEAL */
+        section { padding: 100px 10%; min-height: 100vh; }
+        .section-title { font-size: 2.5rem; margin-bottom: 40px; color: var(--highlight); text-align: center; border-bottom: 2px solid var(--highlight); display: inline-block; padding-bottom: 10px;}
+        
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* CARDS (Glassmorphism) */
+        .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px; border-radius: 15px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 25px rgba(0, 229, 255, 0.2); }
+        .card h3 { color: var(--highlight); margin-bottom: 15px; }
+
+        /* SKILLS TAGS */
+        .skills-wrapper { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .skill-tag {
+            padding: 10px 20px; background: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--highlight); border-radius: 30px;
+            font-weight: 600; transition: all 0.3s;
+        }
+        .skill-tag:hover { background: var(--highlight); color: var(--primary); transform: scale(1.1); cursor: default; }
+
+        /* RESPONSIVE */
+        @media(max-width: 768px) {
+            nav ul { display: none; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="animated-bg"></div>
+
+    <nav>
+        <h2>ARJEET[cite: 1]</h2>
+        <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#projects">Projects</a></li>
+        </ul>
+    </nav>
+
+    <header id="home">
+        <!-- Add your image file in the same folder and change 'profile.jpg' to your image's name -->
+        <img src="profile.jpg" alt="Arjeet Singh" class="profile-img" onerror="this.src='https://via.placeholder.com/180/00e5ff/0f2027?text=Arjeet'">
+        <h1>Arjeet Singh[cite: 1]</h1>
+        <div class="typing-container"><span id="typed-text"></span><span class="cursor">|</span></div>
+        <div class="contact-info reveal">
+            <p>Muzaffarpur, Bihar-842001[cite: 1]</p>
+            <p>+91-9341998459 | arjeetsingh903@gmail.com[cite: 1]</p>
+        </div>
+    </header>
+
+    <section id="about">
+        <center><h2 class="section-title reveal">About Me</h2></center>
+        <div class="card reveal" style="max-width: 800px; margin: 0 auto; text-align: center; line-height: 1.8; font-size: 1.2rem;">
+            <p>
+                I am a Full Stack Developer skilled in React, Node.js, and MySQL/MongoDB with strong Java and DSA fundamentals[cite: 1]. 
+                Currently a 4th-year B.Tech CSE student (2023-27) at IILM University, Greater Noida[cite: 1]. 
+                I am passionate about building scalable, efficient, and user-friendly solutions and experienced in data science and machine learning for analysis and insights[cite: 1].
+            </p>
+        </div>
+    </section>
+
+    <section id="skills">
+        <center><h2 class="section-title reveal">Technical Skills</h2></center>
+        <div class="skills-wrapper reveal">
+            <!-- Programming[cite: 1] -->
+            <span class="skill-tag">C / C++</span>
+            <span class="skill-tag">Java</span>
+            <span class="skill-tag">Python</span>
+            <!-- Web Dev[cite: 1] -->
+            <span class="skill-tag">HTML/CSS/Bootstrap</span>
+            <span class="skill-tag">Tailwind</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Node.js & Express</span>
+            <!-- DB & Tools[cite: 1] -->
+            <span class="skill-tag">MySQL & PostgreSQL</span>
+            <span class="skill-tag">MongoDB & Firebase</span>
+            <span class="skill-tag">Git / GitHub / Postman</span>
+            <!-- ML & Data[cite: 1] -->
+            <span class="skill-tag">Data Structures & Algorithms</span>
+            <span class="skill-tag">Machine Learning</span>
+            <span class="skill-tag">TensorFlow & PyTorch</span>
+        </div>
+    </section>
+
+    <section id="experience">
+        <center><h2 class="section-title reveal">Experience & Leadership</h2></center>
+        <div class="card-container">
+            <div class="card reveal">
+                <h3>AIML-Intern | CODE ALPHA[cite: 1]</h3>
+                <p><strong>May 2025 - July 2025[cite: 1]</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.6;">
+                    <li>Completed a 2-month internship focused on Artificial Intelligence and Machine Learning[cite: 1].</li>
+                    <li>Worked extensively on Google Colab for implementing and testing ML models[cite: 1].</li>
+                    <li>Applied concepts of data preprocessing, analytics, using Python, Pandas, and Scikit-learn[cite: 1].</li>
+                </ul>
+            </div>
+            <div class="card reveal">
+                <h3>President, AIML Club[cite: 1]</h3>
+                <p><strong>IILM University | Sept 2025 - Present[cite: 1]</strong></p>
+                <p style="margin-top: 10px;">Leading the Artificial Intelligence and Machine Learning club, fostering innovation and learning among peers[cite: 1].</p>
+            </div>
+            <div class="card reveal">
+                <h3>Core Member, Coding Club[cite: 1]</h3>
+                <p><strong>IILM University | Aug 2025 - Present[cite: 1]</strong></p>
+                <p style="margin-top: 10px;">Serving as a coordinator and social media team member for the university Coding Club[cite: 1].</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <center><h2 class="section-title reveal">Projects & Certifications</h2></center>
+        <div class="card-container">
+            <div class="card reveal">
+                <h3>Wanderlust - Airbnb Clone[cite: 1]</h3>
+                <p><strong>July 2025[cite: 1]</strong></p>
+                <p style="margin-top: 10px;">Fully functional Airbnb-inspired web application with a responsive frontend and dynamic backend[cite: 1].</p>
+                <p style="margin-top: 10px; color: #b0bec5; font-size: 0.9rem;"><strong>Tech:</strong> Node.js, Express, EJS, MongoDB, SQL, Bootstrap[cite: 1]</p>
+            </div>
+            <div class="card reveal">
+                <h3>Achievements[cite: 1]</h3>
+                <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.6;">
+                    <li>Winner of Star hunt, IGNITE, April 2024[cite: 1]</li>
+                    <li>3rd Runner-up in Ignite BioDatathon competition (April 2025)[cite: 1]</li>
+                    <li>AWS Academy Graduate - Generative AI Foundations[cite: 1]</li>
+                    <li>Data Science with Python - Infosys[cite: 1]</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // LIVE TYPING EFFECT
+        const typedTextSpan = document.getElementById("typed-text");
+        const textArray = ["B.Tech CSE Student", "Full Stack Developer", "AIML Enthusiast", "Competitive Coder"];
+        const typingDelay = 100;
+        const erasingDelay = 50;
+        const newTextDelay = 2000;
+        let textArrayIndex = 0;
+        let charIndex = 0;
+
+        function type() {
+            if (charIndex < textArray[textArrayIndex].length) {
+                typedTextSpan.textContent += textArray[textArrayIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(type, typingDelay);
+            } else {
+                setTimeout(erase, newTextDelay);
+            }
+        }
+
+        function erase() {
+            if (charIndex > 0) {
+                typedTextSpan.textContent = textArray[textArrayIndex].substring(0, charIndex - 1);
+                charIndex--;
+                setTimeout(erase, erasingDelay);
+            } else {
+                textArrayIndex++;
+                if (textArrayIndex >= textArray.length) textArrayIndex = 0;
+                setTimeout(type, typingDelay + 1100);
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(type, newTextDelay + 250);
+        });
+
+        // SCROLL REVEAL ANIMATION (MOVING UI)
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger on load
+    </script>
+</body>
+</html>
