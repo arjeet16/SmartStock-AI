@@ -1,0 +1,1271 @@
+/* =========================================================
+   SMARTSTOCK AI — RESPONSIVE MODULE
+   File: frontend/src/styles/responsive.css
+   Import this AFTER analytics.css and simulator.css
+========================================================= */
+
+/* ---------- Large desktop ---------- */
+
+@media (min-width: 1600px) {
+  .container {
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+  }
+
+  .topbar,
+  .executive-hero,
+  .settings-page,
+  .reports-page,
+  .stock-simulator-pro {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* ---------- Laptop ---------- */
+
+@media (max-width: 1280px) {
+  .sidebar-v2 {
+    width: 240px !important;
+  }
+
+  .container {
+    margin-left: 240px !important;
+    width: calc(100% - 240px) !important;
+    max-width: calc(100% - 240px) !important;
+    padding: 28px !important;
+  }
+
+  .sidebar-v2-nav button {
+    min-height: 43px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 13px;
+  }
+
+  .executive-hero,
+  .ceo-hero {
+    gap: 28px;
+  }
+
+  .reports-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .settings-panel-wide {
+    grid-column: auto !important;
+  }
+}
+
+/* ---------- Tablet / small laptop ---------- */
+
+@media (max-width: 1024px) {
+  .sidebar-v2 {
+    width: 220px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .container {
+    margin-left: 220px !important;
+    width: calc(100% - 220px) !important;
+    max-width: calc(100% - 220px) !important;
+    padding: 22px !important;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .topbar-left {
+    flex: 1 1 auto;
+  }
+
+  .topbar-center {
+    order: 3;
+    max-width: none;
+    width: 100%;
+  }
+
+  .topbar-right {
+    margin-left: auto;
+  }
+
+  .executive-hero,
+  .ceo-hero,
+  .dashboard-v2-hero,
+  .ceo-report-hero,
+  .ai-report-top {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .ceo-hero-right,
+  .executive-hero-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ceo-hero-stats,
+  .executive-metrics,
+  .kpi-v2-grid,
+  .dashboard-v2-metrics,
+  .forecast-metrics,
+  .forecast-metrics-v2,
+  .assistant-grid,
+  .ceo-report-grid,
+  .reports-summary-grid,
+  .after-grid,
+  .financial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .inventory-table-scroll,
+  .sales-history,
+  .sales-section {
+    overflow-x: auto;
+  }
+
+  .inventory-table-scroll table,
+  .sales-history table,
+  .sales-section table {
+    min-width: 900px;
+  }
+
+  .ai-copilot-window {
+    width: min(520px, calc(100vw - 40px));
+    right: 20px;
+  }
+}
+
+/* ---------- Tablet portrait / mobile landscape ---------- */
+
+@media (max-width: 820px) {
+  .sidebar-v2 {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 14px !important;
+    overflow: visible !important;
+    border-radius: 0 0 24px 24px;
+  }
+
+  .sidebar-v2-brand {
+    margin-bottom: 12px;
+  }
+
+  .sidebar-navigation-label {
+    display: none;
+  }
+
+  .sidebar-v2-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    padding: 4px 0 10px !important;
+    margin: 0 !important;
+  }
+
+  .sidebar-v2-nav button {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-height: 40px;
+    padding: 0 13px;
+    white-space: nowrap;
+  }
+
+  .sidebar-active-dot {
+    display: none;
+  }
+
+  .sidebar-v2-user {
+    display: none !important;
+  }
+
+  .container {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 18px !important;
+  }
+
+  .topbar {
+    border-radius: 20px;
+    padding: 16px;
+  }
+
+  .profile {
+    display: none;
+  }
+
+  .executive-hero,
+  .ceo-hero,
+  .settings-page,
+  .reports-page,
+  .stock-simulator-pro,
+  .forecast-section,
+  .ai-business-assistant,
+  .ceo-ai-report {
+    padding: 22px !important;
+    border-radius: 24px !important;
+  }
+
+  .executive-hero h1,
+  .ceo-hero h1,
+  .dashboard-v2-hero h1,
+  .reports-header h2,
+  .settings-page-header h2 {
+    font-size: 30px !important;
+  }
+
+  .analytics-v5,
+  .analytics-v2,
+  .charts,
+  .comparison-grid,
+  .sim-main-grid,
+  .settings-grid,
+  .reports-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .settings-page-header,
+  .reports-header,
+  .settings-danger-zone,
+  .after-section-heading {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .settings-header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .reports-primary-btn,
+  .settings-save-button,
+  .settings-secondary-button {
+    width: 100%;
+  }
+
+  .product-form,
+  .settings-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .forecast-grid,
+  .forecast-grid-v2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ai-copilot-window {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 88px !important;
+    width: auto !important;
+    height: min(76vh, 680px) !important;
+  }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 600px) {
+  body {
+    background: #f8fafc;
+  }
+
+  .container {
+    padding: 12px !important;
+  }
+
+  .topbar {
+    gap: 12px;
+  }
+
+  .topbar-left h2 {
+    font-size: 20px;
+  }
+
+  .topbar-left p {
+    font-size: 12px;
+  }
+
+  .topbar-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .icon-btn,
+  .topbar .logout-btn {
+    min-height: 42px;
+  }
+
+  .executive-hero,
+  .ceo-hero,
+  .settings-page,
+  .reports-page,
+  .stock-simulator-pro,
+  .forecast-section,
+  .ai-business-assistant,
+  .ceo-ai-report {
+    padding: 18px !important;
+    margin: 18px 0 !important;
+    border-radius: 20px !important;
+  }
+
+  .executive-hero-actions,
+  .ceo-hero-actions,
+  .settings-header-actions {
+    flex-direction: column !important;
+    display: flex !important;
+  }
+
+  .executive-hero-actions button,
+  .ceo-hero-actions button,
+  .settings-header-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ceo-score-circle {
+    width: 125px;
+    height: 125px;
+  }
+
+  .ceo-score-circle span {
+    font-size: 42px;
+  }
+
+  .ceo-hero-stats,
+  .executive-metrics,
+  .kpi-v2-grid,
+  .dashboard-v2-metrics,
+  .forecast-metrics,
+  .forecast-metrics-v2,
+  .assistant-grid,
+  .ceo-report-grid,
+  .reports-summary-grid,
+  .after-grid,
+  .financial-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .reports-summary-grid > div,
+  .settings-panel,
+  .report-action-card {
+    padding: 18px;
+  }
+
+  .settings-toggle-row {
+    align-items: flex-start;
+  }
+
+  .settings-switch {
+    margin-top: 2px;
+  }
+
+  .inventory-table-v2,
+  .inventory-v5-card,
+  .sales-history,
+  .sales-section {
+    border-radius: 18px;
+  }
+
+  .inventory-table-header,
+  .forecast-header,
+  .assistant-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inventory-table-scroll {
+    margin-left: -6px;
+    margin-right: -6px;
+  }
+
+  .inventory-table-scroll table {
+    min-width: 820px;
+  }
+
+  .ai-copilot-button {
+    width: 58px;
+    height: 58px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .ai-copilot-window {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+  }
+
+  .ai-copilot-backdrop {
+    background: rgba(2, 6, 23, 0.4);
+  }
+
+  .ai-copilot-header {
+    padding-top: max(18px, env(safe-area-inset-top));
+  }
+
+  .ai-copilot-input-area {
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+
+  .ai-quick-actions {
+    padding-bottom: 12px;
+  }
+
+  .dashboard-skeleton {
+    margin-left: 0 !important;
+    padding: 14px !important;
+  }
+
+  .skeleton-card-grid,
+  .skeleton-analytics-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ---------- Very small screens ---------- */
+
+@media (max-width: 420px) {
+  .sidebar-v2 {
+    padding: 10px !important;
+  }
+
+  .sidebar-v2-brand h2 {
+    font-size: 20px;
+  }
+
+  .sidebar-v2-brand p {
+    font-size: 11px;
+  }
+
+  .sidebar-v2-nav button {
+    font-size: 12px;
+    padding: 0 10px;
+  }
+
+  .topbar-center {
+    min-height: 42px;
+  }
+
+  .executive-hero h1,
+  .ceo-hero h1,
+  .dashboard-v2-hero h1,
+  .reports-header h2,
+  .settings-page-header h2 {
+    font-size: 26px !important;
+  }
+
+  .analytics-v5-card,
+  .report-action-card,
+  .settings-panel {
+    padding: 16px !important;
+  }
+
+  .toast-container,
+  [data-sonner-toaster] {
+    width: calc(100vw - 24px) !important;
+  }
+}
+
+/* ---------- Motion safety ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* ==================================================
+   FINAL MOBILE LAYOUT RESET
+   Must stay at the absolute bottom of responsive.css
+================================================== */
+
+@media (max-width: 820px) {
+  html,
+  body,
+  #root {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    position: relative !important;
+  }
+
+  .sidebar-v2 {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .container {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    padding: 18px !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .container > *,
+  .dashboard-anchor-section,
+  #dashboard,
+  #forecast,
+  #alerts,
+  #simulator,
+  #inventory,
+  #sales,
+  #ai,
+  #reports,
+  #settings {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .topbar {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 18px !important;
+    box-sizing: border-box !important;
+  }
+
+  .sidebar-v2-nav {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin;
+  }
+
+  .sidebar-v2-nav button,
+  .sidebar-v2-nav a {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 12px !important;
+  }
+
+  .topbar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .topbar-left,
+  .topbar-center,
+  .topbar-right {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .topbar-right {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+  }
+
+  .executive-hero,
+  .ceo-hero,
+  .forecast-section,
+  .stock-simulator-pro,
+  .reports-page,
+  .settings-page,
+  .ai-business-assistant,
+  .ceo-ai-report {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+/* ==================================================
+   FINAL AI COPILOT MOBILE BUTTON FIX
+   Keep at the absolute bottom of responsive.css
+================================================== */
+
+@media (max-width: 820px) {
+  button.ai-copilot-button {
+    position: fixed !important;
+
+    left: auto !important;
+    right: 18px !important;
+    top: auto !important;
+    bottom: 18px !important;
+
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    flex: none !important;
+
+    border-radius: 19px !important;
+    z-index: 9999 !important;
+
+    transform: none;
+  }
+
+  button.ai-copilot-button:hover {
+    transform: translateY(-4px) scale(1.03) !important;
+  }
+
+  button.ai-copilot-button span {
+    position: absolute !important;
+    bottom: 7px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    font-size: 8px !important;
+    line-height: 1 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  button.ai-copilot-button {
+    right: 14px !important;
+    bottom: 14px !important;
+
+    width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+  }
+}
+/* =========================================================
+   SMARTSTOCK AI — SCREENSHOT FIXES
+   Keep this as the LAST code in responsive.css
+========================================================= */
+
+/* ---------- Tablet navigation hint ---------- */
+
+@media (max-width: 820px) {
+  .sidebar-v2 {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+  }
+
+  .sidebar-v2-nav {
+    position: relative;
+    padding-right: 42px !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .sidebar-v2-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Soft fade showing that navigation continues horizontally */
+  .sidebar-v2::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 10px;
+    width: 46px;
+    height: 48px;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(8, 20, 43, 0),
+      rgba(8, 20, 43, 0.96)
+    );
+    border-radius: 0 0 22px 0;
+  }
+
+  .dashboard-anchor-section {
+    scroll-margin-top: 145px !important;
+  }
+}
+
+/* ---------- iPad / tablet topbar fix ---------- */
+
+@media (min-width: 601px) and (max-width: 820px) {
+  .container {
+    padding: 16px !important;
+  }
+
+  .topbar {
+    display: grid !important;
+    grid-template-columns: minmax(180px, 1fr) auto !important;
+    align-items: center !important;
+    gap: 14px 18px !important;
+    padding: 18px 20px !important;
+  }
+
+  .topbar-left {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .topbar-right {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+  }
+
+  .topbar-center {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .topbar-center input,
+  .topbar-center .search-input,
+  .topbar-center .search-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .topbar .logout-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .topbar .icon-btn,
+  .topbar .notification-btn {
+    flex-shrink: 0 !important;
+  }
+
+  .executive-hero,
+  .ceo-hero {
+    padding: 24px 20px !important;
+  }
+
+  .executive-hero-left,
+  .ceo-hero-left {
+    text-align: center;
+  }
+
+  .executive-hero-actions,
+  .ceo-hero-actions {
+    justify-content: center !important;
+  }
+
+  .executive-metrics,
+  .ceo-hero-stats {
+    justify-content: center !important;
+  }
+}
+
+/* ---------- Phone topbar fix ---------- */
+
+@media (max-width: 600px) {
+  .sidebar-v2 {
+    position: sticky !important;
+    top: 0 !important;
+  }
+
+  .sidebar-v2-brand {
+    padding: 6px 4px 12px !important;
+  }
+
+  .container {
+    padding: 12px !important;
+  }
+
+  .topbar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    padding: 18px 16px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .topbar-left {
+    text-align: center !important;
+  }
+
+  .topbar-left h2,
+  .topbar-left p {
+    text-align: center !important;
+  }
+
+  .topbar-right {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto auto !important;
+    align-items: center !important;
+    justify-content: stretch !important;
+    gap: 10px !important;
+  }
+
+  .topbar-right > * {
+    min-width: 0 !important;
+  }
+
+  /* AI Live badge fills available space */
+  .topbar-right > :first-child {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .topbar-center {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    order: initial !important;
+  }
+
+  .topbar-center input,
+  .topbar-center .search-input,
+  .topbar-center .search-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .topbar .logout-btn {
+    white-space: nowrap !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  .topbar .icon-btn,
+  .topbar .notification-btn {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+  }
+}
+
+/* ---------- Mobile hero refinement ---------- */
+
+@media (max-width: 600px) {
+  .executive-hero,
+  .ceo-hero {
+    padding: 18px !important;
+    margin-top: 0 !important;
+    gap: 22px !important;
+  }
+
+  .executive-hero-left,
+  .ceo-hero-left {
+    text-align: center !important;
+  }
+
+  .executive-hero-badge,
+  .ceo-hero-badge {
+    width: fit-content !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+  }
+
+  .executive-hero h1,
+  .ceo-hero h1 {
+    font-size: clamp(25px, 7vw, 31px) !important;
+    line-height: 1.16 !important;
+    letter-spacing: -1px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .executive-hero p,
+  .ceo-hero p {
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+    margin-bottom: 20px !important;
+  }
+
+  .executive-metrics,
+  .ceo-hero-stats {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    margin-bottom: 26px !important;
+  }
+
+  .executive-metrics > *,
+  .ceo-hero-stats > * {
+    flex: 0 1 auto !important;
+  }
+
+  .executive-hero-actions,
+  .ceo-hero-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .executive-hero-actions button,
+  .ceo-hero-actions button {
+    width: 100% !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+  }
+
+  .executive-hero-right,
+  .ceo-hero-right {
+    width: 100% !important;
+    padding-top: 0 !important;
+  }
+
+  .ceo-score-card,
+  .executive-score-card {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 24px 18px !important;
+  }
+}
+
+/* ---------- Small phone spacing ---------- */
+
+@media (max-width: 480px) {
+  .sidebar-v2-nav {
+    padding-right: 38px !important;
+  }
+
+  .sidebar-v2-nav button {
+    padding-left: 11px !important;
+    padding-right: 11px !important;
+  }
+
+  .topbar {
+    border-radius: 18px !important;
+  }
+
+  .executive-hero,
+  .ceo-hero {
+    border-radius: 20px !important;
+  }
+
+  .executive-hero-badge,
+  .ceo-hero-badge {
+    font-size: 11px !important;
+    padding: 9px 12px !important;
+  }
+
+  .executive-metrics,
+  .ceo-hero-stats {
+    justify-content: flex-start !important;
+  }
+
+  button.ai-copilot-button {
+    right: 12px !important;
+    bottom: 12px !important;
+    width: 54px !important;
+    min-width: 54px !important;
+    max-width: 54px !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+  }
+}
+/* =========================================================
+   MOBILE TOAST POSITION FIX
+========================================================= */
+
+@media (max-width: 600px) {
+  #_rht_toaster {
+    top: 316px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+  }
+
+  #_rht_toaster > div {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #_rht_toaster [role="status"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+/* =========================================================
+   MOBILE COPILOT SAFE POSITION
+========================================================= */
+
+@media (max-width: 600px) {
+  button.ai-copilot-button {
+    right: 14px !important;
+    bottom: 18px !important;
+
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+
+    border-radius: 17px !important;
+    z-index: 900 !important;
+  }
+
+  /* Gives the page room so fixed AI button does not cover final content */
+  .container {
+    padding-bottom: 90px !important;
+  }
+
+  .executive-hero-actions,
+  .ceo-hero-actions {
+    padding-right: 0 !important;
+  }
+}
+@media (max-width: 480px) {
+  .executive-hero,
+  .ceo-hero {
+    padding: 16px !important;
+  }
+
+  .executive-hero-badge,
+  .ceo-hero-badge {
+    margin-bottom: 18px !important;
+  }
+
+  .executive-hero h1,
+  .ceo-hero h1 {
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .executive-hero p,
+  .ceo-hero p {
+    margin-bottom: 18px !important;
+  }
+
+  .executive-metrics,
+  .ceo-hero-stats {
+    margin-bottom: 20px !important;
+  }
+}
+@media (max-width:600px){
+
+.executive-hero,
+.ceo-hero{
+    padding-bottom:80px !important;
+}
+
+}
+@media(max-width:600px){
+
+.ai-live-badge{
+
+    padding:10px 14px;
+
+    font-size:13px;
+
+    gap:8px;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.topbar-center input{
+
+height:46px;
+
+}
+
+}
+/* =========================================================
+   FINAL DESKTOP FULL-WIDTH DASHBOARD FIX
+========================================================= */
+
+@media (min-width: 1281px) {
+  html,
+  body,
+  #root {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .sidebar-v2 {
+    width: 280px !important;
+    min-width: 280px !important;
+
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+  }
+
+  .container {
+    width: calc(100% - 280px) !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    margin: 0 0 0 280px !important;
+    padding: 28px 32px !important;
+
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .container > *,
+  .dashboard-anchor-section,
+  #dashboard,
+  #forecast,
+  #alerts,
+  #simulator,
+  #inventory,
+  #sales,
+  #ai,
+  #reports,
+  #settings {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .topbar,
+  .executive-hero,
+  .ceo-hero,
+  .executive-brief,
+  .analytics-v5,
+  .forecast-section,
+  .stock-simulator-pro,
+  .reports-page,
+  .settings-page,
+  .ai-business-assistant,
+  .ceo-ai-report,
+  .ml-metrics-panel {
+    width: 100% !important;
+    max-width: none !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    box-sizing: border-box !important;
+  }
+}
+/* ===========================================
+   AI COPILOT BUTTON DESKTOP FIX
+=========================================== */
+
+.ai-copilot-button {
+    position: fixed !important;
+
+    right: 24px !important;
+    bottom: 24px !important;
+    left: auto !important;
+    top: auto !important;
+
+    width: 64px !important;
+    height: 64px !important;
+
+    min-width: 64px !important;
+    max-width: 64px !important;
+
+    min-height: 64px !important;
+    max-height: 64px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 18px !important;
+
+    z-index: 9999 !important;
+}
+
+.ai-copilot-button span {
+    font-size: 9px !important;
+}

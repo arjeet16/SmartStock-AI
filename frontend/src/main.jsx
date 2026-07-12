@@ -1,43 +1,46 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { Toaster } from "react-hot-toast";
 
+import App from "./App";
 import "./index.css";
-import App from "./App.jsx";
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <>
-      <App />
+ReactDOM.createRoot(
+  document.getElementById("root")
+).render(
+  <React.StrictMode>
+    <App />
 
-      <Toaster
-        position="top-right"
-        reverseOrder={false}
-        gutter={10}
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: "#111827",
-            color: "#ffffff",
-            border: "1px solid #4f46e5",
-            borderRadius: "14px",
-            padding: "14px 18px",
-            fontSize: "14px",
+    <Toaster
+      position="top-right"
+      reverseOrder={false}
+      gutter={10}
+      toastOptions={{
+        duration: 3000,
+        style: {
+          background: "#111827",
+          color: "#ffffff",
+          border: "1px solid rgba(99, 102, 241, 0.55)",
+          borderRadius: "14px",
+          padding: "14px 16px",
+          fontSize: "14px",
+          fontWeight: "600",
+          boxShadow:
+            "0 18px 40px rgba(15, 23, 42, 0.25)",
+        },
+        success: {
+          iconTheme: {
+            primary: "#22c55e",
+            secondary: "#ffffff",
           },
-          success: {
-            iconTheme: {
-              primary: "#22c55e",
-              secondary: "#fff",
-            },
+        },
+        error: {
+          iconTheme: {
+            primary: "#ef4444",
+            secondary: "#ffffff",
           },
-          error: {
-            iconTheme: {
-              primary: "#ef4444",
-              secondary: "#fff",
-            },
-          },
-        }}
-      />
-    </>
-  </StrictMode>
+        },
+      }}
+    />
+  </React.StrictMode>
 );

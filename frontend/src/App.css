@@ -9,11 +9,6 @@ body {
   background: #f4f7fc;
 }
 
-.container {
-  width: 95%;
-  margin: auto;
-  padding: 30px;
-}
 
 .title {
   text-align: center;
@@ -199,15 +194,6 @@ tr:hover {
   color: #2c3e50;
 }
 }
-/* Main dashboard layout after sidebar */
-.container {
-  margin-left: 280px !important;
-  width: calc(100% - 280px) !important;
-  max-width: none !important;
-  min-height: 100vh;
-  padding: 30px;
-  box-sizing: border-box;
-}
 
 body {
   margin: 0;
@@ -229,17 +215,7 @@ body,
   z-index: 9999;
 }
 
-/* Main content after sidebar */
-.container {
-  margin-left: 285px !important;
-  width: calc(100vw - 285px) !important;
-  max-width: calc(100vw - 285px) !important;
-  min-height: 100vh;
-  padding: 35px 45px !important;
-  box-sizing: border-box;
-  overflow-x: hidden !important;
-  background: #f4f7fb;
-}
+
 
 /* Fix big overlapping title */
 .container h1 {
@@ -1069,10 +1045,6 @@ body,
   margin: 4px 0 0;
   color: #94a3b8;
   font-size: 12px;
-}
-.container {
-  margin-left: 300px;
-  width: calc(100% - 300px);
 }
 html {
   scroll-behavior: smooth;
@@ -6518,7 +6490,7 @@ left:150%;
 .product-cell strong {
   color: #ffffff;
   display: block;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .product-cell span {
@@ -8473,5 +8445,2931 @@ html {
 
   .stock-simulator-pro .simulator-kpi-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+/* =========================================================
+   SMARTSTOCK AI — SCENARIO SIMULATOR V8 FINAL UI
+   Keep this block at the absolute bottom of App.css
+========================================================= */
+
+.stock-simulator-pro {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 30px 0;
+  padding: 32px;
+  overflow: hidden;
+  border-radius: 32px;
+  color: #0f172a;
+  background:
+    radial-gradient(
+      circle at 8% 0%,
+      rgba(59, 130, 246, 0.13),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 94% 8%,
+      rgba(124, 58, 237, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(145deg, #f8fbff, #ffffff);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.12);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.stock-simulator-pro .simulator-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 190px !important;
+  align-items: center !important;
+  gap: 28px !important;
+  margin: 0 0 26px !important;
+}
+
+.stock-simulator-pro .simulator-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 18px !important;
+  text-align: left !important;
+}
+
+.stock-simulator-pro .simulator-icon {
+  width: 62px !important;
+  height: 62px !important;
+  flex: 0 0 62px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 19px !important;
+  color: #ffffff !important;
+  font-size: 28px !important;
+  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+  box-shadow:
+    0 18px 38px rgba(79, 70, 229, 0.3),
+    0 0 35px rgba(124, 58, 237, 0.16) !important;
+}
+
+.stock-simulator-pro .simulator-tag {
+  display: inline-flex !important;
+  width: fit-content !important;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  color: #2563eb !important;
+  background: #dbeafe !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.stock-simulator-pro .simulator-title h2 {
+  margin: 11px 0 6px !important;
+  color: #0f172a !important;
+  font-size: clamp(28px, 3vw, 39px) !important;
+  line-height: 1.08 !important;
+  font-weight: 950 !important;
+  letter-spacing: -1.4px !important;
+  text-align: left !important;
+}
+
+.stock-simulator-pro .simulator-title p {
+  max-width: 700px !important;
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  text-align: left !important;
+}
+
+.stock-simulator-pro .decision-score-card {
+  min-width: 0 !important;
+  padding: 22px 16px !important;
+  border-radius: 23px !important;
+  text-align: center !important;
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #10b981, #22c55e) !important;
+  box-shadow: 0 20px 42px rgba(16, 185, 129, 0.25) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.stock-simulator-pro .decision-score-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 26px 52px rgba(16, 185, 129, 0.32) !important;
+}
+
+.stock-simulator-pro .decision-score-card small {
+  display: block !important;
+  color: rgba(255, 255, 255, 0.86) !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+}
+
+.stock-simulator-pro .decision-score-card h3 {
+  margin: 9px 0 !important;
+  color: #ffffff !important;
+  font-size: 34px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .decision-score-card > span {
+  display: inline-flex !important;
+  padding: 7px 13px !important;
+  border-radius: 999px !important;
+  color: #059669 !important;
+  background: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+/* =========================
+   PRODUCT SELECTOR
+========================= */
+
+.stock-simulator-pro .simulator-selector-card {
+  display: grid !important;
+  grid-template-columns: minmax(230px, 0.75fr) minmax(380px, 1.25fr) !important;
+  align-items: center !important;
+  gap: 24px !important;
+  padding: 18px 20px !important;
+  margin-bottom: 18px !important;
+  border-radius: 22px !important;
+  text-align: left !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.06) !important;
+}
+
+.stock-simulator-pro .simulator-selector-copy {
+  text-align: left !important;
+}
+
+.stock-simulator-pro .simulator-selector-copy > span {
+  display: block !important;
+  margin-bottom: 5px !important;
+  color: #0f172a !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .simulator-selector-copy p {
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+}
+
+.stock-simulator-pro .simulator-select-wrapper {
+  width: 100% !important;
+  min-height: 58px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 8px 14px !important;
+  border-radius: 17px !important;
+  background: #f8fafc !important;
+  border: 1px solid rgba(59, 130, 246, 0.28) !important;
+  transition: 0.2s ease !important;
+}
+
+.stock-simulator-pro .simulator-select-wrapper:focus-within {
+  border-color: rgba(37, 99, 235, 0.66) !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+}
+
+.stock-simulator-pro .simulator-product-avatar {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 13px !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+  font-size: 13px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .simulator-select-content {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.stock-simulator-pro .simulator-select-content small {
+  display: block !important;
+  margin-bottom: 2px !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+.stock-simulator-pro .simulator-select-content select {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 28px !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+  color: #0f172a !important;
+  background: transparent !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}
+
+/* =========================
+   KPI CARDS
+========================= */
+
+.stock-simulator-pro .simulator-kpi-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin-bottom: 18px !important;
+}
+
+.stock-simulator-pro .simulator-kpi-card {
+  position: relative !important;
+  overflow: hidden !important;
+  min-width: 0 !important;
+  min-height: 145px !important;
+  box-sizing: border-box !important;
+  padding: 18px !important;
+  border-radius: 21px !important;
+  text-align: left !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06) !important;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease !important;
+}
+
+.stock-simulator-pro .simulator-kpi-card:hover {
+  transform: translateY(-6px) !important;
+  border-color: rgba(96, 165, 250, 0.32) !important;
+  box-shadow: 0 22px 48px rgba(15, 23, 42, 0.11) !important;
+}
+
+.stock-simulator-pro .simulator-kpi-blue {
+  color: #2563eb !important;
+  background: linear-gradient(145deg, #eff6ff, #ffffff) !important;
+}
+
+.stock-simulator-pro .simulator-kpi-green {
+  color: #16a34a !important;
+  background: linear-gradient(145deg, #ecfdf5, #ffffff) !important;
+}
+
+.stock-simulator-pro .simulator-kpi-orange {
+  color: #ea580c !important;
+  background: linear-gradient(145deg, #fff7ed, #ffffff) !important;
+}
+
+.stock-simulator-pro .simulator-kpi-purple {
+  color: #7c3aed !important;
+  background: linear-gradient(145deg, #f5f3ff, #ffffff) !important;
+}
+
+.stock-simulator-pro .simulator-kpi-icon {
+  width: 38px !important;
+  height: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin-bottom: 11px !important;
+  border-radius: 12px !important;
+  color: currentColor !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+  font-size: 17px !important;
+}
+
+.stock-simulator-pro .simulator-kpi-card > span {
+  display: block !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+}
+
+.stock-simulator-pro .simulator-kpi-card > h3 {
+  margin: 7px 0 3px !important;
+  color: #0f172a !important;
+  font-size: 24px !important;
+  line-height: 1.08 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.6px !important;
+  text-align: left !important;
+}
+
+.stock-simulator-pro .simulator-kpi-card > small {
+  color: currentColor !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+}
+
+.stock-simulator-pro .simulator-mini-bars {
+  position: absolute !important;
+  right: 15px !important;
+  bottom: 15px !important;
+  width: 65px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 4px !important;
+}
+
+.stock-simulator-pro .simulator-mini-bars i {
+  display: block !important;
+  flex: 1 !important;
+  border-radius: 999px 999px 3px 3px !important;
+  background: currentColor !important;
+  opacity: 0.58 !important;
+}
+
+.stock-simulator-pro .simulator-mini-bars i:nth-child(1) {
+  height: 24% !important;
+}
+
+.stock-simulator-pro .simulator-mini-bars i:nth-child(2) {
+  height: 39% !important;
+}
+
+.stock-simulator-pro .simulator-mini-bars i:nth-child(3) {
+  height: 54% !important;
+}
+
+.stock-simulator-pro .simulator-mini-bars i:nth-child(4) {
+  height: 74% !important;
+}
+
+.stock-simulator-pro .simulator-mini-bars i:nth-child(5) {
+  height: 100% !important;
+}
+
+/* =========================
+   MAIN GRID
+========================= */
+
+.stock-simulator-pro .sim-main-grid {
+  display: grid !important;
+  grid-template-columns: 1.08fr 0.92fr !important;
+  gap: 16px !important;
+  margin-bottom: 18px !important;
+}
+
+.stock-simulator-pro .sim-slider-card,
+.stock-simulator-pro .before-sim-card {
+  min-width: 0 !important;
+  padding: 22px !important;
+  border-radius: 22px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.06) !important;
+}
+
+.stock-simulator-pro .sim-card-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
+  margin-bottom: 21px !important;
+  text-align: left !important;
+}
+
+.stock-simulator-pro .sim-card-heading span {
+  display: block !important;
+  margin-bottom: 3px !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+.stock-simulator-pro .sim-card-heading h3,
+.stock-simulator-pro .sim-card-heading h4 {
+  margin: 0 !important;
+  color: #0f172a !important;
+  font-size: 20px !important;
+  font-weight: 950 !important;
+  text-align: left !important;
+}
+
+/* Critical override for huge global buttons */
+
+.stock-simulator-pro .sim-stock-stepper {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 6px !important;
+  border-radius: 15px !important;
+  background: #eff6ff !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+.stock-simulator-pro .sim-stock-stepper button {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  max-width: 34px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: transform 0.2s ease !important;
+}
+
+.stock-simulator-pro .sim-stock-stepper button:hover {
+  transform: scale(1.08) !important;
+}
+
+.stock-simulator-pro .sim-stock-stepper strong {
+  min-width: 88px !important;
+  color: #0f172a !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+  text-align: center !important;
+}
+
+/* Slider */
+
+.stock-simulator-pro .simulator-range {
+  width: 100% !important;
+  height: 7px !important;
+  margin: 8px 0 0 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border-radius: 999px !important;
+  outline: none !important;
+  background:
+    linear-gradient(
+      to right,
+      #2563eb 0%,
+      #7c3aed var(--range-progress),
+      #e2e8f0 var(--range-progress),
+      #e2e8f0 100%
+    ) !important;
+}
+
+.stock-simulator-pro .simulator-range::-webkit-slider-thumb {
+  width: 21px !important;
+  height: 21px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border-radius: 50% !important;
+  border: 4px solid #ffffff !important;
+  background: #2563eb !important;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35) !important;
+  cursor: grab !important;
+}
+
+.stock-simulator-pro .simulator-range::-moz-range-thumb {
+  width: 15px !important;
+  height: 15px !important;
+  border-radius: 50% !important;
+  border: 4px solid #ffffff !important;
+  background: #2563eb !important;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35) !important;
+  cursor: grab !important;
+}
+
+.stock-simulator-pro .range-labels {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin: 11px 0 17px !important;
+}
+
+.stock-simulator-pro .range-labels span {
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+}
+
+.stock-simulator-pro .slider-mini-summary {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.stock-simulator-pro .slider-mini-summary > div {
+  padding: 14px !important;
+  border-radius: 15px !important;
+  text-align: center !important;
+  background: #eff6ff !important;
+}
+
+.stock-simulator-pro .slider-mini-summary span {
+  display: block !important;
+  margin-bottom: 6px !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+}
+
+.stock-simulator-pro .slider-mini-summary strong {
+  color: #0f172a !important;
+  font-size: 15px !important;
+  font-weight: 950 !important;
+}
+
+/* =========================
+   BEFORE / AFTER
+========================= */
+
+.stock-simulator-pro .sim-risk-pill {
+  margin: 0 !important;
+  padding: 7px 11px !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.stock-simulator-pro .sim-risk-pill.safe {
+  color: #15803d !important;
+  background: #dcfce7 !important;
+}
+
+.stock-simulator-pro .sim-risk-pill.danger {
+  color: #b91c1c !important;
+  background: #fee2e2 !important;
+}
+
+.stock-simulator-pro .before-after-stock {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 1fr 40px 1fr !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 18px !important;
+  margin-bottom: 14px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, #f8fafc, #f5f3ff) !important;
+}
+
+.stock-simulator-pro .before-after-stock > div:not(.before-after-arrow):not(.stock-growth-badge) {
+  text-align: center !important;
+}
+
+.stock-simulator-pro .before-after-stock small {
+  display: block !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+.stock-simulator-pro .before-after-stock strong {
+  display: block !important;
+  margin: 4px 0 1px !important;
+  color: #0f172a !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .before-after-stock span {
+  color: #64748b !important;
+  font-size: 10px !important;
+}
+
+.stock-simulator-pro .before-after-arrow {
+  color: #7c3aed !important;
+  font-size: 24px !important;
+  font-weight: 950 !important;
+  text-align: center !important;
+}
+
+.stock-simulator-pro .stock-growth-badge {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  padding: 5px 8px !important;
+  border-radius: 999px !important;
+  color: #15803d !important;
+  background: #dcfce7 !important;
+  font-size: 9px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .before-after-details {
+  display: grid !important;
+}
+
+.stock-simulator-pro .before-after-details p {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
+  margin: 0 !important;
+  padding: 12px 0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.stock-simulator-pro .before-after-details p:last-child {
+  border-bottom: none !important;
+}
+
+.stock-simulator-pro .before-after-details span {
+  color: #64748b !important;
+  font-size: 12px !important;
+}
+
+.stock-simulator-pro .before-after-details strong {
+  color: #0f172a !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+/* =========================
+   SIMULATION OUTPUT
+========================= */
+
+.stock-simulator-pro .after-section {
+  padding: 22px !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
+}
+
+.stock-simulator-pro .after-section-heading {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 18px !important;
+  margin-bottom: 18px !important;
+}
+
+.stock-simulator-pro .after-section-heading span,
+.stock-simulator-pro .financial-section-heading span {
+  display: block !important;
+  margin-bottom: 4px !important;
+  color: #2563eb !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+}
+
+.stock-simulator-pro .after-section-heading h3,
+.stock-simulator-pro .financial-section-heading h3 {
+  margin: 0 !important;
+  color: #0f172a !important;
+  font-size: 20px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .after-section-heading p {
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 12px !important;
+}
+
+.stock-simulator-pro .after-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+}
+
+.stock-simulator-pro .after-grid article {
+  min-width: 0 !important;
+  padding: 17px !important;
+  border-radius: 18px !important;
+  text-align: center !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+}
+
+.stock-simulator-pro .after-grid article:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08) !important;
+}
+
+.stock-simulator-pro .after-grid svg {
+  margin-bottom: 9px !important;
+  color: #2563eb !important;
+  font-size: 18px !important;
+}
+
+.stock-simulator-pro .after-grid span {
+  display: block !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+}
+
+.stock-simulator-pro .after-grid strong {
+  display: block !important;
+  margin: 5px 0 1px !important;
+  color: #0f172a !important;
+  font-size: 23px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .after-grid small {
+  color: #2563eb !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+}
+
+/* =========================
+   COMPARISON BARS + RISK
+========================= */
+
+.stock-simulator-pro .comparison-grid {
+  display: grid !important;
+  grid-template-columns: 1.25fr 0.75fr !important;
+  gap: 14px !important;
+  margin-bottom: 18px !important;
+}
+
+.stock-simulator-pro .comparison-card,
+.stock-simulator-pro .risk-after-card {
+  padding: 20px !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.stock-simulator-pro .bar-row {
+  margin-top: 14px !important;
+}
+
+.stock-simulator-pro .bar-row > span {
+  display: block !important;
+  margin-bottom: 7px !important;
+  color: #475569 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+.stock-simulator-pro .bar-row > div {
+  height: 9px !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: #e2e8f0 !important;
+}
+
+.stock-simulator-pro .bar-row b {
+  display: block !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, #2563eb, #38bdf8) !important;
+  transition: width 0.45s ease !important;
+}
+
+.stock-simulator-pro .bar-row.purple b {
+  background: linear-gradient(90deg, #7c3aed, #a855f7) !important;
+}
+
+.stock-simulator-pro .bar-row.green b {
+  background: linear-gradient(90deg, #16a34a, #22c55e) !important;
+}
+
+.stock-simulator-pro .risk-after-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.stock-simulator-pro .risk-after-card.safe {
+  background: linear-gradient(145deg, #ecfdf5, #ffffff) !important;
+  border-color: rgba(34, 197, 94, 0.25) !important;
+}
+
+.stock-simulator-pro .risk-after-card.danger {
+  background: linear-gradient(145deg, #fef2f2, #ffffff) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+.stock-simulator-pro .risk-after-icon {
+  width: 48px !important;
+  height: 48px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin-bottom: 10px !important;
+  border-radius: 16px !important;
+  color: #ffffff !important;
+  background: #16a34a !important;
+  font-size: 20px !important;
+}
+
+.stock-simulator-pro .risk-after-card.danger .risk-after-icon {
+  background: #dc2626 !important;
+}
+
+.stock-simulator-pro .risk-after-card > span {
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
+}
+
+.stock-simulator-pro .risk-after-card h3 {
+  margin: 5px 0 !important;
+  color: #15803d !important;
+  font-size: 28px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .risk-after-card.danger h3 {
+  color: #b91c1c !important;
+}
+
+.stock-simulator-pro .risk-after-card p {
+  max-width: 300px !important;
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+}
+
+/* =========================
+   FINANCIAL CARDS
+========================= */
+
+.stock-simulator-pro .financial-section-heading {
+  margin-bottom: 13px !important;
+}
+
+.stock-simulator-pro .financial-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+}
+
+.stock-simulator-pro .financial-grid article {
+  min-width: 0 !important;
+  padding: 18px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(145deg, #ecfdf5, #ffffff) !important;
+  border: 1px solid rgba(34, 197, 94, 0.18) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+}
+
+.stock-simulator-pro .financial-grid article:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08) !important;
+}
+
+.stock-simulator-pro .financial-grid svg {
+  margin-bottom: 9px !important;
+  color: #16a34a !important;
+  font-size: 19px !important;
+}
+
+.stock-simulator-pro .financial-grid span {
+  display: block !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+}
+
+.stock-simulator-pro .financial-grid strong {
+  display: block !important;
+  margin: 6px 0 2px !important;
+  color: #15803d !important;
+  font-size: 21px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .financial-grid small {
+  color: #2563eb !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+}
+
+/* =========================
+   AI RECOMMENDATION
+========================= */
+
+.stock-simulator-pro .final-ai-recommendation {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 22px !important;
+  padding: 20px 22px !important;
+  border-radius: 21px !important;
+}
+
+.stock-simulator-pro .final-ai-recommendation.safe {
+  color: #166534 !important;
+  background: linear-gradient(135deg, #dcfce7, #ecfdf5) !important;
+  border: 1px solid rgba(34, 197, 94, 0.25) !important;
+}
+
+.stock-simulator-pro .final-ai-recommendation.danger {
+  color: #991b1b !important;
+  background: linear-gradient(135deg, #fee2e2, #fef2f2) !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+}
+
+.stock-simulator-pro .final-ai-recommendation span {
+  display: block !important;
+  margin-bottom: 5px !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+.stock-simulator-pro .final-ai-recommendation h3 {
+  margin: 0 0 5px !important;
+  color: inherit !important;
+  font-size: 18px !important;
+  font-weight: 950 !important;
+}
+
+.stock-simulator-pro .final-ai-recommendation p {
+  margin: 0 !important;
+  color: inherit !important;
+  font-size: 11px !important;
+  line-height: 1.55 !important;
+}
+
+.stock-simulator-pro .big-check {
+  width: 54px !important;
+  height: 54px !important;
+  flex: 0 0 54px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  color: #ffffff !important;
+  background: #16a34a !important;
+  font-size: 27px !important;
+  font-weight: 950 !important;
+  box-shadow: 0 14px 32px rgba(22, 163, 74, 0.25) !important;
+}
+
+.stock-simulator-pro .final-ai-recommendation.danger .big-check {
+  background: #dc2626 !important;
+  box-shadow: 0 14px 32px rgba(220, 38, 38, 0.22) !important;
+}
+
+/* =========================
+   ENTRY ANIMATION
+========================= */
+
+.stock-simulator-pro > * {
+  animation: simulatorFadeUp 0.55s ease both;
+}
+
+.stock-simulator-pro > *:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.stock-simulator-pro > *:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.stock-simulator-pro > *:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+.stock-simulator-pro > *:nth-child(5) {
+  animation-delay: 0.2s;
+}
+
+@keyframes simulatorFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1200px) {
+  .stock-simulator-pro .simulator-header {
+    grid-template-columns: 1fr 175px !important;
+  }
+
+  .stock-simulator-pro .simulator-kpi-grid,
+  .stock-simulator-pro .after-grid,
+  .stock-simulator-pro .financial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .stock-simulator-pro {
+    padding: 24px !important;
+  }
+
+  .stock-simulator-pro .simulator-header,
+  .stock-simulator-pro .simulator-selector-card,
+  .stock-simulator-pro .sim-main-grid,
+  .stock-simulator-pro .comparison-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stock-simulator-pro .decision-score-card {
+    width: 100% !important;
+    max-width: 260px !important;
+  }
+
+  .stock-simulator-pro .after-section-heading {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .stock-simulator-pro {
+    padding: 18px !important;
+    border-radius: 24px !important;
+  }
+
+  .stock-simulator-pro .simulator-title {
+    align-items: flex-start !important;
+  }
+
+  .stock-simulator-pro .simulator-icon {
+    width: 50px !important;
+    height: 50px !important;
+    flex-basis: 50px !important;
+    font-size: 22px !important;
+  }
+
+  .stock-simulator-pro .simulator-title h2 {
+    font-size: 27px !important;
+  }
+
+  .stock-simulator-pro .simulator-kpi-grid,
+  .stock-simulator-pro .after-grid,
+  .stock-simulator-pro .financial-grid,
+  .stock-simulator-pro .slider-mini-summary {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stock-simulator-pro .sim-card-heading {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .stock-simulator-pro .sim-stock-stepper {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .stock-simulator-pro .before-after-stock {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stock-simulator-pro .before-after-arrow {
+    transform: rotate(90deg) !important;
+  }
+
+  .stock-simulator-pro .stock-growth-badge {
+    position: static !important;
+    width: fit-content !important;
+    margin: 4px auto 0 !important;
+  }
+
+  .stock-simulator-pro .final-ai-recommendation {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+}
+.stock-simulator-pro .sim-stock-stepper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.stock-simulator-pro .sim-stock-stepper button {
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+}
+
+.stock-simulator-pro .sim-stock-stepper strong {
+  display: block !important;
+  min-width: 90px !important;
+  color: #0f172a !important;
+  text-align: center !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+}
+/* ===========================
+   ANIMATED NUMBERS
+=========================== */
+
+.animated-number {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+/* =========================================
+   SMARTSTOCK GLOBAL MOTION POLISH
+========================================= */
+
+.executive-hero,
+.analytics-v5-card,
+.inventory-v5-card,
+.settings-page,
+.reports-page,
+.stock-simulator-pro,
+.premium-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.executive-hero:hover,
+.analytics-v5-card:hover,
+.inventory-v5-card:hover,
+.settings-page:hover,
+.reports-page:hover,
+.stock-simulator-pro:hover,
+.premium-card:hover {
+  border-color: rgba(96, 165, 250, 0.3);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+}
+
+button,
+a,
+select,
+input {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.dashboard-anchor-section {
+  animation: dashboardSectionIn 0.55s ease both;
+}
+
+@keyframes dashboardSectionIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-v2-nav button {
+  transition:
+    transform 0.22s ease,
+    background 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.sidebar-v2-nav button:hover {
+  transform: translateX(4px);
+}
+
+.ai-copilot-button {
+  animation: copilotFloat 3.5s ease-in-out infinite;
+}
+
+@keyframes copilotFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* =========================================
+   DASHBOARD LOADING SKELETON
+========================================= */
+
+.dashboard-skeleton {
+  min-height: 100vh;
+  padding: 32px;
+  margin-left: 265px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(37, 99, 235, 0.12),
+      transparent 30%
+    ),
+    #f8fafc;
+}
+
+.skeleton-block,
+.skeleton-card,
+.skeleton-panel {
+  position: relative;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
+.skeleton-block::after,
+.skeleton-card::after,
+.skeleton-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.72),
+    transparent
+  );
+  animation: skeletonShimmer 1.35s infinite;
+}
+
+.skeleton-hero {
+  min-height: 270px;
+  padding: 34px;
+  margin-bottom: 22px;
+  border-radius: 30px;
+  background: #dbe4f0;
+}
+
+.skeleton-badge {
+  width: 210px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.skeleton-title {
+  width: 55%;
+  height: 54px;
+  margin-top: 24px;
+  border-radius: 14px;
+}
+
+.skeleton-text {
+  width: 70%;
+  height: 15px;
+  margin-top: 17px;
+  border-radius: 999px;
+}
+
+.skeleton-text-short {
+  width: 48%;
+  margin-top: 10px;
+}
+
+.skeleton-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.skeleton-button {
+  width: 150px;
+  height: 46px;
+  border-radius: 14px;
+}
+
+.skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.skeleton-card {
+  min-height: 170px;
+  padding: 20px;
+  border-radius: 22px;
+  background: #e9eef5;
+}
+
+.skeleton-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+}
+
+.skeleton-label {
+  width: 50%;
+  height: 12px;
+  margin-top: 17px;
+  border-radius: 999px;
+}
+
+.skeleton-value {
+  width: 70%;
+  height: 30px;
+  margin-top: 12px;
+  border-radius: 9px;
+}
+
+.skeleton-small {
+  width: 42%;
+  height: 10px;
+  margin-top: 11px;
+  border-radius: 999px;
+}
+
+.skeleton-analytics-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+}
+
+.skeleton-panel {
+  min-height: 360px;
+  padding: 24px;
+  border-radius: 26px;
+  background: #e8edf4;
+}
+
+.skeleton-panel-title {
+  width: 42%;
+  height: 22px;
+  border-radius: 9px;
+}
+
+.skeleton-chart-bars {
+  height: 245px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.skeleton-chart-bars i {
+  flex: 1;
+  border-radius: 10px 10px 3px 3px;
+  background: #cbd5e1;
+  animation: skeletonBars 1.3s ease-in-out infinite alternate;
+}
+
+.skeleton-chart-bars i:nth-child(1) {
+  height: 34%;
+}
+
+.skeleton-chart-bars i:nth-child(2) {
+  height: 67%;
+}
+
+.skeleton-chart-bars i:nth-child(3) {
+  height: 42%;
+}
+
+.skeleton-chart-bars i:nth-child(4) {
+  height: 82%;
+}
+
+.skeleton-chart-bars i:nth-child(5) {
+  height: 58%;
+}
+
+.skeleton-chart-bars i:nth-child(6) {
+  height: 74%;
+}
+
+.skeleton-chart-bars i:nth-child(7) {
+  height: 49%;
+}
+
+.skeleton-chart-bars i:nth-child(8) {
+  height: 91%;
+}
+
+.skeleton-donut {
+  width: 210px;
+  height: 210px;
+  margin: 55px auto 0;
+  border-radius: 50%;
+  border: 34px solid #cbd5e1;
+  box-sizing: border-box;
+}
+
+@keyframes skeletonShimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes skeletonBars {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1000px) {
+  .dashboard-skeleton {
+    margin-left: 0;
+  }
+
+  .skeleton-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .skeleton-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-skeleton {
+    padding: 18px;
+  }
+
+  .skeleton-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-title {
+    width: 90%;
+  }
+
+  .skeleton-text {
+    width: 100%;
+  }
+
+  .skeleton-actions {
+    flex-direction: column;
+  }
+}
+/* =========================================
+   ANALYTICS FINAL POLISH
+========================================= */
+
+.analytics-v5-chart {
+  height: 310px;
+}
+
+.analytics-v5-donut-wrap {
+  height: 330px;
+}
+
+.analytics-v5-card {
+  isolation: isolate;
+}
+
+.analytics-v5-card:hover {
+  transform: translateY(-5px);
+}
+
+.donut-center-label strong {
+  font-size: 30px;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.donut-center-label span {
+  margin-top: 38px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.analytics-insight-footer {
+  position: relative;
+  overflow: hidden;
+}
+
+.analytics-insight-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  animation: analyticsInsightShine 4s ease-in-out infinite;
+}
+
+@keyframes analyticsInsightShine {
+  0%,
+  65% {
+    left: -100%;
+  }
+
+  100% {
+    left: 150%;
+  }
+}
+
+@media (max-width: 768px) {
+  .analytics-v5-chart {
+    height: 260px;
+  }
+
+  .analytics-v5-donut-wrap {
+    height: 290px;
+  }
+}
+
+
+/* =========================================================
+   FINAL DESKTOP LAYOUT FIX
+   Keeps the fixed 280px sidebar and uses all remaining space.
+========================================================= */
+
+@media (min-width: 1281px) {
+  .sidebar-v2 {
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+  }
+
+  .container {
+    width: calc(100% - 280px) !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    margin: 0 0 0 280px !important;
+    padding: 30px !important;
+
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .container > *,
+  .dashboard-anchor-section,
+  #dashboard,
+  #forecast,
+  #alerts,
+  #simulator,
+  #inventory,
+  #sales,
+  #ai,
+  #reports,
+  #settings {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+/* =========================================================
+   SMARTSTOCK AI — PREMIUM SALES HISTORY
+========================================================= */
+
+.sales-history-premium {
+  width: 100%;
+  margin: 34px 0;
+  padding: 30px;
+
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 30px;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(59, 130, 246, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #07152e,
+      #101d34
+    );
+
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.24);
+
+  overflow: hidden;
+}
+
+.sales-history-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+
+  margin-bottom: 25px;
+}
+
+.sales-history-eyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+
+  color: #60a5fa;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.sales-history-header h2 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: clamp(27px, 3vw, 38px);
+  line-height: 1.15;
+}
+
+.sales-history-header p {
+  max-width: 660px;
+  margin: 10px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.sales-history-live {
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 10px 14px;
+
+  color: #86efac;
+  background: rgba(34, 197, 94, 0.12);
+
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.sales-history-live span {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  box-shadow:
+    0 0 0 5px rgba(34, 197, 94, 0.14);
+}
+
+.sales-summary-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 16px;
+
+  margin-bottom: 22px;
+}
+
+.sales-summary-card {
+  min-width: 0;
+  padding: 19px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30, 41, 59, 0.95),
+      rgba(15, 23, 42, 0.85)
+    );
+
+  border:
+    1px solid rgba(148, 163, 184, 0.16);
+
+  border-radius: 20px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 14px 32px rgba(2, 6, 23, 0.16);
+
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.sales-summary-card:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(96, 165, 250, 0.28);
+
+  box-shadow:
+    0 18px 38px rgba(2, 6, 23, 0.23);
+}
+
+.sales-summary-icon {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+
+  display: grid;
+  place-items: center;
+
+  color: #93c5fd;
+  background:
+    rgba(59, 130, 246, 0.14);
+
+  border:
+    1px solid rgba(96, 165, 250, 0.16);
+
+  border-radius: 14px;
+}
+
+.sales-summary-icon svg {
+  font-size: 18px;
+}
+
+.sales-summary-card span {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.sales-summary-card strong {
+  display: block;
+
+  margin: 6px 0 4px;
+
+  color: #ffffff;
+
+  font-size: 21px;
+  font-weight: 900;
+
+  overflow-wrap: anywhere;
+}
+
+.sales-summary-card small {
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.sales-table-card {
+  overflow: hidden;
+
+  border:
+    1px solid rgba(148, 163, 184, 0.18);
+
+  border-radius: 24px;
+
+  background: rgba(15, 23, 42, 0.82);
+}
+
+.sales-table-toolbar {
+  padding: 20px 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.14);
+}
+
+.sales-table-toolbar > div > span {
+  display: block;
+  margin-bottom: 5px;
+
+  color: #60a5fa;
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.sales-table-toolbar h3 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 21px;
+}
+
+.sales-search-box {
+  width: min(360px, 100%);
+  height: 45px;
+  padding: 0 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: #64748b;
+
+  background: rgba(30, 41, 59, 0.82);
+
+  border:
+    1px solid rgba(148, 163, 184, 0.16);
+
+  border-radius: 14px;
+}
+
+.sales-search-box:focus-within {
+  border-color: #3b82f6;
+
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.sales-search-box input {
+  width: 100%;
+  min-width: 0;
+
+  color: #ffffff;
+  background: transparent;
+
+  border: none;
+  outline: none;
+
+  font-size: 12px;
+}
+
+.sales-search-box input::placeholder {
+  color: #64748b;
+}
+
+.sales-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.sales-table-premium {
+  width: 100%;
+  min-width: 850px;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: transparent;
+
+  box-shadow: none;
+}
+
+.sales-table-premium th {
+  padding: 16px 18px;
+
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.78);
+
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.15);
+
+  text-align: left;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.sales-table-premium th span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sales-table-premium td {
+  padding: 16px 18px;
+
+  color: #cbd5e1;
+
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.1);
+
+  text-align: left;
+
+  font-size: 12px;
+}
+
+.sales-table-premium tbody tr {
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.sales-table-premium tbody tr:hover {
+  background:
+    rgba(59, 130, 246, 0.06);
+}
+
+.sales-table-premium tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sales-id-badge {
+  display: inline-flex;
+
+  padding: 7px 10px;
+
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.12);
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.sales-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.sales-product-avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+
+  display: grid;
+  place-items: center;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+  border-radius: 12px;
+
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.sales-product-cell strong {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 12px;
+}
+
+.sales-product-cell small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+.sales-quantity-badge {
+  display: inline-flex;
+
+  padding: 7px 10px;
+
+  color: #f8fafc;
+  background: rgba(148, 163, 184, 0.12);
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.sales-profit-value {
+  font-weight: 900;
+}
+
+.sales-profit-value.positive {
+  color: #86efac;
+}
+
+.sales-profit-value.neutral {
+  color: #cbd5e1;
+}
+
+.sales-date-cell strong {
+  display: block;
+
+  color: #f8fafc;
+
+  font-size: 11px;
+}
+
+.sales-date-cell small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+.sales-empty-state {
+  min-height: 230px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.sales-empty-state svg {
+  margin-bottom: 14px;
+
+  color: #60a5fa;
+
+  font-size: 30px;
+}
+
+.sales-empty-state strong {
+  color: #ffffff;
+
+  font-size: 15px;
+}
+
+.sales-empty-state span {
+  margin-top: 6px;
+
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+/* Tablet */
+
+@media (max-width: 1100px) {
+  .sales-summary-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .sales-history-premium {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .sales-history-header,
+  .sales-table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sales-history-live {
+    width: fit-content;
+  }
+
+  .sales-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sales-search-box {
+    width: 100%;
+  }
+
+  .sales-table-toolbar {
+    padding: 17px;
+  }
+}
+/* =========================================================
+   SMARTSTOCK AI — PREMIUM INVENTORY CENTER
+========================================================= */
+
+.inventory-intelligence-section {
+  width: 100%;
+  margin: 34px 0;
+}
+
+.inventory-intelligence-card {
+  width: 100%;
+  padding: 30px;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(59, 130, 246, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #07152e,
+      #101d34
+    );
+
+  border:
+    1px solid rgba(148, 163, 184, 0.16);
+
+  border-radius: 30px;
+
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.24);
+}
+
+.inventory-summary-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 16px;
+
+  margin: 24px 0;
+}
+
+.inventory-summary-card {
+  min-width: 0;
+  padding: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30, 41, 59, 0.95),
+      rgba(15, 23, 42, 0.85)
+    );
+
+  border:
+    1px solid rgba(148, 163, 184, 0.15);
+
+  border-radius: 20px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 14px 32px rgba(2, 6, 23, 0.16);
+
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.inventory-summary-card:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(96, 165, 250, 0.3);
+
+  box-shadow:
+    0 18px 38px rgba(2, 6, 23, 0.23);
+}
+
+.inventory-summary-card span {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.inventory-summary-card strong {
+  display: block;
+  margin: 7px 0 5px;
+
+  color: #ffffff;
+
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.inventory-summary-card small {
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.inventory-table-scroll {
+  width: 100%;
+
+  overflow-x: auto;
+
+  border:
+    1px solid rgba(148, 163, 184, 0.16);
+
+  border-radius: 22px;
+}
+
+.inventory-premium-table {
+  width: 100%;
+  min-width: 1120px;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: rgba(15, 23, 42, 0.84);
+
+  box-shadow: none;
+}
+
+.inventory-premium-table th {
+  padding: 16px 18px;
+
+  color: #cbd5e1;
+  background:
+    rgba(30, 41, 59, 0.84);
+
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.14);
+
+  text-align: left;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.inventory-premium-table td {
+  padding: 17px 18px;
+
+  color: #cbd5e1;
+
+  border-bottom:
+    1px solid rgba(148, 163, 184, 0.1);
+
+  text-align: left;
+
+  font-size: 12px;
+}
+
+.inventory-premium-table tbody tr {
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.inventory-premium-table tbody tr:hover {
+  background:
+    rgba(59, 130, 246, 0.06);
+}
+
+.inventory-premium-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.inventory-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inventory-product-avatar {
+  width: 39px;
+  height: 39px;
+  flex: 0 0 39px;
+
+  display: grid;
+  place-items: center;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+  border-radius: 13px;
+
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.inventory-product-cell strong {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 12px;
+}
+
+.inventory-product-cell span {
+  display: block;
+  margin-top: 4px;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+.inventory-category-pill {
+  display: inline-flex;
+  padding: 7px 10px;
+
+  color: #bfdbfe;
+
+  background:
+    rgba(59, 130, 246, 0.12);
+
+  border:
+    1px solid rgba(96, 165, 250, 0.15);
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.inventory-stock-health {
+  min-width: 130px;
+}
+
+.inventory-stock-top {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.inventory-stock-top strong {
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.inventory-stock-top span {
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+.inventory-health-track {
+  height: 7px;
+  margin: 8px 0;
+
+  overflow: hidden;
+
+  background: rgba(148, 163, 184, 0.14);
+
+  border-radius: 999px;
+}
+
+.inventory-health-track span {
+  display: block;
+  height: 100%;
+
+  border-radius: inherit;
+
+  transition: width 450ms ease;
+}
+
+.inventory-health-track .status-healthy {
+  background:
+    linear-gradient(
+      90deg,
+      #22c55e,
+      #4ade80
+    );
+}
+
+.inventory-health-track .status-moderate {
+  background:
+    linear-gradient(
+      90deg,
+      #38bdf8,
+      #60a5fa
+    );
+}
+
+.inventory-health-track .status-warning {
+  background:
+    linear-gradient(
+      90deg,
+      #f59e0b,
+      #fbbf24
+    );
+}
+
+.inventory-health-track .status-critical {
+  background:
+    linear-gradient(
+      90deg,
+      #ef4444,
+      #fb7185
+    );
+}
+
+.inventory-status-label {
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.inventory-status-label.status-healthy {
+  color: #86efac;
+}
+
+.inventory-status-label.status-moderate {
+  color: #7dd3fc;
+}
+
+.inventory-status-label.status-warning {
+  color: #fcd34d;
+}
+
+.inventory-status-label.status-critical {
+  color: #fda4af;
+}
+
+.inventory-price {
+  color: #f8fafc;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.inventory-profit-cell strong {
+  display: block;
+
+  color: #86efac;
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.inventory-profit-cell small {
+  display: block;
+  margin-top: 4px;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+.inventory-ai-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 11px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  white-space: nowrap;
+}
+
+.inventory-ai-pill.ai-critical {
+  color: #fecaca;
+  background:
+    rgba(239, 68, 68, 0.13);
+
+  border:
+    1px solid rgba(248, 113, 113, 0.16);
+}
+
+.inventory-ai-pill.ai-warning {
+  color: #fde68a;
+  background:
+    rgba(245, 158, 11, 0.13);
+
+  border:
+    1px solid rgba(251, 191, 36, 0.16);
+}
+
+.inventory-ai-pill.ai-review {
+  color: #c4b5fd;
+  background:
+    rgba(124, 58, 237, 0.13);
+
+  border:
+    1px solid rgba(167, 139, 250, 0.16);
+}
+
+.inventory-ai-pill.ai-stable {
+  color: #bbf7d0;
+  background:
+    rgba(34, 197, 94, 0.13);
+
+  border:
+    1px solid rgba(74, 222, 128, 0.16);
+}
+
+.inventory-action-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inventory-action-button {
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 11px;
+
+  cursor: pointer;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.inventory-action-button:hover {
+  transform: translateY(-2px);
+}
+
+.inventory-action-button.edit {
+  color: #bfdbfe;
+  background:
+    rgba(59, 130, 246, 0.14);
+}
+
+.inventory-action-button.sell {
+  color: #bbf7d0;
+  background:
+    rgba(34, 197, 94, 0.14);
+}
+
+.inventory-action-button.delete {
+  color: #fecaca;
+  background:
+    rgba(239, 68, 68, 0.14);
+}
+
+.inventory-empty-state {
+  min-height: 230px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.inventory-empty-state svg {
+  margin-bottom: 14px;
+
+  color: #60a5fa;
+
+  font-size: 32px;
+}
+
+.inventory-empty-state strong {
+  color: #ffffff;
+
+  font-size: 15px;
+}
+
+.inventory-empty-state span {
+  margin-top: 6px;
+
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+  .inventory-summary-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .inventory-intelligence-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .inventory-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   FINAL INVENTORY READABILITY + SAFETY OVERRIDES
+   Keep this block at the absolute bottom of App.css
+========================================================= */
+
+.inventory-intelligence-section,
+.inventory-intelligence-card,
+.inventory-table-scroll,
+.inventory-premium-table {
+  box-sizing: border-box !important;
+}
+
+.inventory-intelligence-card {
+  overflow: hidden !important;
+}
+
+/* Prevent old global table rules from shrinking this table */
+.container .inventory-premium-table {
+  width: 100% !important;
+  min-width: 1280px !important;
+  max-width: none !important;
+  margin: 0 !important;
+  table-layout: auto !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.container .inventory-premium-table th,
+.container .inventory-premium-table td {
+  text-align: left !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  word-break: normal !important;
+}
+
+/* Header readability */
+.container .inventory-premium-table th {
+  padding: 20px 18px !important;
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Row readability */
+.container .inventory-premium-table td {
+  padding: 22px 18px !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+/* Product */
+.inventory-product-cell {
+  gap: 14px !important;
+}
+
+.inventory-product-avatar {
+  width: 46px !important;
+  height: 46px !important;
+  flex: 0 0 46px !important;
+  border-radius: 14px !important;
+  font-size: 16px !important;
+}
+
+.inventory-product-cell strong {
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+  font-weight: 900 !important;
+}
+
+.inventory-product-cell span {
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+/* Category */
+.inventory-category-pill {
+  padding: 9px 13px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+
+/* Stock health */
+.inventory-stock-health {
+  min-width: 160px !important;
+}
+
+.inventory-stock-top {
+  gap: 7px !important;
+}
+
+.inventory-stock-top strong {
+  font-size: 18px !important;
+  line-height: 1.2 !important;
+}
+
+.inventory-stock-top span {
+  font-size: 11px !important;
+}
+
+.inventory-health-track {
+  height: 9px !important;
+  margin: 10px 0 8px !important;
+}
+
+.inventory-status-label {
+  display: inline-block !important;
+  padding: 4px 8px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  line-height: 1.15 !important;
+}
+
+.inventory-status-label.status-healthy {
+  background: rgba(34, 197, 94, 0.12) !important;
+}
+
+.inventory-status-label.status-moderate {
+  background: rgba(56, 189, 248, 0.12) !important;
+}
+
+.inventory-status-label.status-warning {
+  background: rgba(245, 158, 11, 0.12) !important;
+}
+
+.inventory-status-label.status-critical {
+  background: rgba(239, 68, 68, 0.12) !important;
+}
+
+/* Prices and profit */
+.inventory-price {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+.inventory-profit-cell strong {
+  font-size: 15px !important;
+  line-height: 1.3 !important;
+}
+
+.inventory-profit-cell small {
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+}
+
+/* Recommendation */
+.inventory-ai-pill {
+  gap: 8px !important;
+  padding: 10px 13px !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+
+.inventory-ai-pill svg {
+  flex: 0 0 auto !important;
+  font-size: 12px !important;
+}
+
+/* Actions */
+.inventory-action-group {
+  gap: 10px !important;
+}
+
+.inventory-action-button {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px !important;
+  margin: 0 !important;
+  border-radius: 12px !important;
+}
+
+.inventory-action-button svg {
+  font-size: 15px !important;
+}
+
+/* Summary cards */
+.inventory-summary-card span {
+  font-size: 13px !important;
+}
+
+.inventory-summary-card strong {
+  font-size: 27px !important;
+}
+
+.inventory-summary-card small {
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+}
+
+/* Smooth horizontal scrolling only inside inventory table */
+.inventory-table-scroll {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(96, 165, 250, 0.55) rgba(15, 23, 42, 0.5);
+}
+
+.inventory-table-scroll::-webkit-scrollbar {
+  height: 10px;
+}
+
+.inventory-table-scroll::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.inventory-table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.55);
+  border-radius: 999px;
+}
+
+/* Laptop */
+@media (max-width: 1280px) {
+  .container .inventory-premium-table {
+    min-width: 1180px !important;
+  }
+
+  .container .inventory-premium-table th {
+    font-size: 13px !important;
+  }
+
+  .container .inventory-premium-table td {
+    font-size: 14px !important;
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .inventory-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .container .inventory-premium-table {
+    min-width: 1120px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .inventory-intelligence-card {
+    padding: 18px !important;
+  }
+
+  .inventory-summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .container .inventory-premium-table th {
+    padding: 16px !important;
+    font-size: 13px !important;
+  }
+
+  .container .inventory-premium-table td {
+    padding: 18px 16px !important;
+    font-size: 14px !important;
+  }
+
+  .inventory-product-cell strong {
+    font-size: 14px !important;
+  }
+
+  .inventory-product-cell span,
+  .inventory-profit-cell small,
+  .inventory-stock-top span {
+    font-size: 10px !important;
   }
 }

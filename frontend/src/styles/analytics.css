@@ -1,0 +1,263 @@
+/* =========================================================
+   SMARTSTOCK AI — FINAL ANALYTICS POLISH
+========================================================= */
+
+.analytics-v5-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.045),
+      transparent 34%
+    );
+}
+
+.analytics-v5-card::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  top: -95px;
+  right: -85px;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(96, 165, 250, 0.08);
+  filter: blur(8px);
+}
+
+.analytics-v5-chart,
+.analytics-v5-donut-wrap {
+  min-width: 0;
+}
+
+.analytics-v5-chart canvas,
+.analytics-v5-donut-wrap canvas {
+  filter: drop-shadow(
+    0 14px 22px rgba(2, 6, 23, 0.16)
+  );
+}
+
+.donut-center-label {
+  width: 112px;
+  height: 112px;
+  justify-content: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgba(15, 23, 42, 0.92),
+      rgba(2, 6, 23, 0.8)
+    );
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  box-shadow:
+    inset 0 0 22px rgba(96, 165, 250, 0.06),
+    0 12px 28px rgba(2, 6, 23, 0.22);
+}
+
+.analytics-empty-state {
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+  text-align: center;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30, 41, 59, 0.52),
+      rgba(15, 23, 42, 0.32)
+    );
+
+  border: 1px dashed rgba(148, 163, 184, 0.2);
+}
+
+.analytics-empty-icon {
+  width: 54px;
+  height: 54px;
+
+  display: grid;
+  place-items: center;
+
+  margin-bottom: 15px;
+
+  border-radius: 17px;
+
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.13);
+
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.analytics-empty-state strong {
+  color: #f8fafc;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.analytics-empty-state span {
+  max-width: 270px;
+  margin-top: 7px;
+
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.analytics-insight-footer {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 12px 25px rgba(2, 6, 23, 0.12);
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 768px) {
+  .analytics-v5-card:hover {
+    transform: none;
+  }
+
+  .analytics-v5-chart {
+    overflow: hidden !important;
+  }
+
+  .analytics-v5-chart canvas {
+    min-width: 0 !important;
+  }
+
+  .donut-center-label {
+    width: 98px;
+    height: 98px;
+  }
+
+  .donut-center-label strong {
+    font-size: 28px;
+  }
+
+  .analytics-empty-state {
+    min-height: 210px;
+  }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 520px) {
+  .analytics-v5 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .analytics-v5-card {
+    border-radius: 20px;
+  }
+
+  .analytics-v5-chart {
+    height: 250px;
+  }
+
+  .analytics-v5-donut-wrap {
+    height: 310px;
+  }
+
+  .donut-center-label {
+  
+    width: 90px;
+    height: 90px;
+  }
+
+  .donut-center-label strong {
+    font-size: 25px;
+  }
+
+  .donut-center-label span {
+    font-size: 8px;
+  }
+
+  .analytics-insight-footer {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 15px;
+    font-size: 12px;
+  }
+}
+.analytics-v5-donut-wrap {
+  position: relative;
+}
+
+.donut-center-label {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 100px;
+  height: 100px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #0f172a;
+
+  z-index: 5;
+}.analytics-v5-donut-wrap {
+  position: relative;
+}
+
+.analytics-v5-donut-wrap .donut-center-label {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+
+  width: 96px;
+  height: 96px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 !important;
+  border-radius: 50%;
+
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+
+  pointer-events: none;
+  z-index: 5;
+}
+
+.analytics-v5-donut-wrap .donut-center-label strong {
+  margin: 0;
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.analytics-v5-donut-wrap .donut-center-label span {
+  margin-top: 5px;
+  color: #94a3b8;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

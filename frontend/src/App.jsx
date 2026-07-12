@@ -1,4 +1,7 @@
 import "./App.css";
+import "./styles/analytics.css";
+import "./styles/simulator.css";
+import "./styles/responsive.css";
 import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import StatsCards from "./components/StatsCards";
@@ -36,6 +39,7 @@ import ReportsHistory from "./components/ReportsHistory";
 import { generateAIReport } from "./services/aiService";
 import { exportDashboardPDF } from "./utils/exportPDF";
 import toast from "react-hot-toast";
+import DashboardSkeleton from "./components/DashboardSkeleton";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -75,6 +79,7 @@ function App() {
   const [editId, setEditId] = useState(null);
   const [aiReport, setAiReport] = useState(null);
   const [reportHistory, setReportHistory] = useState([]);
+  const [isDashboardLoading, setIsDashboardLoading] = useState(true);
   const [formData, setFormData] = useState({
     item_name: "",
     category: "",
@@ -203,8 +208,27 @@ const fetchSales = () => {
 };
 
 useEffect(() => {
-  fetchProducts();
-  fetchSales();
+  const loadDashboardData = async () => {
+    try {
+      setIsDashboardLoading(true);
+
+      await Promise.all([
+        fetch(`${API_BASE_URL}/products`)
+          .then((response) => response.json())
+          .then((data) => setProducts(data)),
+
+        fetch(`${API_BASE_URL}/sales`)
+          .then((response) => response.json())
+          .then((data) => setSales(data)),
+      ]);
+    } catch (error) {
+      console.error("Dashboard loading error:", error);
+    } finally {
+      setIsDashboardLoading(false);
+    }
+  };
+
+  loadDashboardData();
 }, []);
 
 const handleChange = (e) => {
@@ -499,7 +523,9 @@ const topRecommendation =
   if (!isLoggedIn) {
   return <Login setIsLoggedIn={setIsLoggedIn} />;
 }
-
+  if (isDashboardLoading) {
+  return <DashboardSkeleton />;
+}
   return (
   <>
     <SidebarV2
