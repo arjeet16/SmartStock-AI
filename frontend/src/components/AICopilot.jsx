@@ -59,6 +59,10 @@ What would you like to investigate first?`,
 export default function AICopilot({
   products = [],
   sales = [],
+  totalRevenue = 0,
+  totalProfit = 0,
+  lowStockCount = 0,
+  bestSellingProduct = "No Sales",
   showSuggestions = true,
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,12 +119,16 @@ export default function AICopilot({
     setInput("");
     setLoading(true);
 
-    try {
-      const aiResponse = await askCopilot({
-        message: messageText,
-        products,
-        sales,
-      });
+   try {
+  const aiResponse = await askCopilot({
+    question: messageText,
+    products,
+    sales,
+    totalRevenue,
+    totalProfit,
+    lowStockCount,
+    bestSellingProduct,
+  });
 
       const aiMessage = {
         id: crypto.randomUUID(),
@@ -166,11 +174,15 @@ export default function AICopilot({
   setLoading(true);
 
   try {
-    const aiResponse = await askCopilot({
-      message: previousUserMessage.text,
-      products,
-      sales,
-    });
+  const aiResponse = await askCopilot({
+    question: previousUserMessage.text,
+    products,
+    sales,
+    totalRevenue,
+    totalProfit,
+    lowStockCount,
+    bestSellingProduct,
+  });
 
     const regeneratedMessage = {
       id: crypto.randomUUID(),

@@ -68,6 +68,7 @@ Use this exact JSON structure:
 
 async function generateCopilotAnswer({
   question,
+  message,
   products = [],
   sales = [],
   totalRevenue = 0,
@@ -75,26 +76,72 @@ async function generateCopilotAnswer({
   lowStockCount = 0,
   bestSellingProduct = "No Sales",
 }) {
+  const userQuestion = String(
+    question || message || ""
+  ).trim();
+
+  if (!userQuestion) {
+    return "Please ask a specific inventory, sales, profit, or forecasting question.";
+  }
+
+  const normalizedProducts = products.map((product) => {
+    const quantity = Number(product.quantity || 0);
+    const buyingPrice = Number(product.buying_price || 0);
+    const sellingPrice = Number(product.selling_price || 0);
+
+    return {
+      id: product.id,
+      name: product.item_name,
+      category: product.category,
+      quantity,
+      buyingPrice,
+      sellingPrice,
+      profitPerUnit: sellingPrice - buyingPrice,
+      stockStatus:
+        quantity <= 0
+          ? "Out of Stock"
+          : quantity < 20
+          ? "Low Stock"
+          : "Healthy",
+    };
+  });
+
+  const calculatedLowStock = normalizedProducts.filter(
+    (product) => product.quantity < 20
+  );
+
   const prompt = `
-You are SmartStock Copilot, an inventory assistant.
+You are SmartStock AI Copilot, an expert inventory and retail business analyst.
 
-Answer the user's question directly and practically.
-Do NOT return JSON.
-Do NOT use markdown tables.
-Keep the answer concise and useful.
+Answer the user's exact question using only the supplied business data.
 
-User Question:
-${question}
+Rules:
+- Do not claim that no question was asked.
+- Do not invent products, quantities, revenue, sales, or profit.
+- Mention exact product names and quantities when relevant.
+- Give practical actions, not generic advice.
+- Use short headings and bullet points.
+- Do not use markdown tables.
+- Keep the response between 100 and 220 words.
+- If data is missing, clearly state which data is unavailable.
+- For low-stock questions, list every product below 20 units.
+- For profit questions, calculate from buying and selling prices.
+- For executive summaries, include performance, risks, and next actions.
 
-Business Context:
-- Total Products: ${products.length}
-- Total Revenue: ₹${totalRevenue}
-- Total Profit: ₹${totalProfit}
-- Low Stock Items: ${lowStockCount}
-- Best Selling Product: ${bestSellingProduct}
+User question:
+${userQuestion}
+
+Business summary:
+- Total products: ${normalizedProducts.length}
+- Total revenue: ₹${Number(totalRevenue).toLocaleString("en-IN")}
+- Total profit: ₹${Number(totalProfit).toLocaleString("en-IN")}
+- Low-stock products: ${
+    lowStockCount || calculatedLowStock.length
+  }
+- Best-selling product: ${bestSellingProduct}
 
 Products:
-${JSON.stringify(products, null, 2)}
+${JSON.stringify(normalizedProducts, null, 2)}
 
 Sales:
 ${JSON.stringify(sales, null, 2)}

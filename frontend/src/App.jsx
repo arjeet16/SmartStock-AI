@@ -69,7 +69,9 @@ ChartJS.register(
 );
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+  return localStorage.getItem("smartstock_is_logged_in") === "true";
+});
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
   const [forecastData, setForecastData] = useState([]);
@@ -80,6 +82,10 @@ function App() {
   const [aiReport, setAiReport] = useState(null);
   const [reportHistory, setReportHistory] = useState([]);
   const [isDashboardLoading, setIsDashboardLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+const [sellTarget, setSellTarget] = useState(null);
+const [sellQuantity, setSellQuantity] = useState("");
   const [formData, setFormData] = useState({
     item_name: "",
     category: "",
@@ -120,7 +126,7 @@ function App() {
     toast.success("AI Report Generated Successfully!");
   } catch (error) {
     console.error("AI report error:", error);
-    alert("Failed to generate AI report.");
+    toast.error("Failed to generate AI report.");
   } finally {
     setIsGeneratingReport(false);
   }
@@ -184,14 +190,19 @@ const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   });
 };
   const handleLogout = () => {
-    const confirmLogout = window.confirm(
-      "Are you sure you want to logout?"
-    );
+  localStorage.removeItem("smartstock_is_logged_in");
+  localStorage.removeItem("smartstock_current_user");
 
-    if (!confirmLogout) return;
+  sessionStorage.removeItem("smartstock_is_logged_in");
+  sessionStorage.removeItem("smartstock_current_user");
 
-    setIsLoggedIn(false);
-  };
+  setIsLoggedIn(false);
+
+  toast.dismiss();
+  toast.success("Logged out successfully.", {
+    id: "smartstock-logout",
+  });
+};
 
 const fetchProducts = () => {
   fetch(`${API_BASE_URL}/products`)
@@ -273,19 +284,52 @@ const addProduct = async (e) => {
   });
 };
 
-const deleteProduct = async (id) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this product?"
+const deleteProduct = (id) => {
+  const product = products.find(
+    (item) => Number(item.id) === Number(id)
   );
 
-  if (!confirmDelete) return;
+  if (!product) {
+    toast.error("Product not found");
+    return;
+  }
 
-  await fetch(`${API_BASE_URL}/products/${id}`, {
-    method: "DELETE",
-  });
+  setDeleteTarget(product);
+};
+const confirmDeleteProduct = async () => {
+  if (!deleteTarget) return;
 
-  fetchProducts();
-  fetchSales();
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/products/${deleteTarget.id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Unable to delete product"
+      );
+    }
+
+    toast.success(
+      `${deleteTarget.item_name} deleted successfully`
+    );
+
+    setDeleteTarget(null);
+
+    fetchProducts();
+    fetchSales();
+  } catch (error) {
+    console.error("Delete product error:", error);
+
+    toast.error(
+      error.message || "Failed to delete product"
+    );
+  }
 };
 
 const exportToExcel = () => {
@@ -307,24 +351,80 @@ const exportToExcel = () => {
   saveAs(data, "Inventory_Report.xlsx");
 };
 
-const sellProduct = async (productId) => {
-  const quantity = prompt("Enter quantity to sell:");
+const sellProduct = (productId) => {
+  const product = products.find(
+    (item) => Number(item.id) === Number(productId)
+  );
 
-  if (!quantity || Number(quantity) <= 0) return;
+  if (!product) {
+    toast.error("Product not found");
+    return;
+  }
 
-  await fetch(`${API_BASE_URL}/sell`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      product_id: productId,
-      quantity_sold: Number(quantity),
-    }),
-  });
+  setSellTarget(product);
+  setSellQuantity("");
+};
+const confirmSellProduct = async () => {
+  if (!sellTarget) return;
 
-  fetchProducts();
-  fetchSales();
+  const quantity = Number(sellQuantity);
+
+  if (
+    !Number.isInteger(quantity) ||
+    quantity <= 0
+  ) {
+    toast.error("Enter a valid whole-number quantity");
+    return;
+  }
+
+  if (quantity > Number(sellTarget.quantity)) {
+    toast.error(
+      `Only ${sellTarget.quantity} units are available`
+    );
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/sell`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          product_id: sellTarget.id,
+          quantity_sold: quantity,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Unable to sell product"
+      );
+    }
+
+    toast.success(
+      `${quantity} unit${
+        quantity === 1 ? "" : "s"
+      } of ${sellTarget.item_name} sold`
+    );
+
+    setSellTarget(null);
+    setSellQuantity("");
+
+    fetchProducts();
+    fetchSales();
+  } catch (error) {
+    console.error("Sell product error:", error);
+
+    toast.error(
+      error.message || "Failed to record sale"
+    );
+  }
 };
 
   const editProduct = (item) => {
@@ -702,7 +802,114 @@ const topRecommendation =
           setSettings={setSettings}
         />
       </div>
+      {deleteTarget && (
+  <div
+    className="smartstock-modal-backdrop"
+    onMouseDown={() => setDeleteTarget(null)}
+  >
+    <div
+      className="smartstock-modal"
+      onMouseDown={(event) =>
+        event.stopPropagation()
+      }
+    >
+      <span className="smartstock-modal-label">
+        DELETE PRODUCT
+      </span>
 
+      <h3>Delete {deleteTarget.item_name}?</h3>
+
+      <p>
+        This product will be removed permanently. This
+        action cannot be undone.
+      </p>
+
+      <div className="smartstock-modal-actions">
+        <button
+          type="button"
+          className="smartstock-modal-cancel"
+          onClick={() => setDeleteTarget(null)}
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          className="smartstock-modal-delete"
+          onClick={confirmDeleteProduct}
+        >
+          Delete Product
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{sellTarget && (
+  <div
+    className="smartstock-modal-backdrop"
+    onMouseDown={() => {
+      setSellTarget(null);
+      setSellQuantity("");
+    }}
+  >
+    <div
+      className="smartstock-modal"
+      onMouseDown={(event) =>
+        event.stopPropagation()
+      }
+    >
+      <span className="smartstock-modal-label">
+        RECORD SALE
+      </span>
+
+      <h3>Sell {sellTarget.item_name}</h3>
+
+      <p>
+        Available stock:{" "}
+        <strong>{sellTarget.quantity} units</strong>
+      </p>
+
+      <label className="smartstock-modal-field">
+        <span>Quantity to sell</span>
+
+        <input
+          type="number"
+          min="1"
+          max={sellTarget.quantity}
+          step="1"
+          value={sellQuantity}
+          onChange={(event) =>
+            setSellQuantity(event.target.value)
+          }
+          placeholder="Enter quantity"
+          autoFocus
+        />
+      </label>
+
+      <div className="smartstock-modal-actions">
+        <button
+          type="button"
+          className="smartstock-modal-cancel"
+          onClick={() => {
+            setSellTarget(null);
+            setSellQuantity("");
+          }}
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          className="smartstock-modal-confirm"
+          onClick={confirmSellProduct}
+        >
+          Confirm Sale
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       <AICopilot
         products={products}
         sales={sales}
