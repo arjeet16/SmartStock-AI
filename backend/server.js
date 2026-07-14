@@ -6,7 +6,8 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
-
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 const db = require("./config/db");
 const {
   generateInventoryReport,
@@ -21,7 +22,16 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+const mailTransporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT || 587),
+  secure:
+    String(process.env.SMTP_SECURE).toLowerCase() === "true",
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 /* =========================================================
    ROOT
 ========================================================= */
@@ -658,7 +668,265 @@ app.post("/register", async (req, res) => {
     });
   }
 });
+// FORGOT PASSWORD
+app.post("/forgot-password", async (req, res) => {
+  try {
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
 
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email address is required.",
+      });
+    }
+
+    const [users] = await db.promise().query(
+      `
+        SELECT id, full_name, email
+        FROM users
+        WHERE LOWER(email) = ?
+        LIMIT 1
+      `,
+      [email]
+    );
+
+    /*
+      Return the same message even if the user does not exist.
+      This avoids revealing which emails are registered.
+    */
+    if (users.length === 0) {
+      return res.json({
+        success: true,
+        message:
+          "If an account exists for this email, a reset link has been sent.",
+      });
+    }
+
+    const user = users[0];
+
+    const resetToken = crypto
+      .randomBytes(32)
+      .toString("hex");
+
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    const resetTokenExpires = new Date(
+      Date.now() + 15 * 60 * 1000
+    );
+
+    await db.promise().query(
+      `
+        UPDATE users
+        SET
+          reset_token_hash = ?,
+          reset_token_expires = ?
+        WHERE id = ?
+      `,
+      [
+        resetTokenHash,
+        resetTokenExpires,
+        user.id,
+      ]
+    );
+
+    const frontendUrl =
+      process.env.FRONTEND_URL ||
+      "http://localhost:5173";
+
+    const resetUrl =
+      `${frontendUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(
+        user.email
+      )}`;
+
+    await mailTransporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: user.email,
+      subject: "Reset your SmartStock AI password",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+          <h2 style="color: #2563eb;">SmartStock AI</h2>
+
+          <p>Hello ${user.full_name || "User"},</p>
+
+          <p>
+            We received a request to reset your password.
+          </p>
+
+          <p>
+            Click the button below to create a new password.
+            This link will expire in 15 minutes.
+          </p>
+
+          <p style="margin: 30px 0;">
+            <a
+              href="${resetUrl}"
+              style="
+                display: inline-block;
+                padding: 14px 22px;
+                background: #2563eb;
+                color: #ffffff;
+                text-decoration: none;
+                border-radius: 10px;
+                font-weight: 700;
+              "
+            >
+              Reset Password
+            </a>
+          </p>
+
+          <p>
+            If you did not request this, you can safely ignore this email.
+          </p>
+
+          <p style="color: #64748b; font-size: 13px;">
+            SmartStock AI Security Team
+          </p>
+        </div>
+      `,
+    });
+
+    return res.json({
+      success: true,
+      message:
+        "If an account exists for this email, a reset link has been sent.",
+    });
+  } catch (error) {
+    console.error(
+      "FORGOT PASSWORD ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to process password reset request.",
+      error: error.message,
+    });
+  }
+});
+// RESET PASSWORD
+app.post("/reset-password", async (req, res) => {
+  try {
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+
+    const token = String(req.body.token || "").trim();
+    const newPassword = String(
+      req.body.new_password || ""
+    );
+    const confirmPassword = String(
+      req.body.confirm_password || ""
+    );
+
+    if (
+      !email ||
+      !token ||
+      !newPassword ||
+      !confirmPassword
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required.",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match.",
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must contain at least 8 characters.",
+      });
+    }
+
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const [users] = await db.promise().query(
+      `
+        SELECT
+          id,
+          reset_token_expires
+        FROM users
+        WHERE LOWER(email) = ?
+          AND reset_token_hash = ?
+        LIMIT 1
+      `,
+      [email, resetTokenHash]
+    );
+
+    if (users.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Reset link is invalid or has already been used.",
+      });
+    }
+
+    const user = users[0];
+
+    if (
+      !user.reset_token_expires ||
+      new Date(user.reset_token_expires).getTime() <
+        Date.now()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Reset link has expired. Request a new one.",
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(
+      newPassword,
+      12
+    );
+
+    await db.promise().query(
+      `
+        UPDATE users
+        SET
+          password_hash = ?,
+          reset_token_hash = NULL,
+          reset_token_expires = NULL
+        WHERE id = ?
+      `,
+      [passwordHash, user.id]
+    );
+
+    return res.json({
+      success: true,
+      message:
+        "Password reset successfully. You can now sign in.",
+    });
+  } catch (error) {
+    console.error(
+      "RESET PASSWORD ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to reset password.",
+      error: error.message,
+    });
+  }
+});
 // LOGIN WITH EMAIL, MOBILE OR LEGACY ADMIN USERNAME
 app.post("/login", async (req, res) => {
   try {
@@ -1309,7 +1577,15 @@ app.post(
 /* =========================================================
    START SERVER
 ========================================================= */
-
+mailTransporter
+  .verify()
+  .then(() => {
+    console.log("✅ SMTP mail server connected successfully.");
+  })
+  .catch((error) => {
+    console.error("❌ SMTP connection failed:");
+    console.error(error.message);
+  });
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

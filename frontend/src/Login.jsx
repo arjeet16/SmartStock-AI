@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaBuilding,
@@ -25,8 +25,19 @@ const INITIAL_REGISTER_FORM = {
   password: "",
   confirm_password: "",
 };
-
 function Login({ setIsLoggedIn }) {
+const queryParams = new URLSearchParams(
+  window.location.search
+);
+
+const resetToken = queryParams.get("token") || "";
+const resetEmail = queryParams.get("email") || "";
+
+const isResetPasswordPage =
+  window.location.pathname === "/reset-password" &&
+  Boolean(resetToken) &&
+  Boolean(resetEmail);
+
   const [authMode, setAuthMode] = useState("login");
 
   const [identifier, setIdentifier] = useState(() => {
@@ -40,7 +51,16 @@ function Login({ setIsLoggedIn }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] =
     useState(false);
+  const [resetForm, setResetForm] = useState({
+  new_password: "",
+  confirm_password: "",
+});
 
+const [showResetPassword, setShowResetPassword] =
+  useState(false);
+
+const [showResetConfirmPassword, setShowResetConfirmPassword] =
+  useState(false);
   const [rememberMe, setRememberMe] = useState(
     Boolean(
       localStorage.getItem(
@@ -52,7 +72,6 @@ function Login({ setIsLoggedIn }) {
   const [registerForm, setRegisterForm] = useState(
     INITIAL_REGISTER_FORM
   );
-
   const [showRegisterPassword, setShowRegisterPassword] =
     useState(false);
 
@@ -63,7 +82,9 @@ function Login({ setIsLoggedIn }) {
 
   const [isLoading, setIsLoading] =
     useState(false);
-
+  const [forgotEmail, setForgotEmail] = useState("");
+const [showForgotPassword, setShowForgotPassword] =
+  useState(false);
   const handleRegisterChange = (event) => {
     const { name, value } = event.target;
 
@@ -239,17 +260,163 @@ setIsLoggedIn(true);
   };
 
   const handleForgotPassword = () => {
-    toast(
-      "Password recovery will be connected in the next step."
-    );
-  };
+  setForgotEmail(
+    identifier.includes("@") ? identifier : ""
+  );
 
+  setShowForgotPassword(true);
+};
+const submitForgotPassword = async (event) => {
+  event.preventDefault();
+
+  const email = forgotEmail.trim().toLowerCase();
+
+  if (!email) {
+    toast.error("Please enter your email address.");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    const response = await fetch(
+      `${API_BASE_URL}/forgot-password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message ||
+          "Unable to send password reset email."
+      );
+    }
+
+    toast.success(
+      data.message ||
+        "Password reset link sent successfully."
+    );
+
+    setShowForgotPassword(false);
+    setForgotEmail("");
+  } catch (error) {
+    console.error("Forgot password error:", error);
+
+    toast.error(
+      error.message ||
+        "Unable to send password reset email."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+const submitResetPassword = async (event) => {
+  event.preventDefault();
+
+  const newPassword = resetForm.new_password;
+  const confirmPassword = resetForm.confirm_password;
+
+  if (!newPassword || !confirmPassword) {
+    toast.error("Please complete both password fields.");
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    toast.error(
+      "Password must contain at least 8 characters."
+    );
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    toast.error("Passwords do not match.");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    const response = await fetch(
+      `${API_BASE_URL}/reset-password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: resetEmail,
+          token: resetToken,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        }),
+      }
+    );
+
+    const contentType =
+      response.headers.get("content-type") || "";
+
+    if (!contentType.includes("application/json")) {
+      throw new Error(
+        `Backend returned status ${response.status}.`
+      );
+    }
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message || "Unable to reset password."
+      );
+    }
+
+    toast.success(
+      data.message ||
+        "Password reset successfully."
+    );
+
+    setResetForm({
+      new_password: "",
+      confirm_password: "",
+    });
+
+    setShowResetPassword(false);
+    setIdentifier(resetEmail);
+    setPassword("");
+
+    window.history.replaceState(
+      {},
+      "",
+      window.location.origin
+    );
+  } catch (error) {
+    console.error("Reset password error:", error);
+
+    toast.error(
+      error.message || "Unable to reset password."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
   const handleGoogleLogin = () => {
     toast(
       "Google authentication will be connected after OAuth configuration."
     );
   };
-
+useEffect(() => {
+  if (isResetPasswordPage) {
+    setShowResetPassword(true);
+  }
+}, [isResetPasswordPage]);
+const [showNewPassword, setShowNewPassword] =
+  useState(false);
   return (
     <main className="auth-page">
       <div className="auth-background-grid" />
@@ -692,7 +859,226 @@ setIsLoggedIn(true);
             </form>
           )}
         </div>
-      </section>
+           </section>
+
+      {showForgotPassword && (
+        <div
+          className="auth-modal-backdrop"
+          onMouseDown={() => {
+            if (!isLoading) {
+              setShowForgotPassword(false);
+            }
+          }}
+        >
+          <form
+            className="auth-modal-card"
+            onSubmit={submitForgotPassword}
+            onMouseDown={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <button
+              type="button"
+              className="auth-modal-close"
+              onClick={() =>
+                setShowForgotPassword(false)
+              }
+              disabled={isLoading}
+              aria-label="Close forgot password"
+            >
+              ×
+            </button>
+
+            <div className="auth-modal-icon">
+              <FaEnvelope />
+            </div>
+
+            <span className="auth-form-eyebrow">
+              PASSWORD RECOVERY
+            </span>
+
+            <h2>Forgot your password?</h2>
+
+            <p>
+              Enter the email address linked to your
+              SmartStock AI account. We will send you a
+              secure reset link.
+            </p>
+
+            <label className="auth-field">
+              <span>Email Address</span>
+
+              <div className="auth-input-wrapper">
+                <FaEnvelope />
+
+                <input
+                  type="email"
+                  value={forgotEmail}
+                  onChange={(event) =>
+                    setForgotEmail(event.target.value)
+                  }
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  disabled={isLoading}
+                  autoFocus
+                  required
+                />
+              </div>
+            </label>
+
+            <button
+              type="submit"
+              className="auth-submit-button"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="auth-spinner" />
+                  Sending reset link...
+                </>
+              ) : (
+                "Send Reset Link"
+              )}
+            </button>
+
+            <button
+              type="button"
+              className="auth-modal-back-button"
+              onClick={() =>
+                setShowForgotPassword(false)
+              }
+              disabled={isLoading}
+            >
+              Back to login
+            </button>
+          </form>
+        </div>
+      )}
+      {showResetPassword && (
+  <div className="auth-modal-backdrop">
+    <form
+      className="auth-modal-card"
+      onSubmit={submitResetPassword}
+    >
+      <div className="auth-modal-icon">
+        <FaLock />
+      </div>
+
+      <span className="auth-form-eyebrow">
+        CREATE NEW PASSWORD
+      </span>
+
+      <h2>Reset your password</h2>
+
+      <p>
+        Enter a new secure password for{" "}
+        <strong>{resetEmail}</strong>.
+      </p>
+
+      <label className="auth-field">
+        <span>New Password</span>
+
+        <div className="auth-input-wrapper">
+          <FaLock />
+
+          <input
+           type={
+  showNewPassword
+    ? "text"
+    : "password"
+}
+            value={resetForm.new_password}
+            onChange={(event) =>
+              setResetForm((previous) => ({
+                ...previous,
+                new_password: event.target.value,
+              }))
+            }
+            placeholder="Minimum 8 characters"
+            autoComplete="new-password"
+            disabled={isLoading}
+            required
+          />
+
+          <button
+            type="button"
+            className="auth-password-toggle"
+            onClick={() =>
+  setShowNewPassword(
+    (previous) => !previous
+  )
+}
+          >
+            {showNewPassword ? (
+              <FaEyeSlash />
+            ) : (
+              <FaEye />
+            )}
+          </button>
+        </div>
+      </label>
+
+      <label className="auth-field">
+        <span>Confirm Password</span>
+
+        <div className="auth-input-wrapper">
+          <FaLock />
+
+          <input
+            type={
+              showResetConfirmPassword
+                ? "text"
+                : "password"
+            }
+            value={resetForm.confirm_password}
+            onChange={(event) =>
+              setResetForm((previous) => ({
+                ...previous,
+                confirm_password:
+                  event.target.value,
+              }))
+            }
+            placeholder="Repeat new password"
+            autoComplete="new-password"
+            disabled={isLoading}
+            required
+          />
+
+          <button
+            type="button"
+            className="auth-password-toggle"
+            onClick={() =>
+              setShowResetConfirmPassword(
+                (previous) => !previous
+              )
+            }
+          >
+            {showResetConfirmPassword ? (
+              <FaEyeSlash />
+            ) : (
+              <FaEye />
+            )}
+          </button>
+        </div>
+      </label>
+
+      <button
+        type="submit"
+        className="auth-submit-button"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <>
+            <span className="auth-spinner" />
+            Resetting password...
+          </>
+        ) : (
+          "Reset Password"
+        )}
+      </button>
+    </form>
+  </div>
+)}
     </main>
   );
 }
