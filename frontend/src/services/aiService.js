@@ -1,22 +1,16 @@
-import { API_BASE_URL } from "./api";
+import { authFetch } from "./authFetch";
 
 export async function generateAIReport(payload) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/ai-report`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+  const data = await authFetch("/ai-report", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
-    if (!response.ok) {
-      throw new Error("AI report request failed");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("AI report error:", error);
-    throw error;
+  if (!data.report) {
+    throw new Error(
+      "AI report could not be generated."
+    );
   }
+
+  return data.report;
 }

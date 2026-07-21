@@ -1,23 +1,40 @@
 import { useEffect, useState } from "react";
-import { getMLMetrics } from "../services/mlMetricsService";
+import { authFetch } from "../services/authFetch";
 
 export default function MLModelMetrics() {
   const [metrics, setMetrics] = useState(null);
 
   useEffect(() => {
-    async function loadMetrics() {
+    let isMounted = true;
+
+    const loadMetrics = async () => {
       try {
-        const data = await getMLMetrics();
-        setMetrics(data);
+        const data = await authFetch("/ml-metrics");
+        console.log("ML Metrics Response:", data);
+        if (isMounted) {
+          setMetrics(data?.metrics ?? null);
+        }
       } catch (error) {
         console.error("ML metrics error:", error);
+
+        if (isMounted) {
+          setMetrics(null);
+        }
       }
-    }
+    };
 
     loadMetrics();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (!metrics) return null;
+
+  const features = Array.isArray(metrics.features)
+    ? metrics.features
+    : [];
 
   return (
     <section className="ml-metrics-panel">
@@ -25,41 +42,43 @@ export default function MLModelMetrics() {
         <div>
           <span>🧠 Machine Learning Engine</span>
           <h2>Model Performance</h2>
-          <p>Live metadata from the Python Random Forest forecasting service.</p>
+          <p>
+            Live metadata from the Python Random Forest forecasting service.
+          </p>
         </div>
 
-        <strong>{metrics.status}</strong>
+        <strong>{metrics.status || "Healthy"}</strong>
       </div>
 
       <div className="ml-metrics-grid">
         <div>
           <span>Algorithm</span>
-          <strong>{metrics.algorithm}</strong>
+          <strong>{metrics.algorithm || "Random Forest"}</strong>
         </div>
 
         <div>
           <span>R² Score</span>
-          <strong>{metrics.r2_score}</strong>
+          <strong>{metrics.r2_score ?? "-"}</strong>
         </div>
 
         <div>
           <span>MAE</span>
-          <strong>{metrics.mae}</strong>
+          <strong>{metrics.mae ?? "-"}</strong>
         </div>
 
         <div>
           <span>Training Samples</span>
-          <strong>{metrics.training_samples}</strong>
+          <strong>{metrics.training_samples ?? "-"}</strong>
         </div>
 
         <div>
           <span>Last Trained</span>
-          <strong>{metrics.last_trained}</strong>
+          <strong>{metrics.last_trained ?? "-"}</strong>
         </div>
 
         <div>
           <span>Features</span>
-          <strong>{metrics.features.length}</strong>
+          <strong>{features.length}</strong>
         </div>
       </div>
     </section>

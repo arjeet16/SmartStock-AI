@@ -1,13 +1,7 @@
-import { API_BASE_URL } from "./api";
+import { authFetch } from "./authFetch";
 
 export async function getMLMetrics() {
-  const response = await fetch(`${API_BASE_URL}/ml-metrics`);
+  const data = await authFetch("/ml-metrics");
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch ML metrics");
-  }
-
-  const data = await response.json();
-
-  return data.metrics;
+  return data.metrics || data;
 }

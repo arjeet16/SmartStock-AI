@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getForecast } from "../services/forecastService";
+import { getDemandForecast } from "../services/forecastService";
 import {
   FaBoxOpen,
   FaChartLine,
@@ -20,7 +20,7 @@ export default function DemandForecast({ onForecastLoad }) {
     try {
       setLoading(true);
       
-      const data = await getForecast();
+      const data = await getDemandForecast();
       console.log("Forecast loaded:", data);
 
 setForecast(data);

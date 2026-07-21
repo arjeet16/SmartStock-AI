@@ -148,6 +148,13 @@ localStorage.setItem(
   "true"
 );
 
+if (data.token) {
+  localStorage.setItem(
+    "smartstock_auth_token",
+    data.token
+  );
+}
+
 if (data.user) {
   localStorage.setItem(
     "smartstock_current_user",

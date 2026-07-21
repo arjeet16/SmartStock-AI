@@ -1,11 +1,9 @@
-export async function getForecast() {
-  const response = await fetch("http://localhost:5000/forecast");
+import { authFetch } from "./authFetch";
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch forecast");
-  }
+export async function getDemandForecast() {
+  const data = await authFetch("/forecast");
 
-  const data = await response.json();
-
-  return data.forecast || [];
+  return Array.isArray(data.forecast)
+    ? data.forecast
+    : [];
 }

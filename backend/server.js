@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 console.log("SERVER FILE LOADED");
@@ -8,6 +9,7 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 const db = require("./config/db");
 const {
   generateInventoryReport,
@@ -32,6 +34,51 @@ const mailTransporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 });
+
+const createAuthToken = (user) => {
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d",
+    }
+  );
+};
+
+const authenticateUser = (req, res, next) => {
+  const authHeader = req.headers.authorization || "";
+
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : "";
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication required.",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired session.",
+    });
+  }
+};
+
 /* =========================================================
    ROOT
 ========================================================= */
@@ -45,14 +92,17 @@ app.get("/", (req, res) => {
 ========================================================= */
 
 // GET ALL PRODUCTS
-app.get("/products", (req, res) => {
+app.get("/products", authenticateUser, (req, res) => {
+  const userId = Number(req.user.id);
+
   const sql = `
     SELECT *
     FROM stock_items
+    WHERE user_id = ?
     ORDER BY id DESC
   `;
 
-  db.query(sql, (error, results) => {
+  db.query(sql, [userId], (error, results) => {
     if (error) {
       console.error("GET PRODUCTS ERROR:", error);
 
@@ -68,7 +118,7 @@ app.get("/products", (req, res) => {
 });
 
 // ADD PRODUCT
-app.post("/products", (req, res) => {
+app.post("/products", authenticateUser, (req, res) => {
   const {
     item_name,
     category,
@@ -76,7 +126,7 @@ app.post("/products", (req, res) => {
     buying_price,
     selling_price,
   } = req.body;
-
+  const userId = Number(req.user.id);
   const cleanItemName = String(item_name || "").trim();
   const cleanCategory = String(category || "").trim();
 
@@ -102,25 +152,27 @@ app.post("/products", (req, res) => {
 
   const sql = `
     INSERT INTO stock_items
-    (
-      item_name,
-      category,
-      quantity,
-      buying_price,
-      selling_price
-    )
-    VALUES (?, ?, ?, ?, ?)
+(
+  user_id,
+  item_name,
+  category,
+  quantity,
+  buying_price,
+  selling_price
+)
+VALUES (?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [
-      cleanItemName,
-      cleanCategory,
-      normalizedQuantity,
-      normalizedBuyingPrice,
-      normalizedSellingPrice,
-    ],
+   [
+  userId,
+  cleanItemName,
+  cleanCategory,
+  normalizedQuantity,
+  normalizedBuyingPrice,
+  normalizedSellingPrice,
+],
     (error, result) => {
       if (error) {
         console.error("ADD PRODUCT ERROR:", error);
@@ -142,11 +194,12 @@ app.post("/products", (req, res) => {
 });
 
 // UPDATE PRODUCT
-app.put("/products/:id", (req, res) => {
+app.put("/products/:id", authenticateUser, (req, res) => {
   const { id } = req.params;
-
+  const userId = Number(req.user.id);
+  
   const {
-    item_name,
+    item_name, 
     category,
     quantity,
     buying_price,
@@ -177,26 +230,28 @@ app.put("/products/:id", (req, res) => {
   }
 
   const sql = `
-    UPDATE stock_items
-    SET
-      item_name = ?,
-      category = ?,
-      quantity = ?,
-      buying_price = ?,
-      selling_price = ?
-    WHERE id = ?
+   UPDATE stock_items
+SET
+  item_name = ?,
+  category = ?,
+  quantity = ?,
+  buying_price = ?,
+  selling_price = ?
+WHERE id = ?
+  AND user_id = ?
   `;
 
   db.query(
     sql,
     [
-      cleanItemName,
-      cleanCategory,
-      normalizedQuantity,
-      normalizedBuyingPrice,
-      normalizedSellingPrice,
-      id,
-    ],
+  cleanItemName,
+  cleanCategory,
+  normalizedQuantity,
+  normalizedBuyingPrice,
+  normalizedSellingPrice,
+  id,
+  userId,
+],
     (error, result) => {
       if (error) {
         console.error("UPDATE PRODUCT ERROR:", error);
@@ -224,9 +279,12 @@ app.put("/products/:id", (req, res) => {
 });
 
 // UPDATE COMPLETE PRODUCT
-app.put("/products/edit/:id", (req, res) => {
+app.put(
+  "/products/edit/:id",
+  authenticateUser,
+  (req, res) => {
   const { id } = req.params;
-
+  const userId = Number(req.user.id);
   const {
     item_name,
     category,
@@ -267,18 +325,20 @@ app.put("/products/edit/:id", (req, res) => {
       buying_price = ?,
       selling_price = ?
     WHERE id = ?
+  AND user_id = ?
   `;
 
   db.query(
     sql,
     [
-      cleanItemName,
-      cleanCategory,
-      normalizedQuantity,
-      normalizedBuyingPrice,
-      normalizedSellingPrice,
-      id,
-    ],
+  cleanItemName,
+  cleanCategory,
+  normalizedQuantity,
+  normalizedBuyingPrice,
+  normalizedSellingPrice,
+  id,
+  userId,
+],
     (error, result) => {
       if (error) {
         console.error("EDIT PRODUCT ERROR:", error);
@@ -306,15 +366,16 @@ app.put("/products/edit/:id", (req, res) => {
 });
 
 // DELETE PRODUCT
-app.delete("/products/:id", (req, res) => {
+app.delete("/products/:id", authenticateUser, (req, res) => {
   const { id } = req.params;
-
+  const userId = Number(req.user.id);
   const sql = `
     DELETE FROM stock_items
-    WHERE id = ?
+WHERE id = ?
+  AND user_id = ?
   `;
 
-  db.query(sql, [id], (error, result) => {
+  db.query(sql, [id, userId], (error, result) => {
     if (error) {
       console.error("DELETE PRODUCT ERROR:", error);
 
@@ -344,9 +405,9 @@ app.delete("/products/:id", (req, res) => {
 ========================================================= */
 
 // SELL PRODUCT
-app.post("/sell", (req, res) => {
+app.post("/sell", authenticateUser, (req, res) => {
   const { product_id, quantity_sold } = req.body;
-
+  const userId = Number(req.user.id);
   const normalizedProductId = Number(product_id);
   const normalizedQuantitySold = Number(quantity_sold);
 
@@ -363,14 +424,15 @@ app.post("/sell", (req, res) => {
   }
 
   const getProductSql = `
-    SELECT *
-    FROM stock_items
-    WHERE id = ?
-  `;
+  SELECT *
+  FROM stock_items
+  WHERE id = ?
+    AND user_id = ?
+`;
 
   db.query(
-    getProductSql,
-    [normalizedProductId],
+  getProductSql,
+  [normalizedProductId, userId],
     (productError, products) => {
       if (productError) {
         console.error(
@@ -419,14 +481,15 @@ app.post("/sell", (req, res) => {
         (sellingPrice - buyingPrice);
 
       const updateStockSql = `
-        UPDATE stock_items
-        SET quantity = ?
-        WHERE id = ?
-      `;
+  UPDATE stock_items
+  SET quantity = ?
+  WHERE id = ?
+    AND user_id = ?
+`;
 
       db.query(
         updateStockSql,
-        [newQuantity, normalizedProductId],
+        [newQuantity, normalizedProductId, userId],
         (updateError) => {
           if (updateError) {
             console.error(
@@ -443,23 +506,25 @@ app.post("/sell", (req, res) => {
 
           const saleSql = `
             INSERT INTO sales
-            (
-              product_id,
-              quantity_sold,
-              selling_price,
-              profit
-            )
-            VALUES (?, ?, ?, ?)
+(
+  user_id,
+  product_id,
+  quantity_sold,
+  selling_price,
+  profit
+)
+VALUES (?, ?, ?, ?, ?)
           `;
 
           db.query(
             saleSql,
             [
-              normalizedProductId,
-              normalizedQuantitySold,
-              sellingPrice,
-              profit,
-            ],
+  userId,
+  normalizedProductId,
+  normalizedQuantitySold,
+  sellingPrice,
+  profit,
+],
             (saleError, saleResult) => {
               if (saleError) {
                 console.error(
@@ -491,9 +556,9 @@ app.post("/sell", (req, res) => {
 });
 
 // GET SALES HISTORY
-app.get("/sales", (req, res) => {
+app.get("/sales", authenticateUser, (req, res) => {
   console.log("SALES API HIT");
-
+  const userId = Number(req.user.id);
   const sql = `
     SELECT
       sales.id,
@@ -503,12 +568,14 @@ app.get("/sales", (req, res) => {
       sales.profit,
       sales.sale_date
     FROM sales
-    JOIN stock_items
-      ON sales.product_id = stock_items.id
-    ORDER BY sales.sale_date DESC
+JOIN stock_items
+  ON sales.product_id = stock_items.id
+WHERE sales.user_id = ?
+  AND stock_items.user_id = ?
+ORDER BY sales.sale_date DESC
   `;
 
-  db.query(sql, (error, results) => {
+  db.query(sql, [userId, userId], (error, results) => {
     if (error) {
       console.error("GET SALES ERROR:", error);
 
@@ -1015,20 +1082,20 @@ app.post("/login", async (req, res) => {
           message: "Invalid email or password.",
         });
       }
-
+    const token = createAuthToken(user);
       return res.status(200).json({
-        success: true,
-        message: "Login successful.",
-        user: {
-          id: user.id,
-          full_name: user.full_name,
-          company_name: user.company_name,
-          email: user.email,
-          mobile_number: user.mobile_number,
-          role:
-            user.role || "Administrator",
-        },
-      });
+  success: true,
+  message: "Login successful.",
+  token,
+  user: {
+    id: user.id,
+    full_name: user.full_name,
+    company_name: user.company_name,
+    email: user.email,
+    mobile_number: user.mobile_number,
+    role: user.role || "Administrator",
+  },
+});
     }
 
     const [legacyAdmins] =
@@ -1067,18 +1134,24 @@ app.post("/login", async (req, res) => {
       }
 
       if (adminPasswordMatches) {
+        const token = createAuthToken({
+  id: 2,
+  email: "admin@smartstock.local",
+  role: "Administrator",
+});
         return res.status(200).json({
-          success: true,
-          message: "Login successful.",
-          user: {
-            id: admin.id,
-            full_name: admin.username,
-            company_name: "SmartStock AI",
-            email: null,
-            mobile_number: null,
-            role: "Administrator",
-          },
-        });
+  success: true,
+  message: "Login successful.",
+  token,
+  user: {
+    id: 2,
+    full_name: "admin",
+    company_name: "SmartStock AI",
+    email: "admin@smartstock.local",
+    mobile_number: null,
+    role: "Administrator",
+  },
+});
       }
     }
 
@@ -1102,7 +1175,7 @@ app.post("/login", async (req, res) => {
    AI REPORT
 ========================================================= */
 
-app.post("/ai-report", async (req, res) => {
+app.post("/ai-report", authenticateUser, async (req, res) => {
   console.log("AI REPORT API HIT");
 
   try {
@@ -1151,7 +1224,7 @@ app.post("/ai-report", async (req, res) => {
    AI COPILOT
 ========================================================= */
 
-app.post("/ai-chat", async (req, res) => {
+app.post("/ai-chat", authenticateUser, async (req, res) => {
   try {
     const answer =
       await generateCopilotAnswer(req.body);
@@ -1179,81 +1252,65 @@ app.post("/ai-chat", async (req, res) => {
    AI DEMAND FORECAST
 ========================================================= */
 
-app.get("/forecast", async (req, res) => {
+app.get("/forecast", authenticateUser, async (req, res) => {
   try {
-    const [products] =
-      await db.promise().query(
-        `
-          SELECT *
-          FROM stock_items
-        `
-      );
+    const userId = Number(req.user.id);
 
-    const [sales] =
-      await db.promise().query(
-        `
-          SELECT *
-          FROM sales
-        `
-      );
+    const [products] = await db.promise().query(
+      `
+        SELECT *
+        FROM stock_items
+        WHERE user_id = ?
+      `,
+      [userId]
+    );
 
-    let forecast =
-      calculateForecast(products, sales);
+    const [sales] = await db.promise().query(
+      `
+        SELECT *
+        FROM sales
+        WHERE user_id = ?
+      `,
+      [userId]
+    );
+
+    let forecast = calculateForecast(products, sales);
 
     forecast = await Promise.all(
       forecast.map(async (item) => {
         try {
-          const mlResponse =
-            await axios.post(
-              "http://localhost:7000/predict",
-              {
-                current_stock:
-                  item.currentStock,
-                avg_daily_sales:
-                  item.averageDailySales,
-                days_remaining:
-                  item.daysRemaining,
-                trend_percent:
-                  item.trendPercent,
-              }
-            );
-
-          console.log(
-            "ML response:",
-            mlResponse.data
+          const mlResponse = await axios.post(
+            "http://localhost:7000/predict",
+            {
+              current_stock: item.currentStock,
+              avg_daily_sales: item.averageDailySales,
+              days_remaining: item.daysRemaining,
+              trend_percent: item.trendPercent,
+            }
           );
 
           let mlPrediction = Number(
-            mlResponse.data
-              .predicted_30_day_demand || 0
+            mlResponse.data.predicted_30_day_demand || 0
           );
 
-          if (
-            Number(item.averageDailySales) === 0
-          ) {
+          if (Number(item.averageDailySales) === 0) {
             mlPrediction = 0;
           }
 
-          const mlRecommendedRestock =
-            Math.max(
-              0,
-              mlPrediction -
-                Number(item.currentStock)
-            );
+          const mlRecommendedRestock = Math.max(
+            0,
+            mlPrediction - Number(item.currentStock)
+          );
 
           const businessExplanation = [];
 
-          if (
-            Number(item.averageDailySales) === 0
-          ) {
+          if (Number(item.averageDailySales) === 0) {
             businessExplanation.push(
               "No measurable demand detected in recent sales."
             );
-
             businessExplanation.push(
               "Current inventory is sufficient."
             );
-
             businessExplanation.push(
               "No restocking is required at this time."
             );
@@ -1261,7 +1318,6 @@ app.get("/forecast", async (req, res) => {
             businessExplanation.push(
               `Current inventory will last about ${item.daysRemaining} days.`
             );
-
             businessExplanation.push(
               `Demand trend is ${String(
                 item.trend || "stable"
@@ -1271,15 +1327,12 @@ app.get("/forecast", async (req, res) => {
                   : ""
               }.`
             );
-
             businessExplanation.push(
               `ML predicts ${mlPrediction} units demand for the next 30 days.`
             );
-
             businessExplanation.push(
               `Recommended restock quantity is ${mlRecommendedRestock} units.`
             );
-
             businessExplanation.push(
               `Forecast confidence is ${item.confidence}%.`
             );
@@ -1287,13 +1340,10 @@ app.get("/forecast", async (req, res) => {
 
           return {
             ...item,
-            mlForecast30Days:
-              mlPrediction,
+            mlForecast30Days: mlPrediction,
             mlRecommendedRestock,
-            forecastSource:
-              "ML Random Forest",
-            predictionExplanation:
-              mlResponse.data.explanation,
+            forecastSource: "ML Random Forest",
+            predictionExplanation: mlResponse.data.explanation,
             businessExplanation,
           };
         } catch (error) {
@@ -1304,20 +1354,12 @@ app.get("/forecast", async (req, res) => {
 
           return {
             ...item,
-            mlForecast30Days:
-              item.forecast30Days,
-            mlRecommendedRestock:
-              item.recommendedRestock,
-            forecastSource:
-              "Rule Based Fallback",
+            mlForecast30Days: item.forecast30Days,
+            mlRecommendedRestock: item.recommendedRestock,
+            forecastSource: "Rule Based Fallback",
           };
         }
       })
-    );
-
-    console.log(
-      "FINAL FORECAST SENT:",
-      forecast[0]
     );
 
     return res.json({
@@ -1325,15 +1367,11 @@ app.get("/forecast", async (req, res) => {
       forecast,
     });
   } catch (error) {
-    console.error(
-      "FORECAST ERROR:",
-      error
-    );
+    console.error("FORECAST ERROR:", error);
 
     return res.status(500).json({
       success: false,
       message: error.message,
-      error,
     });
   }
 });
@@ -1342,7 +1380,7 @@ app.get("/forecast", async (req, res) => {
    ML MODEL METRICS
 ========================================================= */
 
-app.get("/ml-metrics", async (req, res) => {
+app.get("/ml-metrics", authenticateUser, async (req, res) => {
   try {
     const response = await axios.get(
       "http://localhost:7000/metrics"
@@ -1369,6 +1407,7 @@ app.get("/ml-metrics", async (req, res) => {
 
 app.post(
   "/forecast/simulate",
+  authenticateUser,
   async (req, res) => {
     try {
       const {
@@ -1468,6 +1507,7 @@ app.post(
 
 app.post(
   "/scenario-simulate",
+  authenticateUser,
   async (req, res) => {
     try {
       const {
