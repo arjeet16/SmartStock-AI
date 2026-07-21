@@ -64,7 +64,9 @@ const EMPTY_FORM = {
   item_name: "",
   category: "",
   quantity: "",
+  carton_count: "",
   units_per_carton: "1",
+  open_units: "",
   buying_price: "",
   selling_price: "",
 };
@@ -98,29 +100,106 @@ function App() {
     useState("dashboard");
 
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [sellTarget, setSellTarget] = useState(null);
-  const [sellQuantity, setSellQuantity] = useState("");
 
-  const [settings, setSettings] = useState(() => {
-    const savedSettings = localStorage.getItem(
-      "smartstock_app_settings"
+const [sellTarget, setSellTarget] = useState(null);
+const [sellQuantity, setSellQuantity] = useState("");
+const [sellType, setSellType] = useState("unit");
+ const [settings, setSettings] = useState(() => {
+  let savedSettings = {};
+  let currentUser = {};
+
+  try {
+    savedSettings = JSON.parse(
+      localStorage.getItem(
+        "smartstock_app_settings"
+      ) || "{}"
+    );
+  } catch (error) {
+    console.error(
+      "Failed to load settings:",
+      error
+    );
+  }
+
+  try {
+    currentUser = JSON.parse(
+      localStorage.getItem(
+        "smartstock_current_user"
+      ) || "{}"
+    );
+  } catch (error) {
+    console.error(
+      "Failed to load current user:",
+      error
+    );
+  }
+
+  return {
+    ...DEFAULT_SETTINGS,
+    ...savedSettings,
+
+    profileName:
+      currentUser.full_name ||
+      currentUser.name ||
+      "User",
+
+    email:
+      currentUser.email ||
+      savedSettings.email ||
+      "",
+
+    companyName:
+      currentUser.company_name ||
+      savedSettings.companyName ||
+      "SmartStock AI",
+  };
+});
+useEffect(() => {
+  if (!isLoggedIn) {
+    return;
+  }
+
+  try {
+    const currentUser = JSON.parse(
+      localStorage.getItem(
+        "smartstock_current_user"
+      ) || "{}"
     );
 
-    if (!savedSettings) {
-      return DEFAULT_SETTINGS;
-    }
+    setSettings((previousSettings) => ({
+      ...previousSettings,
 
-    try {
-      return {
-        ...DEFAULT_SETTINGS,
-        ...JSON.parse(savedSettings),
-      };
-    } catch (error) {
-      console.error("Failed to load settings:", error);
-      return DEFAULT_SETTINGS;
-    }
-  });
+      profileName:
+        currentUser.full_name ||
+        currentUser.name ||
+        "User",
 
+      email:
+        currentUser.email ||
+        previousSettings.email ||
+        "",
+
+      companyName:
+        currentUser.company_name ||
+        previousSettings.companyName ||
+        "SmartStock AI",
+    }));
+  } catch (error) {
+    console.error(
+      "Failed to synchronize current user:",
+      error
+    );
+  }
+}, [isLoggedIn]);
+const currentUser = JSON.parse(
+  localStorage.getItem("smartstock_current_user") || "{}"
+);
+
+const displayName =
+  currentUser.full_name ||
+  currentUser.name ||
+  settings.profileName ||
+  "User";
   const clearAuthentication = () => {
     localStorage.removeItem("smartstock_auth_token");
     localStorage.removeItem("smartstock_is_logged_in");
@@ -343,98 +422,192 @@ function App() {
   };
 
   const addProduct = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    const productPayload = {
-      item_name: formData.item_name.trim(),
-      category: formData.category.trim(),
-      quantity: Number(formData.quantity),
-      units_per_carton:
-        Number(formData.units_per_carton) || 1,
-      buying_price: Number(formData.buying_price),
-      selling_price: Number(formData.selling_price),
-    };
+  const itemName = String(
+    formData.item_name || ""
+  ).trim();
 
-    if (
-      !productPayload.item_name ||
-      !productPayload.category
-    ) {
-      toast.error(
-        "Product name and category are required."
-      );
-      return;
-    }
+  const category = String(
+    formData.category || ""
+  ).trim();
 
-    if (
-      !Number.isFinite(productPayload.quantity) ||
-      productPayload.quantity < 0
-    ) {
-      toast.error("Enter a valid product quantity.");
-      return;
-    }
+  const cartonCount = Number(
+    formData.carton_count || 0
+  );
 
-    if (
-      !Number.isFinite(productPayload.buying_price) ||
-      productPayload.buying_price < 0 ||
-      !Number.isFinite(productPayload.selling_price) ||
-      productPayload.selling_price < 0
-    ) {
-      toast.error("Enter valid buying and selling prices.");
-      return;
-    }
+  const unitsPerCarton = Number(
+    formData.units_per_carton || 1
+  );
 
-    try {
-      if (editId) {
-        await authFetch(`/products/${editId}`, {
-          method: "PUT",
-          body: JSON.stringify(productPayload),
-        });
+  const openUnits = Number(
+    formData.open_units || 0
+  );
 
-        toast.success("Product updated successfully.");
-      } else {
-        await authFetch("/products", {
-          method: "POST",
-          body: JSON.stringify(productPayload),
-        });
+  const buyingPrice = Number(
+    formData.buying_price
+  );
 
-        toast.success("Product added successfully.");
-      }
+  const sellingPrice = Number(
+    formData.selling_price
+  );
 
-      resetProductForm();
-      await refreshDashboardData();
-    } catch (error) {
-      console.error("Save product error:", error);
+  if (!itemName || !category) {
+    toast.error(
+      "Product name and category are required."
+    );
+    return;
+  }
 
-      toast.error(
-        error.message || "Unable to save product."
-      );
-    }
+  if (
+    !Number.isInteger(cartonCount) ||
+    cartonCount < 0
+  ) {
+    toast.error(
+      "Enter a valid number of cartons."
+    );
+    return;
+  }
+
+  if (
+    !Number.isInteger(unitsPerCarton) ||
+    unitsPerCarton < 1
+  ) {
+    toast.error(
+      "Units per carton must be at least 1."
+    );
+    return;
+  }
+
+  if (
+    !Number.isInteger(openUnits) ||
+    openUnits < 0
+  ) {
+    toast.error(
+      "Enter a valid number of open units."
+    );
+    return;
+  }
+
+  if (openUnits >= unitsPerCarton) {
+    toast.error(
+      `Open units must be less than ${unitsPerCarton}.`
+    );
+    return;
+  }
+
+  const totalQuantity =
+    cartonCount * unitsPerCarton + openUnits;
+
+  if (totalQuantity <= 0) {
+    toast.error(
+      "The product must contain at least one unit."
+    );
+    return;
+  }
+
+  if (
+    !Number.isFinite(buyingPrice) ||
+    buyingPrice < 0 ||
+    !Number.isFinite(sellingPrice) ||
+    sellingPrice < 0
+  ) {
+    toast.error(
+      "Enter valid buying and selling prices."
+    );
+    return;
+  }
+
+  const productPayload = {
+    item_name: itemName,
+    category,
+    quantity: totalQuantity,
+    units_per_carton: unitsPerCarton,
+    buying_price: buyingPrice,
+    selling_price: sellingPrice,
   };
+
+  try {
+    if (editId) {
+      await authFetch(`/products/${editId}`, {
+        method: "PUT",
+        body: JSON.stringify(productPayload),
+      });
+
+      toast.success(
+        "Product updated successfully."
+      );
+    } else {
+      await authFetch("/products", {
+        method: "POST",
+        body: JSON.stringify(productPayload),
+      });
+
+      toast.success(
+        "Product added successfully."
+      );
+    }
+
+    resetProductForm();
+    await refreshDashboardData();
+  } catch (error) {
+    console.error("Save product error:", error);
+
+    toast.error(
+      error.message || "Unable to save product."
+    );
+  }
+};
 
   const editProduct = (item) => {
-    setEditId(item.id);
+  if (!item) {
+    toast.error("Product not found.");
+    return;
+  }
 
-    setFormData({
-      item_name: item.item_name || "",
-      category: item.category || "",
-      quantity: String(item.quantity ?? ""),
-      units_per_carton: String(
-        item.units_per_carton ?? 1
-      ),
-      buying_price: String(item.buying_price ?? ""),
-      selling_price: String(item.selling_price ?? ""),
+  const totalUnits = Number(
+    item.quantity || 0
+  );
+
+  const unitsPerCarton = Math.max(
+    Number(item.units_per_carton) || 1,
+    1
+  );
+
+  const cartonCount = Math.floor(
+    totalUnits / unitsPerCarton
+  );
+
+  const openUnits =
+    totalUnits % unitsPerCarton;
+
+  setEditId(item.id);
+
+  setFormData({
+    item_name: item.item_name || "",
+    category: item.category || "",
+    quantity: String(totalUnits),
+    carton_count: String(cartonCount),
+    units_per_carton: String(unitsPerCarton),
+    open_units: String(openUnits),
+    buying_price: String(
+      item.buying_price ?? ""
+    ),
+    selling_price: String(
+      item.selling_price ?? ""
+    ),
+  });
+
+  const inventorySection =
+    document.getElementById("inventory");
+
+  if (inventorySection) {
+    inventorySection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
-
-    const inventorySection =
-      document.getElementById("inventory");
-
-    if (inventorySection) {
-      inventorySection.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
+  }
+};
 
   const deleteProduct = (id) => {
     const product = products.find(
@@ -477,72 +650,131 @@ function App() {
     }
   };
 
-  const sellProduct = (productId) => {
-    const product = products.find(
-      (item) =>
-        Number(item.id) === Number(productId)
+ const sellProduct = (productId) => {
+  const product = products.find(
+    (item) =>
+      Number(item.id) === Number(productId)
+  );
+
+  if (!product) {
+    toast.error("Product not found.");
+    return;
+  }
+
+  if (Number(product.quantity || 0) <= 0) {
+    toast.error(
+      `${product.item_name} is out of stock.`
+    );
+    return;
+  }
+
+  setSellTarget(product);
+  setSellQuantity("");
+  setSellType("unit");
+};
+const confirmSellProduct = async () => {
+  if (!sellTarget) {
+    return;
+  }
+
+  const quantity = Number(sellQuantity);
+
+  if (
+    !Number.isInteger(quantity) ||
+    quantity <= 0
+  ) {
+    toast.error(
+      "Enter a valid whole-number quantity."
+    );
+    return;
+  }
+
+  const totalAvailableUnits = Number(
+    sellTarget.quantity || 0
+  );
+
+  const unitsPerCarton = Math.max(
+    Number(sellTarget.units_per_carton) || 1,
+    1
+  );
+
+  const availableCartons = Math.floor(
+    totalAvailableUnits / unitsPerCarton
+  );
+
+  const unitsToSell =
+    sellType === "carton"
+      ? quantity * unitsPerCarton
+      : quantity;
+
+  if (
+    sellType === "carton" &&
+    availableCartons <= 0
+  ) {
+    toast.error(
+      "No complete cartons are available."
+    );
+    return;
+  }
+
+  if (
+    sellType === "carton" &&
+    quantity > availableCartons
+  ) {
+    toast.error(
+      `Only ${availableCartons} complete carton${
+        availableCartons === 1 ? "" : "s"
+      } are available.`
+    );
+    return;
+  }
+
+  if (unitsToSell > totalAvailableUnits) {
+    toast.error(
+      `Only ${totalAvailableUnits} unit${
+        totalAvailableUnits === 1 ? "" : "s"
+      } are available.`
+    );
+    return;
+  }
+
+  try {
+    await authFetch("/sell", {
+      method: "POST",
+      body: JSON.stringify({
+        product_id: sellTarget.id,
+        quantity,
+        sell_type: sellType,
+      }),
+    });
+
+    const saleDescription =
+      sellType === "carton"
+        ? `${quantity} carton${
+            quantity === 1 ? "" : "s"
+          } (${unitsToSell} units)`
+        : `${quantity} unit${
+            quantity === 1 ? "" : "s"
+          }`;
+
+    toast.success(
+      `${saleDescription} of ${sellTarget.item_name} sold successfully.`
     );
 
-    if (!product) {
-      toast.error("Product not found.");
-      return;
-    }
-
-    setSellTarget(product);
+    setSellTarget(null);
     setSellQuantity("");
-  };
+    setSellType("unit");
 
-  const confirmSellProduct = async () => {
-    if (!sellTarget) {
-      return;
-    }
+    await refreshDashboardData();
+  } catch (error) {
+    console.error("Sell product error:", error);
 
-    const quantity = Number(sellQuantity);
-
-    if (
-      !Number.isInteger(quantity) ||
-      quantity <= 0
-    ) {
-      toast.error(
-        "Enter a valid whole-number quantity."
-      );
-      return;
-    }
-
-    if (quantity > Number(sellTarget.quantity)) {
-      toast.error(
-        `Only ${sellTarget.quantity} units are available.`
-      );
-      return;
-    }
-
-    try {
-      await authFetch("/sell", {
-        method: "POST",
-        body: JSON.stringify({
-          product_id: sellTarget.id,
-          quantity_sold: quantity,
-        }),
-      });
-
-      toast.success(
-        `${quantity} unit${
-          quantity === 1 ? "" : "s"
-        } of ${sellTarget.item_name} sold.`
-      );
-
-      setSellTarget(null);
-      setSellQuantity("");
-
-      await refreshDashboardData();
-    } catch (error) {
-      console.error("Sell product error:", error);
-
-      toast.error(
-        error.message || "Failed to record sale."
-      );
-    }
-  };
+    toast.error(
+      error.message || "Failed to record sale."
+    );
+  }
+};
+ 
 
   const handleGenerateAIReport = async () => {
     if (isGeneratingReport) {
@@ -855,7 +1087,53 @@ function App() {
       (item) =>
         Number(item.recommendedPurchase) > 0
     ) || null;
+  const sellTotalUnits = Math.max(
+  Number(sellTarget?.quantity || 0),
+  0
+);
 
+const sellUnitsPerCarton = Math.max(
+  Number(sellTarget?.units_per_carton) || 1,
+  1
+);
+
+const availableSellCartons = Math.floor(
+  sellTotalUnits / sellUnitsPerCarton
+);
+
+const availableSellOpenUnits =
+  sellTotalUnits % sellUnitsPerCarton;
+
+const enteredSellQuantity = Number(
+  sellQuantity || 0
+);
+
+const previewUnitsToSell =
+  sellType === "carton"
+    ? enteredSellQuantity *
+      sellUnitsPerCarton
+    : enteredSellQuantity;
+
+const isSellPreviewValid =
+  Number.isInteger(enteredSellQuantity) &&
+  enteredSellQuantity > 0 &&
+  previewUnitsToSell <= sellTotalUnits &&
+  !(
+    sellType === "carton" &&
+    enteredSellQuantity >
+      availableSellCartons
+  );
+
+const remainingUnits = isSellPreviewValid
+  ? sellTotalUnits - previewUnitsToSell
+  : sellTotalUnits;
+
+const remainingCartons = Math.floor(
+  remainingUnits / sellUnitsPerCarton
+);
+
+const remainingOpenUnits =
+  remainingUnits % sellUnitsPerCarton;
   if (!isLoggedIn) {
     return (
       <Login setIsLoggedIn={setIsLoggedIn} />
@@ -869,10 +1147,10 @@ function App() {
   return (
     <>
       <SidebarV2
-        activeSection={activeSection}
-        onNavigate={handleSidebarNavigation}
-        userName={settings.profileName}
-      />
+  activeSection={activeSection}
+  onNavigate={handleSidebarNavigation}
+  userName={displayName}
+/>
 
       <div className="container">
         <Topbar
@@ -1135,81 +1413,184 @@ function App() {
             </div>
           </div>
         )}
+      {sellTarget && (
+  <div
+    className="smartstock-modal-backdrop"
+    onMouseDown={() => {
+      setSellTarget(null);
+      setSellQuantity("");
+      setSellType("unit");
+    }}
+  >
+    <div
+      className="smartstock-modal"
+      onMouseDown={(event) =>
+        event.stopPropagation()
+      }
+    >
+      <span className="smartstock-modal-label">
+        RECORD SALE
+      </span>
 
-        {sellTarget && (
-          <div
-            className="smartstock-modal-backdrop"
-            onMouseDown={() => {
-              setSellTarget(null);
-              setSellQuantity("");
-            }}
-          >
-            <div
-              className="smartstock-modal"
-              onMouseDown={(event) =>
-                event.stopPropagation()
-              }
-            >
-              <span className="smartstock-modal-label">
-                RECORD SALE
-              </span>
+      <h3>Sell {sellTarget.item_name}</h3>
 
-              <h3>
-                Sell {sellTarget.item_name}
-              </h3>
+      <p>
+        One carton contains{" "}
+        <strong>
+          {sellUnitsPerCarton} units
+        </strong>
+        .
+      </p>
 
-              <p>
-                Available stock:{" "}
-                <strong>
-                  {sellTarget.quantity} units
-                </strong>
-              </p>
+      <div className="sell-stock-summary">
+        <div>
+          <span>Available Cartons</span>
+          <strong>
+            {availableSellCartons}
+          </strong>
+        </div>
 
-              <label className="smartstock-modal-field">
-                <span>Quantity to sell</span>
+        <div>
+          <span>Open Units</span>
+          <strong>
+            {availableSellOpenUnits}
+          </strong>
+        </div>
 
-                <input
-                  type="number"
-                  min="1"
-                  max={sellTarget.quantity}
-                  step="1"
-                  value={sellQuantity}
-                  onChange={(event) =>
-                    setSellQuantity(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Enter quantity"
-                  autoFocus
-                />
-              </label>
+        <div>
+          <span>Total Units</span>
+          <strong>{sellTotalUnits}</strong>
+        </div>
+      </div>
 
-              <div className="smartstock-modal-actions">
-                <button
-                  type="button"
-                  className="smartstock-modal-cancel"
-                  onClick={() => {
-                    setSellTarget(null);
-                    setSellQuantity("");
-                  }}
-                >
-                  Cancel
-                </button>
+      <div className="sell-type-selector">
+        <button
+          type="button"
+          className={
+            sellType === "carton"
+              ? "sell-type-button active"
+              : "sell-type-button"
+          }
+          onClick={() => {
+            setSellType("carton");
+            setSellQuantity("");
+          }}
+          disabled={
+            availableSellCartons <= 0
+          }
+        >
+          📦 Sell Cartons
+        </button>
 
-                <button
-                  type="button"
-                  className="smartstock-modal-confirm"
-                  onClick={
-                    confirmSellProduct
-                  }
-                >
-                  Confirm Sale
-                </button>
-              </div>
-            </div>
+        <button
+          type="button"
+          className={
+            sellType === "unit"
+              ? "sell-type-button active"
+              : "sell-type-button"
+          }
+          onClick={() => {
+            setSellType("unit");
+            setSellQuantity("");
+          }}
+        >
+          📄 Sell Units
+        </button>
+      </div>
+
+      <label className="smartstock-modal-field">
+        <span>
+          {sellType === "carton"
+            ? "Number of cartons"
+            : "Number of units"}
+        </span>
+
+        <input
+          type="number"
+          min="1"
+          max={
+            sellType === "carton"
+              ? availableSellCartons
+              : sellTotalUnits
+          }
+          step="1"
+          value={sellQuantity}
+          onChange={(event) =>
+            setSellQuantity(
+              event.target.value
+            )
+          }
+          placeholder={
+            sellType === "carton"
+              ? "Enter cartons"
+              : "Enter units"
+          }
+          autoFocus
+        />
+      </label>
+
+      {enteredSellQuantity > 0 && (
+        <div className="sell-preview-card">
+          <div>
+            <span>Units being sold</span>
+
+            <strong>
+              {previewUnitsToSell.toLocaleString(
+                "en-IN"
+              )}
+            </strong>
           </div>
-        )}
 
+          {isSellPreviewValid ? (
+            <div>
+              <span>Remaining stock</span>
+
+              <strong>
+                {remainingCartons} Carton
+                {remainingCartons === 1
+                  ? ""
+                  : "s"}
+                {" + "}
+                {remainingOpenUnits} Unit
+                {remainingOpenUnits === 1
+                  ? ""
+                  : "s"}
+              </strong>
+            </div>
+          ) : (
+            <div className="sell-preview-error">
+              The entered sale quantity exceeds
+              the available stock.
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="smartstock-modal-actions">
+        <button
+          type="button"
+          className="smartstock-modal-cancel"
+          onClick={() => {
+            setSellTarget(null);
+            setSellQuantity("");
+            setSellType("unit");
+          }}
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          className="smartstock-modal-confirm"
+          onClick={confirmSellProduct}
+          disabled={!isSellPreviewValid}
+        >
+          Confirm Sale
+        </button>
+      </div>
+    </div>
+  </div>
+)}
         <AICopilot
           products={products}
           sales={sales}

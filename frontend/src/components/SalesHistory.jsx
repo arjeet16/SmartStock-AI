@@ -215,7 +215,33 @@ function SalesHistory({ sales = [] }) {
               {filteredSales.length > 0 ? (
                 filteredSales.map((sale) => {
                   const profit = Number(sale.profit || 0);
+                const dateValue =
+  sale.created_at ||
+  sale.sale_date ||
+  sale.date;
 
+const parsedDate = dateValue
+  ? new Date(dateValue)
+  : null;
+
+const hasValidDate =
+  parsedDate &&
+  !Number.isNaN(parsedDate.getTime());
+
+const formattedDate = hasValidDate
+  ? parsedDate.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+  : "Date unavailable";
+
+const formattedTime = hasValidDate
+  ? parsedDate.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  : "—";
                   return (
                     <tr key={sale.id}>
                       <td>
@@ -271,34 +297,55 @@ function SalesHistory({ sales = [] }) {
                           })}
                         </span>
                       </td>
+<td>
+  <div className="sales-date-cell">
+    {(() => {
+      const dateValue =
+        sale.created_at ||
+        sale.sale_date ||
+        sale.date;
 
-                      <td>
-                        <div className="sales-date-cell">
-                          <strong>
-                            {new Date(
-                              sale.sale_date
-                            ).toLocaleDateString(
-                              "en-IN",
-                              {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              }
-                            )}
-                          </strong>
+      const parsedDate = dateValue
+        ? new Date(dateValue)
+        : null;
 
-                          <small>
-                            {new Date(
-                              sale.sale_date
-                            ).toLocaleDateString(
-                              "en-IN",
-                              {
-                                weekday: "short",
-                              }
-                            )}
-                          </small>
-                        </div>
-                      </td>
+      const isValidDate =
+        parsedDate &&
+        !Number.isNaN(parsedDate.getTime());
+
+      return isValidDate ? (
+        <>
+          <strong>
+            {parsedDate.toLocaleDateString(
+              "en-IN",
+              {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              }
+            )}
+          </strong>
+
+          <small>
+            {parsedDate.toLocaleTimeString(
+              "en-IN",
+              {
+                hour: "2-digit",
+                minute: "2-digit",
+              }
+            )}
+          </small>
+        </>
+      ) : (
+        <>
+          <strong>Date unavailable</strong>
+          <small>—</small>
+        </>
+      );
+    })()}
+  </div>
+</td>
+                    
                     </tr>
                   );
                 })

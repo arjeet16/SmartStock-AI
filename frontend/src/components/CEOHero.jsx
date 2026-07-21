@@ -17,6 +17,31 @@ function CEOHero({
   aiReport,
   setAiReport,
 }) {
+  const storedUser = localStorage.getItem(
+  "smartstock_current_user"
+);
+
+let currentUser = null;
+
+try {
+  currentUser = storedUser
+    ? JSON.parse(storedUser)
+    : null;
+} catch (error) {
+  console.error(
+    "Failed to read current user:",
+    error
+  );
+}
+
+const fullName =
+  currentUser?.full_name ||
+  currentUser?.name ||
+  "User";
+
+const firstName =
+  String(fullName).trim().split(" ")[0] ||
+  "User";
   const healthStatus = lowStockCount > 0 ? "Needs Attention" : "Healthy";
   const score = lowStockCount > 0 ? 85 : 94;
 
@@ -48,7 +73,8 @@ function CEOHero({
       aiReport,
     });
   };
-
+console.log("CEOHero current user:", currentUser);
+console.log("CEOHero firstName:", firstName);
     return (
     <motion.div
       className="ceo-hero"
@@ -61,7 +87,9 @@ function CEOHero({
           <FaBrain /> AI Executive Overview
         </p>
 
-        <h1>Good to see you, Arjeet 👋</h1>
+        <h1>
+  Good to see you, {firstName} 👋
+</h1>
 
         <p className="ceo-hero-text">
           SmartStock AI analyzed your inventory performance, stock movement and

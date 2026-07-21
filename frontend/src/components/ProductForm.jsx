@@ -1,90 +1,185 @@
-import { FaBoxOpen, FaLayerGroup, FaRupeeSign, FaHashtag } from "react-icons/fa";
+import {
+  FaBoxOpen,
+  FaLayerGroup,
+  FaRupeeSign,
+  FaHashtag,
+  FaBoxes,
+  FaCube,
+} from "react-icons/fa";
 
-function ProductForm({ formData, handleChange, addProduct, editId }) {
+function ProductForm({
+  formData,
+  handleChange,
+  addProduct,
+  editId,
+}) {
+  const cartonCount = Number(
+    formData.carton_count || 0
+  );
+
+  const unitsPerCarton = Number(
+    formData.units_per_carton || 1
+  );
+
+  const openUnits = Number(
+    formData.open_units || 0
+  );
+
+  const totalUnits =
+    cartonCount * unitsPerCarton + openUnits;
+
   return (
-    <div className="product-form-v2">
-      <div className="product-form-header">
+    <section className="product-form-section">
+      <div className="product-form-heading">
         <div>
-          <p>Product Management</p>
-          <h2>{editId ? "Update Inventory Item" : "Add New Product"}</h2>
-          <span>
-            Add, update and manage product pricing, stock and profitability.
+          <span className="product-form-label">
+            Product Management
           </span>
+
+          <h2>
+            {editId
+              ? "Update Inventory Item"
+              : "Add New Product"}
+          </h2>
+
+          <p>
+            Add, update and manage product pricing,
+            stock, carton size and profitability.
+          </p>
         </div>
 
-        <div className="product-form-status">
+        <span className="product-form-mode">
           {editId ? "Edit Mode" : "Create Mode"}
-        </div>
+        </span>
       </div>
 
-      <form className="product-form-grid" onSubmit={addProduct}>
-        <div className="form-field">
+      <form
+        className="product-form"
+        onSubmit={addProduct}
+      >
+        <label className="product-input-group">
           <FaBoxOpen />
+
           <input
             type="text"
             name="item_name"
-            placeholder="Item Name"
             value={formData.item_name}
             onChange={handleChange}
+            placeholder="Item Name"
             required
           />
-        </div>
+        </label>
 
-        <div className="form-field">
+        <label className="product-input-group">
           <FaLayerGroup />
+
           <input
             type="text"
             name="category"
-            placeholder="Category"
             value={formData.category}
             onChange={handleChange}
+            placeholder="Category"
             required
           />
-        </div>
+        </label>
 
-        <div className="form-field">
-          <FaHashtag />
+        <label className="product-input-group">
+          <FaBoxes />
+
           <input
             type="number"
-            name="quantity"
-            placeholder="Quantity"
-            value={formData.quantity}
+            name="carton_count"
+            min="0"
+            step="1"
+            value={formData.carton_count}
             onChange={handleChange}
+            placeholder="Number of Cartons"
             required
           />
-        </div>
+        </label>
 
-        <div className="form-field">
-          <FaRupeeSign />
+        <label className="product-input-group">
+        <FaCube />
+
           <input
             type="number"
-            step="0.01"
+            name="units_per_carton"
+            min="1"
+            step="1"
+            value={formData.units_per_carton}
+            onChange={handleChange}
+            placeholder="Units per Carton"
+            required
+          />
+        </label>
+
+        <label className="product-input-group">
+          <FaHashtag />
+
+          <input
+            type="number"
+            name="open_units"
+            min="0"
+            max={Math.max(unitsPerCarton - 1, 0)}
+            step="1"
+            value={formData.open_units}
+            onChange={handleChange}
+            placeholder="Open Units"
+            required
+          />
+        </label>
+
+        <label className="product-input-group">
+          <FaHashtag />
+
+          <input
+  type="text"
+  value={`${totalUnits} Total Units`}
+  aria-label="Total Units"
+  readOnly
+/>
+        </label>
+
+        <label className="product-input-group">
+          <FaRupeeSign />
+
+          <input
+            type="number"
             name="buying_price"
-            placeholder="Buying Price"
+            min="0"
+            step="0.01"
             value={formData.buying_price}
             onChange={handleChange}
+            placeholder="Buying Price per Unit"
             required
           />
-        </div>
+        </label>
 
-        <div className="form-field">
+        <label className="product-input-group">
           <FaRupeeSign />
+
           <input
             type="number"
-            step="0.01"
             name="selling_price"
-            placeholder="Selling Price"
+            min="0"
+            step="0.01"
             value={formData.selling_price}
             onChange={handleChange}
+            placeholder="Selling Price per Unit"
             required
           />
-        </div>
+        </label>
 
-        <button className="product-submit-btn" type="submit">
-          {editId ? "Update Product" : "Add Product"}
+        <button
+          type="submit"
+          className="product-submit-button"
+        >
+          {editId
+            ? "Update Product"
+            : "Add Product"}
         </button>
       </form>
-    </div>
+    </section>
   );
 }
 

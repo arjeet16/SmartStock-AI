@@ -84,7 +84,27 @@ function ExecutiveHero({
       change: businessStatus,
     },
   ];
+const storedUser = localStorage.getItem(
+  "smartstock_current_user"
+);
 
+let currentUser = null;
+
+try {
+  currentUser = storedUser
+    ? JSON.parse(storedUser)
+    : null;
+} catch (error) {
+  console.error("Failed to load current user:", error);
+}
+
+const fullName =
+  currentUser?.full_name ||
+  currentUser?.name ||
+  "User";
+
+const firstName =
+  String(fullName).trim().split(" ")[0];
   return (
     <motion.section
       className="executive-hero"
@@ -102,8 +122,8 @@ function ExecutiveHero({
         </div>
 
         <h1>
-          Good to see you, <span>Arjeet.</span>
-        </h1>
+  Good to see you, <span>{firstName}.</span>
+</h1>
 
         <p className="hero-subtitle">
           Your AI inventory engine analyzed revenue, profit, stock movement,

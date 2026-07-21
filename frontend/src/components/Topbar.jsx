@@ -23,7 +23,18 @@ function Topbar({
     totalRevenue,
     totalProfit
   );
+const currentUser = JSON.parse(
+  localStorage.getItem("smartstock_current_user") || "{}"
+);
 
+const displayName =
+  currentUser.full_name ||
+  currentUser.name ||
+  "User";
+
+const avatarLetter = displayName
+  .charAt(0)
+  .toUpperCase();
   const today = currentTime.toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
@@ -84,12 +95,15 @@ function Topbar({
         </div>
 
         <div className="profile">
-          <div className="avatar">A</div>
-          <div>
-            <strong>Arjeet Singh</strong>
-            <small>Administrator</small>
-          </div>
-        </div>
+  <div className="avatar">
+    {avatarLetter}
+  </div>
+
+  <div>
+    <strong>{displayName}</strong>
+    <small>Administrator</small>
+  </div>
+</div>
 
         <button className="logout-btn premium-logout" onClick={handleLogout}>
           <FaSignOutAlt />

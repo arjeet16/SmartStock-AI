@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 console.log("SERVER FILE LOADED");
@@ -118,27 +117,34 @@ app.get("/products", authenticateUser, (req, res) => {
 });
 
 // ADD PRODUCT
+// ADD PRODUCT
 app.post("/products", authenticateUser, (req, res) => {
   const {
     item_name,
     category,
     quantity,
+    units_per_carton,
     buying_price,
     selling_price,
   } = req.body;
+
   const userId = Number(req.user.id);
+
   const cleanItemName = String(item_name || "").trim();
   const cleanCategory = String(category || "").trim();
 
   const normalizedQuantity = Number(quantity);
+  const normalizedUnitsPerCarton = Number(units_per_carton);
   const normalizedBuyingPrice = Number(buying_price);
   const normalizedSellingPrice = Number(selling_price);
 
   if (
     !cleanItemName ||
     !cleanCategory ||
-    !Number.isFinite(normalizedQuantity) ||
+    !Number.isInteger(normalizedQuantity) ||
     normalizedQuantity < 0 ||
+    !Number.isInteger(normalizedUnitsPerCarton) ||
+    normalizedUnitsPerCarton <= 0 ||
     !Number.isFinite(normalizedBuyingPrice) ||
     normalizedBuyingPrice < 0 ||
     !Number.isFinite(normalizedSellingPrice) ||
@@ -146,33 +152,36 @@ app.post("/products", authenticateUser, (req, res) => {
   ) {
     return res.status(400).json({
       success: false,
-      message: "Please provide valid product details.",
+      message:
+        "Please provide valid product details. Units per carton must be greater than 0.",
     });
   }
 
   const sql = `
     INSERT INTO stock_items
-(
-  user_id,
-  item_name,
-  category,
-  quantity,
-  buying_price,
-  selling_price
-)
-VALUES (?, ?, ?, ?, ?, ?)
+    (
+      user_id,
+      item_name,
+      category,
+      quantity,
+      units_per_carton,
+      buying_price,
+      selling_price
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-   [
-  userId,
-  cleanItemName,
-  cleanCategory,
-  normalizedQuantity,
-  normalizedBuyingPrice,
-  normalizedSellingPrice,
-],
+    [
+      userId,
+      cleanItemName,
+      cleanCategory,
+      normalizedQuantity,
+      normalizedUnitsPerCarton,
+      normalizedBuyingPrice,
+      normalizedSellingPrice,
+    ],
     (error, result) => {
       if (error) {
         console.error("ADD PRODUCT ERROR:", error);
@@ -188,20 +197,29 @@ VALUES (?, ?, ?, ?, ?, ?)
         success: true,
         message: "Product Added Successfully",
         id: result.insertId,
+        product: {
+          id: result.insertId,
+          item_name: cleanItemName,
+          category: cleanCategory,
+          quantity: normalizedQuantity,
+          units_per_carton: normalizedUnitsPerCarton,
+          buying_price: normalizedBuyingPrice,
+          selling_price: normalizedSellingPrice,
+        },
       });
     }
   );
 });
-
 // UPDATE PRODUCT
 app.put("/products/:id", authenticateUser, (req, res) => {
   const { id } = req.params;
   const userId = Number(req.user.id);
-  
+
   const {
-    item_name, 
+    item_name,
     category,
     quantity,
+    units_per_carton,
     buying_price,
     selling_price,
   } = req.body;
@@ -210,14 +228,17 @@ app.put("/products/:id", authenticateUser, (req, res) => {
   const cleanCategory = String(category || "").trim();
 
   const normalizedQuantity = Number(quantity);
+  const normalizedUnitsPerCarton = Number(units_per_carton);
   const normalizedBuyingPrice = Number(buying_price);
   const normalizedSellingPrice = Number(selling_price);
 
   if (
     !cleanItemName ||
     !cleanCategory ||
-    !Number.isFinite(normalizedQuantity) ||
+    !Number.isInteger(normalizedQuantity) ||
     normalizedQuantity < 0 ||
+    !Number.isInteger(normalizedUnitsPerCarton) ||
+    normalizedUnitsPerCarton <= 0 ||
     !Number.isFinite(normalizedBuyingPrice) ||
     normalizedBuyingPrice < 0 ||
     !Number.isFinite(normalizedSellingPrice) ||
@@ -225,33 +246,36 @@ app.put("/products/:id", authenticateUser, (req, res) => {
   ) {
     return res.status(400).json({
       success: false,
-      message: "Please provide valid product details.",
+      message:
+        "Please provide valid product details. Units per carton must be greater than 0.",
     });
   }
 
   const sql = `
-   UPDATE stock_items
-SET
-  item_name = ?,
-  category = ?,
-  quantity = ?,
-  buying_price = ?,
-  selling_price = ?
-WHERE id = ?
-  AND user_id = ?
+    UPDATE stock_items
+    SET
+      item_name = ?,
+      category = ?,
+      quantity = ?,
+      units_per_carton = ?,
+      buying_price = ?,
+      selling_price = ?
+    WHERE id = ?
+      AND user_id = ?
   `;
 
   db.query(
     sql,
     [
-  cleanItemName,
-  cleanCategory,
-  normalizedQuantity,
-  normalizedBuyingPrice,
-  normalizedSellingPrice,
-  id,
-  userId,
-],
+      cleanItemName,
+      cleanCategory,
+      normalizedQuantity,
+      normalizedUnitsPerCarton,
+      normalizedBuyingPrice,
+      normalizedSellingPrice,
+      id,
+      userId,
+    ],
     (error, result) => {
       if (error) {
         console.error("UPDATE PRODUCT ERROR:", error);
@@ -277,94 +301,101 @@ WHERE id = ?
     }
   );
 });
-
 // UPDATE COMPLETE PRODUCT
 app.put(
   "/products/edit/:id",
   authenticateUser,
   (req, res) => {
-  const { id } = req.params;
-  const userId = Number(req.user.id);
-  const {
-    item_name,
-    category,
-    quantity,
-    buying_price,
-    selling_price,
-  } = req.body;
+    const { id } = req.params;
+    const userId = Number(req.user.id);
 
-  const cleanItemName = String(item_name || "").trim();
-  const cleanCategory = String(category || "").trim();
+    const {
+      item_name,
+      category,
+      quantity,
+      units_per_carton,
+      buying_price,
+      selling_price,
+    } = req.body;
 
-  const normalizedQuantity = Number(quantity);
-  const normalizedBuyingPrice = Number(buying_price);
-  const normalizedSellingPrice = Number(selling_price);
+    const cleanItemName = String(item_name || "").trim();
+    const cleanCategory = String(category || "").trim();
 
-  if (
-    !cleanItemName ||
-    !cleanCategory ||
-    !Number.isFinite(normalizedQuantity) ||
-    normalizedQuantity < 0 ||
-    !Number.isFinite(normalizedBuyingPrice) ||
-    normalizedBuyingPrice < 0 ||
-    !Number.isFinite(normalizedSellingPrice) ||
-    normalizedSellingPrice < 0
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide valid product details.",
-    });
-  }
+    const normalizedQuantity = Number(quantity);
+    const normalizedUnitsPerCarton = Number(units_per_carton);
+    const normalizedBuyingPrice = Number(buying_price);
+    const normalizedSellingPrice = Number(selling_price);
 
-  const sql = `
-    UPDATE stock_items
-    SET
-      item_name = ?,
-      category = ?,
-      quantity = ?,
-      buying_price = ?,
-      selling_price = ?
-    WHERE id = ?
-  AND user_id = ?
-  `;
-
-  db.query(
-    sql,
-    [
-  cleanItemName,
-  cleanCategory,
-  normalizedQuantity,
-  normalizedBuyingPrice,
-  normalizedSellingPrice,
-  id,
-  userId,
-],
-    (error, result) => {
-      if (error) {
-        console.error("EDIT PRODUCT ERROR:", error);
-
-        return res.status(500).json({
-          success: false,
-          message: "Unable to update product.",
-          error: error.message,
-        });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found.",
-        });
-      }
-
-      return res.json({
-        success: true,
-        message: "Product Updated Successfully",
+    if (
+      !cleanItemName ||
+      !cleanCategory ||
+      !Number.isInteger(normalizedQuantity) ||
+      normalizedQuantity < 0 ||
+      !Number.isInteger(normalizedUnitsPerCarton) ||
+      normalizedUnitsPerCarton <= 0 ||
+      !Number.isFinite(normalizedBuyingPrice) ||
+      normalizedBuyingPrice < 0 ||
+      !Number.isFinite(normalizedSellingPrice) ||
+      normalizedSellingPrice < 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Please provide valid product details. Units per carton must be greater than 0.",
       });
     }
-  );
-});
 
+    const sql = `
+      UPDATE stock_items
+      SET
+        item_name = ?,
+        category = ?,
+        quantity = ?,
+        units_per_carton = ?,
+        buying_price = ?,
+        selling_price = ?
+      WHERE id = ?
+        AND user_id = ?
+    `;
+
+    db.query(
+      sql,
+      [
+        cleanItemName,
+        cleanCategory,
+        normalizedQuantity,
+        normalizedUnitsPerCarton,
+        normalizedBuyingPrice,
+        normalizedSellingPrice,
+        id,
+        userId,
+      ],
+      (error, result) => {
+        if (error) {
+          console.error("EDIT PRODUCT ERROR:", error);
+
+          return res.status(500).json({
+            success: false,
+            message: "Unable to update product.",
+            error: error.message,
+          });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Product not found.",
+          });
+        }
+
+        return res.json({
+          success: true,
+          message: "Product Updated Successfully",
+        });
+      }
+    );
+  }
+);
 // DELETE PRODUCT
 app.delete("/products/:id", authenticateUser, (req, res) => {
   const { id } = req.params;
@@ -400,39 +431,54 @@ WHERE id = ?
   });
 });
 
-/* =========================================================
-   SALES
-========================================================= */
-
-// SELL PRODUCT
+// SELL PRODUCT BY UNITS OR CARTONS
 app.post("/sell", authenticateUser, (req, res) => {
-  const { product_id, quantity_sold } = req.body;
+  const {
+    product_id,
+    quantity,
+    sell_type,
+    quantity_sold,
+  } = req.body;
+
   const userId = Number(req.user.id);
   const normalizedProductId = Number(product_id);
-  const normalizedQuantitySold = Number(quantity_sold);
+
+  // Backward compatibility:
+  // old frontend may still send quantity_sold only
+  const requestedQuantity = Number(
+    quantity ?? quantity_sold
+  );
+
+  const normalizedSellType =
+    String(sell_type || "unit")
+      .trim()
+      .toLowerCase();
 
   if (
     !Number.isInteger(normalizedProductId) ||
     normalizedProductId <= 0 ||
-    !Number.isInteger(normalizedQuantitySold) ||
-    normalizedQuantitySold <= 0
+    !Number.isInteger(requestedQuantity) ||
+    requestedQuantity <= 0 ||
+    !["unit", "carton"].includes(normalizedSellType)
   ) {
     return res.status(400).json({
       success: false,
-      message: "Please provide a valid product and quantity.",
+      message:
+        "Please provide a valid product, quantity and sell type.",
     });
   }
 
   const getProductSql = `
-  SELECT *
-  FROM stock_items
-  WHERE id = ?
-    AND user_id = ?
-`;
+    SELECT *
+    FROM stock_items
+    WHERE id = ?
+      AND user_id = ?
+    LIMIT 1
+  `;
 
   db.query(
-  getProductSql,
-  [normalizedProductId, userId],
+    getProductSql,
+    [normalizedProductId, userId],
     (productError, products) => {
       if (productError) {
         console.error(
@@ -456,17 +502,39 @@ app.post("/sell", authenticateUser, (req, res) => {
 
       const product = products[0];
 
-      const availableQuantity = Number(product.quantity || 0);
+      const availableQuantity = Number(
+        product.quantity || 0
+      );
 
-      if (availableQuantity < normalizedQuantitySold) {
+      const unitsPerCarton = Math.max(
+        1,
+        Number(product.units_per_carton || 1)
+      );
+
+      const totalUnitsToSell =
+        normalizedSellType === "carton"
+          ? requestedQuantity * unitsPerCarton
+          : requestedQuantity;
+
+      if (availableQuantity < totalUnitsToSell) {
+        const availableCartons = Math.floor(
+          availableQuantity / unitsPerCarton
+        );
+
+        const remainingUnits =
+          availableQuantity % unitsPerCarton;
+
         return res.status(400).json({
           success: false,
-          message: `Insufficient stock. Only ${availableQuantity} units are available.`,
+          message:
+            normalizedSellType === "carton"
+              ? `Insufficient stock. Available stock is ${availableCartons} cartons and ${remainingUnits} units.`
+              : `Insufficient stock. Only ${availableQuantity} units are available.`,
         });
       }
 
       const newQuantity =
-        availableQuantity - normalizedQuantitySold;
+        availableQuantity - totalUnitsToSell;
 
       const buyingPrice = Number(
         product.buying_price || 0
@@ -477,19 +545,23 @@ app.post("/sell", authenticateUser, (req, res) => {
       );
 
       const profit =
-        normalizedQuantitySold *
+        totalUnitsToSell *
         (sellingPrice - buyingPrice);
 
       const updateStockSql = `
-  UPDATE stock_items
-  SET quantity = ?
-  WHERE id = ?
-    AND user_id = ?
-`;
+        UPDATE stock_items
+        SET quantity = ?
+        WHERE id = ?
+          AND user_id = ?
+      `;
 
       db.query(
         updateStockSql,
-        [newQuantity, normalizedProductId, userId],
+        [
+          newQuantity,
+          normalizedProductId,
+          userId,
+        ],
         (updateError) => {
           if (updateError) {
             console.error(
@@ -506,25 +578,25 @@ app.post("/sell", authenticateUser, (req, res) => {
 
           const saleSql = `
             INSERT INTO sales
-(
-  user_id,
-  product_id,
-  quantity_sold,
-  selling_price,
-  profit
-)
-VALUES (?, ?, ?, ?, ?)
+            (
+              user_id,
+              product_id,
+              quantity_sold,
+              selling_price,
+              profit
+            )
+            VALUES (?, ?, ?, ?, ?)
           `;
 
           db.query(
             saleSql,
             [
-  userId,
-  normalizedProductId,
-  normalizedQuantitySold,
-  sellingPrice,
-  profit,
-],
+              userId,
+              normalizedProductId,
+              totalUnitsToSell,
+              sellingPrice,
+              profit,
+            ],
             (saleError, saleResult) => {
               if (saleError) {
                 console.error(
@@ -540,11 +612,39 @@ VALUES (?, ?, ?, ?, ?)
                 });
               }
 
+              const remainingCartons =
+                Math.floor(
+                  newQuantity / unitsPerCarton
+                );
+
+              const remainingLooseUnits =
+                newQuantity % unitsPerCarton;
+
               return res.status(201).json({
                 success: true,
-                message: "Sale Recorded Successfully",
+                message:
+                  "Sale Recorded Successfully",
                 sale_id: saleResult.insertId,
-                remaining_quantity: newQuantity,
+
+                sell_type: normalizedSellType,
+                requested_quantity:
+                  requestedQuantity,
+
+                units_per_carton:
+                  unitsPerCarton,
+
+                total_units_sold:
+                  totalUnitsToSell,
+
+                remaining_quantity:
+                  newQuantity,
+
+                remaining_stock: {
+                  cartons: remainingCartons,
+                  units: remainingLooseUnits,
+                  display: `${remainingCartons} cartons + ${remainingLooseUnits} units`,
+                },
+
                 profit,
               });
             }
@@ -554,28 +654,31 @@ VALUES (?, ?, ?, ?, ?)
     }
   );
 });
+/* =========================================================
+   SALES HISTORY
+========================================================= */
 
-// GET SALES HISTORY
 app.get("/sales", authenticateUser, (req, res) => {
-  console.log("SALES API HIT");
   const userId = Number(req.user.id);
+
   const sql = `
     SELECT
-      sales.id,
-      stock_items.item_name,
-      sales.quantity_sold,
-      sales.selling_price,
-      sales.profit,
-      sales.sale_date
-    FROM sales
-JOIN stock_items
-  ON sales.product_id = stock_items.id
-WHERE sales.user_id = ?
-  AND stock_items.user_id = ?
-ORDER BY sales.sale_date DESC
+      s.id,
+      s.product_id,
+      p.item_name,
+      s.quantity_sold,
+      s.selling_price,
+      s.profit,
+      s.created_at
+    FROM sales s
+    LEFT JOIN stock_items p
+      ON s.product_id = p.id
+      AND p.user_id = s.user_id
+    WHERE s.user_id = ?
+    ORDER BY s.created_at DESC, s.id DESC
   `;
 
-  db.query(sql, [userId, userId], (error, results) => {
+  db.query(sql, [userId], (error, results) => {
     if (error) {
       console.error("GET SALES ERROR:", error);
 
@@ -589,15 +692,6 @@ ORDER BY sales.sale_date DESC
     return res.json(results);
   });
 });
-
-/* =========================================================
-   TEST
-========================================================= */
-
-app.get("/test", (req, res) => {
-  res.send("TEST ROUTE WORKING");
-});
-
 /* =========================================================
    AUTHENTICATION
 ========================================================= */

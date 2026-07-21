@@ -216,7 +216,17 @@ function ProductTable({
                     buyingPrice > 0
                       ? (profit / buyingPrice) * 100
                       : 0;
+                  const totalUnits = Number(item.quantity || 0);
 
+const unitsPerCarton =
+  Number(item.units_per_carton) || 1;
+
+const cartons = Math.floor(
+  totalUnits / unitsPerCarton
+);
+
+const openUnits =
+  totalUnits % unitsPerCarton;
                   const status = getStockStatus(
                     item.quantity
                   );
@@ -259,16 +269,33 @@ function ProductTable({
 
                       <td>
                         <div className="inventory-stock-health">
-                          <div className="inventory-stock-top">
-                            <strong>
-                              {Number(
-                                item.quantity || 0
-                              ).toLocaleString("en-IN")}
-                            </strong>
+                        <div className="inventory-stock-top">
+  <strong>
+    📦 {cartons} Carton{cartons !== 1 ? "s" : ""}
+  </strong>
+</div>
 
-                            <span>units</span>
-                          </div>
+<div
+  style={{
+    marginTop: 6,
+    fontSize: 13,
+    color: "#64748b",
+    lineHeight: 1.6,
+  }}
+>
+  <div>
+    📦 <strong>{unitsPerCarton}</strong> Units /
+    Carton
+  </div>
 
+  <div>
+    📂 <strong>{openUnits}</strong> Open Units
+  </div>
+
+  <div>
+    📊 <strong>{totalUnits}</strong> Total Units
+  </div>
+</div>
                           <div className="inventory-health-track">
                             <span
                               className={
