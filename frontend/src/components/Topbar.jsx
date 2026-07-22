@@ -104,7 +104,6 @@ const avatarLetter = displayName
     <small>Administrator</small>
   </div>
 </div>
-
         <button className="logout-btn premium-logout" onClick={handleLogout}>
           <FaSignOutAlt />
           Logout

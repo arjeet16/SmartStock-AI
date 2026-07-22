@@ -21,7 +21,28 @@ const { calculateForecast } = require("./forecast");
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin)
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error("Origin not allowed by CORS.")
+      );
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 const mailTransporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -77,7 +98,9 @@ const authenticateUser = (req, res, next) => {
     });
   }
 };
-
+const ML_SERVICE_URL =
+  process.env.ML_SERVICE_URL ||
+  "http://localhost:7000";
 /* =========================================================
    ROOT
 ========================================================= */
@@ -1374,7 +1397,7 @@ app.get("/forecast", authenticateUser, async (req, res) => {
       forecast.map(async (item) => {
         try {
           const mlResponse = await axios.post(
-            "http://localhost:7000/predict",
+            `${ML_SERVICE_URL}/predict`,
             {
               current_stock: item.currentStock,
               avg_daily_sales: item.averageDailySales,
@@ -1477,7 +1500,7 @@ app.get("/forecast", authenticateUser, async (req, res) => {
 app.get("/ml-metrics", authenticateUser, async (req, res) => {
   try {
     const response = await axios.get(
-      "http://localhost:7000/metrics"
+      `${ML_SERVICE_URL}/metrics`
     );
 
     return res.json(response.data);
@@ -1537,7 +1560,7 @@ app.post(
 
       const mlResponse =
         await axios.post(
-          "http://localhost:7000/predict",
+          `${ML_SERVICE_URL}/predict`,
           {
             current_stock: newStock,
             avg_daily_sales:
@@ -1640,7 +1663,7 @@ app.post(
 
       const mlResponse =
         await axios.post(
-          "http://localhost:7000/predict",
+          `${ML_SERVICE_URL}/predict`,
           {
             current_stock:
               normalizedCurrentStock,
@@ -1722,8 +1745,6 @@ mailTransporter
   });
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(
-    `Server Running On Port ${PORT}`
-  );
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server Running On Port ${PORT}`);
 });
