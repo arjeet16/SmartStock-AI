@@ -7,7 +7,7 @@ const axios = require("axios");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 const jwt = require("jsonwebtoken");
 const db = require("./config/db");
 const {
@@ -44,17 +44,7 @@ app.use(
   })
 );
 app.use(express.json());
-const mailTransporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT || 587),
-  secure:
-    String(process.env.SMTP_SECURE).toLowerCase() === "true",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 const createAuthToken = (user) => {
   return jwt.sign(
     {
@@ -927,52 +917,58 @@ app.post("/forgot-password", async (req, res) => {
         user.email
       )}`;
 
-    await mailTransporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to: user.email,
-      subject: "Reset your SmartStock AI password",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
-          <h2 style="color: #2563eb;">SmartStock AI</h2>
+    const { data, error } = await resend.emails.send({
+  from:
+    process.env.RESEND_FROM_EMAIL ||
+    "SmartStock AI <onboarding@resend.dev>",
+  to: [user.email],
+  subject: "Reset your SmartStock AI password",
+  html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+      <h2 style="color: #2563eb;">SmartStock AI</h2>
 
-          <p>Hello ${user.full_name || "User"},</p>
+      <p>Hello ${user.full_name || "User"},</p>
 
-          <p>
-            We received a request to reset your password.
-          </p>
+      <p>We received a request to reset your password.</p>
 
-          <p>
-            Click the button below to create a new password.
-            This link will expire in 15 minutes.
-          </p>
+      <p>
+        Click the button below to create a new password.
+        This link will expire in 15 minutes.
+      </p>
 
-          <p style="margin: 30px 0;">
-            <a
-              href="${resetUrl}"
-              style="
-                display: inline-block;
-                padding: 14px 22px;
-                background: #2563eb;
-                color: #ffffff;
-                text-decoration: none;
-                border-radius: 10px;
-                font-weight: 700;
-              "
-            >
-              Reset Password
-            </a>
-          </p>
+      <p style="margin: 30px 0;">
+        <a
+          href="${resetUrl}"
+          style="
+            display: inline-block;
+            padding: 14px 22px;
+            background: #2563eb;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+          "
+        >
+          Reset Password
+        </a>
+      </p>
 
-          <p>
-            If you did not request this, you can safely ignore this email.
-          </p>
+      <p>
+        If you did not request this, you can safely ignore this email.
+      </p>
 
-          <p style="color: #64748b; font-size: 13px;">
-            SmartStock AI Security Team
-          </p>
-        </div>
-      `,
-    });
+      <p style="color: #64748b; font-size: 13px;">
+        SmartStock AI Security Team
+      </p>
+    </div>
+  `,
+});
+
+if (error) {
+  throw new Error(error.message);
+}
+
+console.log("Password reset email sent:", data?.id);
 
     return res.json({
       success: true,
@@ -1734,15 +1730,6 @@ app.post(
 /* =========================================================
    START SERVER
 ========================================================= */
-mailTransporter
-  .verify()
-  .then(() => {
-    console.log("✅ SMTP mail server connected successfully.");
-  })
-  .catch((error) => {
-    console.error("❌ SMTP connection failed:");
-    console.error(error.message);
-  });
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, "0.0.0.0", () => {
