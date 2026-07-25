@@ -306,8 +306,8 @@ if (onForecastLoad) {
                   </p>
                 </div>
 
-                <ul className="business-list">
-  {(item.businessExplanation || []).map((point, index) => (
+                <ul className="business-list compact-business-list">
+  {(item.businessExplanation || []).slice(0, 3).map((point, index) => (
     <li key={index}>
       <span className="check-icon">✅</span>
       <span>{point}</span>

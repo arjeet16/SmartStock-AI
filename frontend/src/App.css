@@ -2238,6 +2238,15 @@ html {
   line-height: 1.55;
   color: #475569;
 }
+.compact-business-list {
+  margin-top: 10px;
+}
+
+.compact-business-list li {
+  padding: 4px 0;
+  font-size: 13px;
+  line-height: 1.35;
+}
 /* ===========================
    ML MODEL METRICS PANEL
 =========================== */
