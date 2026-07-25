@@ -10,7 +10,6 @@ export default function MLModelMetrics() {
     const loadMetrics = async () => {
       try {
         const data = await authFetch("/ml-metrics");
-        console.log("ML Metrics Response:", data);
         if (isMounted) {
           setMetrics(data?.metrics ?? null);
         }
