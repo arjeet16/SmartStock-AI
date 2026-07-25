@@ -1584,16 +1584,20 @@ app.get("/forecast", authenticateUser, async (req, res) => {
 /* =========================================================
    ML MODEL METRICS
 ========================================================= */
-catch (error) {
-  console.error("ML Metrics Error:", error);
+app.get("/ml-metrics", authenticateUser, async (req, res) => {
+  try {
+    const response = await axios.get(`${ML_SERVICE_URL}/metrics`);
+    return res.json(response.data);
+  } catch (error) {
+    console.error("ML Metrics Error:", error);
 
-  return res.status(500).json({
-    success: false,
-    message: error.message,
-    details: error.response?.data || error.stack,
-  });
-}
-
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      details: error.response?.data || error.stack,
+    });
+  }
+});
 /* =========================================================
    FORECAST SIMULATOR
 ========================================================= */
