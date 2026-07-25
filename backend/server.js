@@ -1,5 +1,8 @@
 require("dotenv").config();
-
+console.log(
+  "OpenRouter key loaded:",
+  !!process.env.OPENROUTER_API_KEY
+);
 console.log("SERVER FILE LOADED");
 
 const express = require("express");
@@ -90,7 +93,7 @@ const authenticateUser = (req, res, next) => {
 };
 const ML_SERVICE_URL =
   process.env.ML_SERVICE_URL ||
-  "http://localhost:7000";
+  "https://smartstock-ai-c9jl.onrender.com";
 /* =========================================================
    ROOT
 ========================================================= */
@@ -1301,23 +1304,24 @@ app.post("/ai-report", authenticateUser, async (req, res) => {
       bestSellingProduct,
     } = req.body;
 
-    const report =
-      await generateInventoryReport({
-        products,
-        sales,
-        totalRevenue,
-        totalProfit,
-        lowStockCount,
-        bestSellingProduct,
-      });
+  const forecastData = calculateForecast(products, sales);
+  console.log("Forecast Data:", JSON.stringify(forecastData, null, 2));
+const report = await generateInventoryReport({
+  products,
+  sales,
+  forecastData,
+  totalRevenue,
+  totalProfit,
+  lowStockCount,
+  bestSellingProduct,
+});
 
-    const formattedReport =
-      formatAIReport(report);
+const formattedReport = formatAIReport(report);
 
-    return res.json({
-      success: true,
-      report: formattedReport,
-    });
+return res.json({
+  success: true,
+  report: formattedReport,
+});  
   } catch (error) {
     console.error(
       "AI REPORT ERROR:",
@@ -1339,8 +1343,97 @@ app.post("/ai-report", authenticateUser, async (req, res) => {
 
 app.post("/ai-chat", authenticateUser, async (req, res) => {
   try {
+    const userId = Number(req.user.id);
+
+    const [products] = await db.promise().query(
+      `
+        SELECT *
+        FROM stock_items
+        WHERE user_id = ?
+      `,
+      [userId]
+    );
+
+    const [sales] = await db.promise().query(
+      `
+        SELECT *
+        FROM sales
+        WHERE user_id = ?
+      `,
+      [userId]
+    );
+
+    const forecastData = calculateForecast(
+      products,
+      sales
+    );
+    console.log(
+  "COPILOT FORECAST DATA:",
+  JSON.stringify(forecastData, null, 2)
+);
+
+    const totalRevenue = sales.reduce(
+      (sum, sale) =>
+        sum +
+        Number(sale.quantity_sold || 0) *
+          Number(sale.selling_price || 0),
+      0
+    );
+
+    const totalProfit = sales.reduce(
+      (sum, sale) =>
+        sum + Number(sale.profit || 0),
+      0
+    );
+
+    const lowStockCount = products.filter(
+      (product) =>
+        Number(product.quantity || 0) > 0 &&
+        Number(product.quantity || 0) < 20
+    ).length;
+
+    const productSalesTotals = sales.reduce(
+      (totals, sale) => {
+        const productId = Number(
+          sale.product_id
+        );
+
+        totals[productId] =
+          (totals[productId] || 0) +
+          Number(sale.quantity_sold || 0);
+
+        return totals;
+      },
+      {}
+    );
+
+    const bestSellingEntry = Object.entries(
+      productSalesTotals
+    ).sort(
+      ([, quantityA], [, quantityB]) =>
+        quantityB - quantityA
+    )[0];
+
+    const bestSellingProduct =
+      bestSellingEntry
+        ? products.find(
+            (product) =>
+              Number(product.id) ===
+              Number(bestSellingEntry[0])
+          )?.item_name || "No Sales"
+        : "No Sales";
+
     const answer =
-      await generateCopilotAnswer(req.body);
+      await generateCopilotAnswer({
+        ...req.body,
+        products,
+        sales,
+        forecastData,
+        totalRevenue,
+        totalProfit,
+        lowStockCount,
+        bestSellingProduct,
+      });
 
     return res.json({
       success: true,
@@ -1360,7 +1453,6 @@ app.post("/ai-chat", authenticateUser, async (req, res) => {
     });
   }
 });
-
 /* =========================================================
    AI DEMAND FORECAST
 ========================================================= */
@@ -1492,27 +1584,15 @@ app.get("/forecast", authenticateUser, async (req, res) => {
 /* =========================================================
    ML MODEL METRICS
 ========================================================= */
+catch (error) {
+  console.error("ML Metrics Error:", error);
 
-app.get("/ml-metrics", authenticateUser, async (req, res) => {
-  try {
-    const response = await axios.get(
-      `${ML_SERVICE_URL}/metrics`
-    );
-
-    return res.json(response.data);
-  } catch (error) {
-    console.error(
-      "ML Metrics Error:",
-      error.message
-    );
-
-    return res.status(500).json({
-      success: false,
-      message:
-        "Unable to fetch ML model metrics.",
-    });
-  }
-});
+  return res.status(500).json({
+    success: false,
+    message: error.message,
+    details: error.response?.data || error.stack,
+  });
+}
 
 /* =========================================================
    FORECAST SIMULATOR
