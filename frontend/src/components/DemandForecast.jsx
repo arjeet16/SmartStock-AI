@@ -315,7 +315,7 @@ if (onForecastLoad) {
   ))}
 </ul>
 
-                <p className="decision-action">{getAiRecommendation(item)}</p>
+                {/* <p className="decision-action">{getAiRecommendation(item)}</p> */}
               </div>
 
               <p className="forecast-note">

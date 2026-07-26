@@ -2112,11 +2112,10 @@ html {
 .mini-trend span:nth-child(6) {
   height: 90%;
 }
-
 .forecast-ai-box {
-  margin-top: 18px;
-  padding: 15px;
-  border-radius: 18px;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 16px;
   background: #f8fafc;
   border: 1px solid #e5e7eb;
 }
@@ -2208,10 +2207,9 @@ html {
 }
 .decision-list {
   display: grid;
-  gap: 9px;
-  margin-top: 10px;
+  gap: 5px;
+  margin-top: 6px;
 }
-
 .decision-list p {
   margin: 0;
   display: flex;
