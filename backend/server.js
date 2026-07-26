@@ -172,7 +172,6 @@ app.post("/products", authenticateUser, (req, res) => {
         "Please provide valid product details. Units per carton must be greater than 0.",
     });
   }
-
   const sql = `
     INSERT INTO stock_items
     (
