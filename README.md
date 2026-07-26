@@ -65,3 +65,101 @@ The platform combines Machine Learning, Artificial Intelligence, Business Analyt
   - Frontend → Vercel
   - Backend → Render
   - ML Service → Render
+
+  ## 🌐 Live Demo
+
+| Service | Link |
+|---------|------|
+| 🎨 Frontend | https://smart-stock-ai-ochre.vercel.app |
+| ⚙️ Backend API | https://smartstock-ai-api.onrender.com |
+| 🤖 ML Service | https://smartstock-ai-c9jl.onrender.com |
+
+## 🛠️ Tech Stack
+
+### Frontend
+- React.js (Vite)
+- JavaScript (ES6+)
+- CSS3
+- React Icons
+- Chart.js
+- Framer Motion
+
+### Backend
+- Node.js
+- Express.js
+- JWT Authentication
+- bcrypt.js
+- Resend Email API
+
+### Database
+- MySQL
+
+### Machine Learning
+- Python
+- Flask
+- Scikit-learn
+- Pandas
+- NumPy
+- Random Forest Regressor
+
+### Deployment
+- Vercel (Frontend)
+- Render (Backend)
+- Render (ML Service)
+
+### Development Tools
+- VS Code
+- Git
+- GitHub
+- Postman
+
+## 🏗️ System Architecture
+
+```text
+                 User
+                   │
+                   ▼
+      React + Vite Frontend (Vercel)
+                   │
+          REST API Requests
+                   │
+                   ▼
+      Node.js + Express Backend
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+     MySQL Database      Flask ML Service
+                                │
+                                ▼
+                    Demand Forecast Model
+                    (Random Forest)
+```
+## 📸 Application Screenshots
+
+### 🔐 Login
+![Login](screenshots/login.png)
+
+---
+
+### 📊 Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+### 📦 Inventory Management
+![Inventory](screenshots/inventory.png)
+
+---
+
+### 🤖 AI Demand Forecast
+![Forecast](screenshots/forecast.png)
+
+---
+
+### 🧠 AI Copilot
+![AI Copilot](screenshots/copilot.png)
+
+---
+
+### 📄 AI Executive Reports
+![Reports](screenshots/reports.png)
