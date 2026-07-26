@@ -191,6 +191,7 @@ async function callOpenRouter(prompt) {
 async function generateInventoryReport({
   products = [],
   sales = [],
+  forecastData = [],
   totalRevenue = 0,
   totalProfit = 0,
   lowStockCount = 0,
@@ -200,26 +201,69 @@ async function generateInventoryReport({
     products,
     sales
   );
+const analyticsWithForecast = analytics.map((product) => {
+  const forecast = forecastData.find(
+    (item) =>
+      Number(item.productId || item.product_id || item.id) ===
+      Number(product.id)
+  );
 
-  const totalInventoryValue = analytics.reduce(
+  return {
+    ...product,
+
+    forecast7Days: forecast?.forecast7Days ?? 0,
+    forecast30Days: forecast?.forecast30Days ?? 0,
+
+    recommendedRestock:
+      forecast?.recommendedRestock ?? 0,
+
+    safetyStock:
+      forecast?.safetyStock ?? 0,
+
+    targetStock:
+      forecast?.targetStock ?? 0,
+
+    confidence:
+      forecast?.confidence ?? 0,
+
+    risk:
+      forecast?.risk ?? "Unknown",
+
+    riskReason:
+      forecast?.riskReason ??
+      "No forecast available.",
+
+    trend:
+      forecast?.trend ?? "Stable",
+
+    trendPercent:
+      forecast?.trendPercent ?? 0,
+
+    daysRemaining:
+      forecast?.daysRemaining ?? 999,
+
+    inventoryTurnover:
+      forecast?.inventoryTurnover ?? 0,
+  };
+});
+  const totalInventoryValue = analyticsWithForecast.reduce(
     (sum, product) =>
       sum + product.inventoryValue,
     0
   );
 
-  const outOfStockProducts = analytics.filter(
+  const outOfStockProducts = analyticsWithForecast.filter(
     (product) => product.quantity <= 0
   );
 
   const possibleOverstockProducts =
-    analytics.filter(
-      (product) =>
-        product.stockStatus ===
-          "Possible Overstock" ||
-        product.stockStatus === "High Stock"
-    );
+  analyticsWithForecast.filter(
+    (product) =>
+      product.stockStatus === "Possible Overstock" ||
+      product.stockStatus === "High Stock"
+  );
 
-  const fastMovingProducts = analytics.filter(
+  const fastMovingProducts = analyticsWithForecast.filter(
     (product) =>
       product.movementStatus === "Fast Moving"
   );
@@ -233,20 +277,26 @@ Important business rules:
 
 1. Total Profit means actual realized sales profit only.
 2. Inventory value is not profit.
-3. Never recommend restocking a product that has:
+3. Forecast metrics are calculated by the SmartStock forecasting engine and must be treated as the source of truth.
+4. Use recommendedRestock exactly as supplied. Do not calculate a different restock quantity.
+5. Use riskReason when explaining stock risk.
+6. Do not treat confidence as certainty. Mention low confidence when forecast confidence is weak.
+7. A product marked Overstock must not be recommended for purchasing.
+8. Use safetyStock and targetStock only when they are present in the supplied forecast data.
+9. Never recommend restocking a product that has:
    - zero recorded sales,
    - zero predicted demand,
    - or a large quantity already available.
-4. If a product has high stock and weak sales, recommend:
-   - avoiding additional purchasing,
-   - promoting existing stock,
-   - reviewing pricing,
-   - or reducing future order quantities.
-5. Recommend restocking only when stock is low or zero and recorded demand exists.
-6. Do not describe high stock as healthy without considering sales movement.
-7. Use exact product names, quantities and financial values.
-8. Keep each risk, recommendation and profit tip concise.
-9. Return a maximum of 3 items in each array.
+10. If a product has high stock and weak sales, recommend:
+    - avoiding additional purchasing,
+    - promoting existing stock,
+    - reviewing pricing,
+    - or reducing future order quantities.
+11. Recommend restocking only when stock is low or zero and recorded demand exists.
+12. Do not describe high stock as healthy without considering sales movement.
+13. Use exact product names, quantities and financial values.
+14. Keep each risk, recommendation and profit tip concise.
+15. Return a maximum of 3 items in each array.
 
 Business Summary:
 - Total Products: ${analytics.length}
@@ -267,8 +317,8 @@ Business Summary:
   }
 - Best-Selling Product: ${bestSellingProduct}
 
-Product Analytics:
-${JSON.stringify(analytics, null, 2)}
+Product and Forecast Analytics:
+${JSON.stringify(analyticsWithForecast, null, 2)}
 
 Sales History:
 ${JSON.stringify(sales, null, 2)}
@@ -307,6 +357,7 @@ async function generateCopilotAnswer({
   message,
   products = [],
   sales = [],
+  forecastData = [],
   totalRevenue = 0,
   totalProfit = 0,
   lowStockCount = 0,
@@ -324,31 +375,71 @@ async function generateCopilotAnswer({
     products,
     sales
   );
+  const analyticsWithForecast = analytics.map((product) => {
+  const forecast = forecastData.find(
+    (item) =>
+      Number(item.productId || item.product_id || item.id) ===
+      Number(product.id)
+  );
 
-  const totalInventoryValue = analytics.reduce(
+  return {
+    ...product,
+
+    forecast7Days: forecast?.forecast7Days ?? 0,
+    forecast30Days: forecast?.forecast30Days ?? 0,
+
+    recommendedRestock:
+      forecast?.recommendedRestock ?? 0,
+
+    safetyStock:
+      forecast?.safetyStock ?? 0,
+
+    targetStock:
+      forecast?.targetStock ?? 0,
+
+    confidence:
+      forecast?.confidence ?? 0,
+
+    risk:
+      forecast?.risk ?? "Unknown",
+
+    riskReason:
+      forecast?.riskReason ?? "No forecast available.",
+
+    trend:
+      forecast?.trend ?? "Stable",
+
+    trendPercent:
+      forecast?.trendPercent ?? 0,
+
+    daysRemaining:
+      forecast?.daysRemaining ?? 999,
+
+    inventoryTurnover:
+      forecast?.inventoryTurnover ?? 0,
+  };
+});
+  const totalInventoryValue = analyticsWithForecast.reduce(
     (sum, product) =>
       sum + product.inventoryValue,
     0
   );
 
-  const calculatedLowStock = analytics.filter(
+  const calculatedLowStock = analyticsWithForecast.filter(
     (product) =>
       product.quantity > 0 &&
       product.quantity < 20
   );
 
-  const outOfStockProducts = analytics.filter(
-    (product) => product.quantity <= 0
-  );
+  const outOfStockProducts = analyticsWithForecast.filter(
+  (product) => product.quantity <= 0
+);
 
-  const possibleOverstockProducts =
-    analytics.filter(
-      (product) =>
-        product.stockStatus ===
-          "Possible Overstock" ||
-        product.stockStatus === "High Stock"
-    );
-
+  const possibleOverstockProducts = analyticsWithForecast.filter(
+  (product) =>
+    product.stockStatus === "Possible Overstock" ||
+    product.stockStatus === "High Stock"
+);
   const prompt = `
 Answer the user's exact question as SmartStock AI Copilot.
 
@@ -362,6 +453,17 @@ Critical rules:
 - Never invent figures or products.
 - Total profit is actual realized sales profit.
 - Inventory value and potential profit are not realized profit.
+- Forecast metrics are generated by the SmartStock forecasting engine and must be treated as the source of truth.
+- For every forecast question, copy forecast7Days, forecast30Days, confidence, risk, daysRemaining, recommendedRestock, safetyStock, targetStock, and riskReason exactly from Product-Level Analytics.
+- Never derive forecast values from total units sold, sales history, average sales, or your own calculations.
+- Never convert numeric forecast values into words such as "High", "Low", "Yes", or "No".
+- recommendedRestock must remain a numeric quantity. For example, output 0 instead of "No".
+- If Forecast Summary, Sales History, and Product-Level Analytics contain different values, Product-Level Analytics is authoritative.
+- Use recommendedRestock exactly as supplied. Never calculate a different quantity.
+- Explain stock risk using riskReason whenever it is available.
+- Mention forecast confidence when confidence is below 60.
+- Never recommend purchasing a product whose risk is "Overstock".
+- When forecast data is unavailable, clearly state that the recommendation is based only on sales history.
 - Do not recommend restocking products with zero sales or excess stock.
 - Recommend restocking only when inventory is low or empty and demand exists.
 - When discussing high inventory, include capital-lock and overstock risk.
@@ -371,7 +473,7 @@ Critical rules:
   - inventory value.
 - Mention exact product names and quantities.
 - If sales history is insufficient, state that clearly.
-- Give practical actions supported by the data.
+Give practical actions supported by the data. Do not introduce thresholds, percentages, time periods, or formulas unless they are explicitly present in the supplied data.
 - Use short headings and bullet points.
 - Do not use markdown tables.
 - Keep the response between 90 and 200 words.
@@ -393,17 +495,16 @@ Business Totals:
     possibleOverstockProducts.length
   }
 - Best-Selling Product: ${bestSellingProduct}
-
+Forecast Summary:
+${JSON.stringify(forecastData, null, 2)}
 Product-Level Analytics:
-${JSON.stringify(analytics, null, 2)}
+${JSON.stringify(analyticsWithForecast, null, 2)}
 
 Sales History:
 ${JSON.stringify(sales, null, 2)}
 `;
-
-  return callOpenRouter(prompt);
+return callOpenRouter(prompt);
 }
-
 module.exports = {
   generateInventoryReport,
   generateCopilotAnswer,

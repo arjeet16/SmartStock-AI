@@ -927,14 +927,11 @@ const confirmSellProduct = async () => {
     0
   );
 
-  const totalProfit = products.reduce(
-    (sum, item) =>
-      sum +
-      Number(item.quantity || 0) *
-        (Number(item.selling_price || 0) -
-          Number(item.buying_price || 0)),
-    0
-  );
+ const totalProfit = sales.reduce(
+  (sum, sale) =>
+    sum + Number(sale.profit || 0),
+  0
+);
 
   const totalRevenue = sales.reduce(
     (sum, sale) =>
