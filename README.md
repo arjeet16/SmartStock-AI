@@ -136,30 +136,9 @@ The platform combines Machine Learning, Artificial Intelligence, Business Analyt
 ```
 ## 📸 Application Screenshots
 
-### 🔐 Login
-![Login](screenshots/login.png)
-
----
-
-### 📊 Dashboard
-![Dashboard](screenshots/dashboard.png)
-
----
-
-### 📦 Inventory Management
-![Inventory](screenshots/inventory.png)
-
----
-
-### 🤖 AI Demand Forecast
-![Forecast](screenshots/forecast.png)
-
----
-
-### 🧠 AI Copilot
-![AI Copilot](screenshots/copilot.png)
-
----
-
-### 📄 AI Executive Reports
-![Reports](screenshots/reports.png)
+![Login](screenshots/login.png.png)
+![Dashboard](screenshots/dashboard.png.png)
+![Inventory](screenshots/inventory.png.png)
+![Forecast](screenshots/forecast.png.png)
+![AI Copilot](screenshots/copilot.png.png)
+![Reports](screenshots/reports.png.png)
